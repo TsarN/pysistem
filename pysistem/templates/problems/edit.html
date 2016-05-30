@@ -1,0 +1,79 @@
+{% extends "problems/base.html" %}
+{% if problem.id %}
+{% block problem_navbar_link_edit %}active{% endblock %}
+{% endif %}
+{% block title %}
+    {% if problem.id %}
+        {{ super() }}
+    {% else %}
+        {{ _('title.problem.new') }}
+    {% endif %}
+{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    textarea.form-control {
+        min-width: 100%;
+        min-height: 100%;
+    }
+</style>
+<script type="text/javascript" src="{{ url_for('static', filename='tinymce/tinymce.min.js') }}"></script>
+{% endblock %}
+{% block problem_nav %}
+{% if problem.id %}
+{{ super() }}
+{% endif %}
+{% endblock %}
+{% block problem_content %}
+<div class="container">
+<div class="col-md-8 col-md-offset-2">
+{% if error %}
+<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
+{% endif %}
+{% if not problem.id %}
+<div class="page-header text-center">
+    <h2>
+    {{ _('title.problem.new') }}
+    </h2>
+</div>
+{% endif %}
+<form method="POST" action="
+    {% if problem.id %}
+        {{ url_for('problems.edit', id=problem.id) }}
+    {% else %}
+        {{ url_for('problems.edit', id=-1) }}
+    {% endif %}
+" role="form" class="form-horizontal">
+<div class="form-group">
+    <label for="name" class="col-sm-4 control-label">{{ _('common.name') }}</label>
+    <div class="col-sm-8">
+    <input type="text" class="form-control" id="name" name="name"
+    placeholder="{{ _('common.name') }}" value="{{ problem.name or '' }}" />
+    </div>
+</div>
+<div class="form-group">
+    <label for="description" class="col-sm-4 control-label">{{ _('common.description') }}</label>
+    <div class="col-sm-8">
+    <textarea class="form-control" id="description" name="description" placeholder="{{ _('common.description') }}">{{ problem.description or '' }}</textarea>
+    </div>
+</div>
+<div class="form-group">
+    <label for="statement" class="control-label">{{ _('common.statement') }}</label>
+    <div>
+    <textarea id="statement" class="form-control" name="statement" placeholder="{{ _('common.statement') }}">{{ (problem.statement or '')|safe }}</textarea>
+    </div>
+</div>
+<script type="text/javascript">
+    tinymce.init({
+        selector: '#statement'
+    })
+</script>
+<div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
+<button type="submit" name="update_info" class="btn btn-lg btn-primary btn-block">
+    {{ _('common.update') }}
+</button>
+</div>
+</form>
+</div>
+</div>
+{% endblock %}

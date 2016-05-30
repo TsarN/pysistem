@@ -1,0 +1,315 @@
+# English translations for PROJECT.
+# Copyright (C) 2016 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2016-05-30 20:28+0300\n"
+"PO-Revision-Date: 2016-05-24 15:48+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+#: locale/views.py:13
+msgid "locale.set.success"
+msgstr "Language changed to %(lang)s"
+
+#: locale/views.py:15
+msgid "locale.set.langnotfound"
+msgstr "No such language: %(lang)s"
+
+#: problems/views.py:46
+msgid "problems.new.success"
+msgstr "New problem created"
+
+#: problems/views.py:49
+msgid "problems.edit.success"
+msgstr "Changes saved"
+
+#: problems/views.py:52
+msgid "problems.edit.emptyname"
+msgstr "Problem name is empty"
+
+#: problems/views.py:73
+msgid "problems.test.notfound"
+msgstr "No such test"
+
+#: problems/views.py:77
+msgid "problems.deltest.success"
+msgstr "Test was deleted"
+
+#: problems/views.py:92 problems/views.py:97
+msgid "problems.addtest.inputmissing"
+msgstr "No input file"
+
+#: problems/views.py:132 problems/views.py:137
+msgid "problems.addchecker.sourcemissing"
+msgstr "No souce file"
+
+#: problems/views.py:157 problems/views.py:169
+msgid "problems.checker.notfound"
+msgstr "No such checker"
+
+#: problems/views.py:161
+msgid "problems.delchecker.success"
+msgstr "Checker was deleted"
+
+#: problems/views.py:172
+msgid "problems.actchecker.success"
+msgstr "Checker is now active"
+
+#: problems/views.py:193 problems/views.py:198
+msgid "problems.submit.sourcemissing"
+msgstr "No file chosen"
+
+#: problems/views.py:207
+msgid "problems.submit.selectcompiler"
+msgstr "Compiler is not selected"
+
+#: problems/views.py:213
+msgid "problems.submit.success"
+msgstr "Your solution was sent to testing"
+
+#: templates/base.html:44 templates/index.html:2
+msgid "title.home"
+msgstr "Home"
+
+#: templates/base.html:51 templates/problems/checkers.html:10
+#: templates/problems/submissions.html:26
+msgid "common.language"
+msgstr "Language"
+
+#: templates/base.html:69
+msgid "common.anonymous"
+msgstr "Anonymous"
+
+#: templates/base.html:74 templates/users/profile.html:2
+msgid "title.profile"
+msgstr "Profile"
+
+#: templates/base.html:76
+msgid "title.logout"
+msgstr "Log Out"
+
+#: templates/base.html:78 templates/users/login.html:2
+msgid "title.login"
+msgstr "Log In"
+
+#: templates/base.html:79 templates/users/signup.html:2
+msgid "title.signup"
+msgstr "Sign Up"
+
+#: templates/index.html:5
+msgid "common.helloworld"
+msgstr "Hello, world!"
+
+#: templates/contests/ctl.html:2
+msgid "title.contestctl"
+msgstr "Contest control"
+
+#: templates/contests/ctl.html:7 templates/problems/edit.html:31
+#: templates/users/login.html:7 templates/users/profile.html:7
+#: templates/users/signup.html:7
+msgid "common.error"
+msgstr "Error"
+
+#: templates/contests/ctl.html:10
+msgid "contest.new"
+msgstr "New contest"
+
+#: templates/contests/ctl.html:14 templates/contests/ctl.html:16
+#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
+#: templates/problems/edit.html:48 templates/problems/edit.html:51
+msgid "common.name"
+msgstr "Name"
+
+#: templates/contests/list.html:2
+msgid "title.contestlist"
+msgstr "Contest list"
+
+#: templates/errors/403.html:2
+msgid "title.error.403"
+msgstr "403 - Forbidden"
+
+#: templates/errors/403.html:5
+msgid "error.permission"
+msgstr "Permission denied"
+
+#: templates/errors/403.html:6 templates/errors/404.html:6
+msgid "common.back"
+msgstr "To index"
+
+#: templates/errors/404.html:2
+msgid "title.error.404"
+msgstr "404 - Page not found"
+
+#: templates/errors/404.html:5
+msgid "error.404.text"
+msgstr "Sorry, but we couldn't find page that you've requested"
+
+#: templates/problems/base.html:10 templates/problems/edit.html:61
+#: templates/problems/edit.html:63
+msgid "common.statement"
+msgstr "Statement"
+
+#: templates/problems/base.html:13
+msgid "title.problem.submissions"
+msgstr "Submissions"
+
+#: templates/problems/base.html:17
+msgid "title.problem.edit"
+msgstr "Edit problem"
+
+#: templates/problems/base.html:20
+msgid "title.problem.testpairs"
+msgstr "Test pairs"
+
+#: templates/problems/base.html:23
+msgid "title.problem.checkers"
+msgstr "Checkers"
+
+#: templates/problems/checkers.html:9 templates/problems/submissions.html:14
+#: templates/problems/submissions.html:25
+msgid "common.source"
+msgstr "Source"
+
+#: templates/problems/checkers.html:38 templates/problems/tests.html:34
+msgid "common.delete"
+msgstr "Delete"
+
+#: templates/problems/edit.html:9 templates/problems/edit.html:36
+msgid "title.problem.new"
+msgstr "New problem"
+
+#: templates/problems/edit.html:55 templates/problems/edit.html:57
+msgid "common.description"
+msgstr "Description"
+
+#: templates/problems/edit.html:73 templates/users/profile.html:36
+msgid "common.update"
+msgstr "Update"
+
+#: templates/problems/submissions.html:5
+msgid "problems.submissions.new"
+msgstr "Submit solution"
+
+#: templates/problems/submissions.html:8
+msgid "common.compiler"
+msgstr "Compiler"
+
+#: templates/problems/submissions.html:16
+msgid "common.submit"
+msgstr "Submit"
+
+#: templates/problems/submissions.html:27
+msgid "submissions.status"
+msgstr "Status"
+
+#: templates/problems/submissions.html:41
+msgid "problems.submissions.recheck"
+msgstr "Recheck"
+
+#: templates/problems/submissions.html:45
+msgid "problems.submissions.reject"
+msgstr "Reject"
+
+#: templates/problems/submissions.html:49
+msgid "problems.submissions.delete"
+msgstr "Delete"
+
+#: templates/problems/tests.html:9
+msgid "problems.tests.input"
+msgstr "Input"
+
+#: templates/problems/tests.html:10
+msgid "problems.tests.pattern"
+msgstr "Pattern"
+
+#: templates/users/login.html:10 templates/users/login.html:19
+msgid "common.login"
+msgstr "Log In"
+
+#: templates/users/login.html:14 templates/users/signup.html:14
+msgid "common.username"
+msgstr "Username"
+
+#: templates/users/login.html:17 templates/users/signup.html:17
+msgid "common.password"
+msgstr "Password"
+
+#: templates/users/profile.html:14 templates/users/profile.html:17
+msgid "common.firstname"
+msgstr "First name"
+
+#: templates/users/profile.html:21 templates/users/profile.html:24
+msgid "common.lastname"
+msgstr "Last name"
+
+#: templates/users/profile.html:28 templates/users/profile.html:31
+msgid "common.email"
+msgstr "E-Mail address"
+
+#: templates/users/signup.html:10 templates/users/signup.html:22
+msgid "common.signup"
+msgstr "Sign Up"
+
+#: templates/users/signup.html:20
+msgid "common.passwordconfirmation"
+msgstr "Password confirmation"
+
+#: users/decorators.py:10
+msgid "error.permission.authrequired"
+msgstr "Please log in to view this page"
+
+#: users/views.py:19
+msgid "auth.login.success"
+msgstr "You were authorized"
+
+#: users/views.py:41
+msgid "auth.signup.success"
+msgstr "You were registred"
+
+#: users/views.py:44
+msgid "auth.signup.shortpassword"
+msgstr "Password is too short"
+
+#: users/views.py:46
+msgid "auth.signup.mismatchedpasswords"
+msgstr "Passwords do not match"
+
+#: users/views.py:48
+msgid "auth.signup.exists"
+msgstr "User already exists"
+
+#: users/views.py:50
+msgid "auth.signup.invalidusername"
+msgstr "Invalid username"
+
+#: users/views.py:56
+msgid "auth.logout.success"
+msgstr "You were logged out"
+
+#: users/views.py:70
+msgid "profile.update.success"
+msgstr "Profile was successfully updated"
+
+#~ msgid "auth.login.invalidcredentials"
+#~ msgstr "Invalid credentials"
+
+#~ msgid "common.action"
+#~ msgstr "Action"
+
+#~ msgid "problems.tests.new"
+#~ msgstr "New test"
+
+#~ msgid "problems.notfound"
+#~ msgstr "No such problem"
+

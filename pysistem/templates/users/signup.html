@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ _('title.signup') }}{% endblock %}
+{% block content %}
+<div class="container">
+<div class="col-md-4 col-md-offset-4">
+{% if error %}
+<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
+{% endif %}
+<div class="page-header text-center">
+    <h2>{{ _('common.signup') }}</h2>
+</div>
+<form method="POST" action="{{ url_for('users.signup') }}" class="form-signin" role="form">
+    <div class="form-group">
+        <input type="text" class="form-control" name="username" placeholder="{{ _('common.username') }}" />
+    </div>
+    <div class="form-group">
+        <input type="password" class="form-control" name="password" placeholder="{{ _('common.password') }}" />
+    </div>
+    <div class="form-group">
+        <input type="password" class="form-control" name="passwordConfirm" placeholder="{{ _('common.passwordconfirmation') }}" />
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary btn-block">{{ _('common.signup') }}</button>
+</form>
+</div>
+</div>
+{% endblock %}

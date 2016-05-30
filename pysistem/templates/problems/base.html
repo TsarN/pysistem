@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ problem.name }}{% endblock %}
+{% block content %}
+{% block problem_nav %}
+<h2 class="text-center page-header">
+    {{ problem.name }}
+</h2>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="{% block problem_navbar_link_view %}{% endblock %}">
+        <a href="{{ url_for('problems.view', id=problem.id) }}">{{ _('common.statement') }}</a>
+    </li>
+    <li role="presentation" class="{% block problem_navbar_link_submissions %}{% endblock %}">
+        <a href="{{ url_for('problems.submissions', id=problem.id) }}">{{ _('title.problem.submissions') }}</a>
+    </li>
+    {% if g.user.role == 'admin' %}
+    <li role="presentation" class="{% block problem_navbar_link_edit %}{% endblock %}">
+        <a href="{{ url_for('problems.edit', id=problem.id) }}">{{ _('title.problem.edit') }}</a>
+    </li>
+    <li role="presentation" class="{% block problem_navbar_link_tests %}{% endblock %}">
+        <a href="{{ url_for('problems.tests', id=problem.id) }}">{{ _('title.problem.testpairs') }}</a>
+    </li>
+    <li role="presentation" class="{% block problem_navbar_link_checkers %}{% endblock %}">
+        <a href="{{ url_for('problems.checkers', id=problem.id) }}">{{ _('title.problem.checkers') }}</a>
+    </li>
+    {% endif %}
+</ul>
+<br />
+{% endblock %}
+{% block problem_content %}
+{% endblock %}
+{% endblock %}

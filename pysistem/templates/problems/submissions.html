@@ -1,0 +1,57 @@
+{% extends "problems/base.html" %}
+{% block problem_navbar_link_submissions %}active{% endblock %}
+{% block problem_content %}
+
+<h3>{{ _('problems.submissions.new') }}</h3>
+
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.submissions', id=problem.id) }}">
+<label for="compiler">{{ _('common.compiler') }}</label>
+<select name="compiler" class="form-control" id="compiler">
+{% for compiler in compilers %}
+<option value="{{ compiler.id }}" {% if loop.index == 1 %}selected="selected"{% endif %}>{{ compiler.name }}</option>
+{% endfor %}
+</select><br />
+<label for="source">{{ _('common.source') }}</label>
+<input type="file" id="source" name="source_file" /><br />
+<button type="submit" role="button" class="btn btn-primary">{{ _('common.submit') }}</button>
+</form>
+
+<hr />
+
+<table class="table">
+<thead>
+<tr>
+    <th>ID</th>
+    <th>{{ _('common.source') }}</th>
+    <th>{{ _('common.language') }}</th>
+    <th>{{ _('submissions.status') }}</th>
+</tr>
+</thead>
+<tbody>
+{% for submission in submissions[::-1] %}
+<tr>
+    <td>{{ submission.id }}</td>
+    <td><pre>{{ submission.source }}</pre></td>
+    <td>{{ submission.compiler.name }}</td>
+    <td>
+        {{ submission.get_str_result(color=True)|safe }}
+        {% if g.user.role == 'admin' %}
+        <br />
+        <a href="{{ url_for('problems.rechecksub', id=submission.id) }}">
+            {{ _('problems.submissions.recheck') }}
+        </a><br />
+        {% if submission.result != 8 %}
+        <a href="{{ url_for('problems.rejectsub', id=submission.id) }}">
+            {{ _('problems.submissions.reject') }}
+        </a><br />
+        {% endif %}
+        <a href="{{ url_for('problems.delsub', id=submission.id) }}">
+            {{ _('problems.submissions.delete') }}
+        </a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

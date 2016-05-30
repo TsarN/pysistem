@@ -1,0 +1,51 @@
+{% extends "problems/base.html" %}
+{% block problem_navbar_link_tests %}active{% endblock %}
+{% block problem_content %}
+
+<table class="table">
+<thead>
+<tr>
+    <th></th>
+    <th>{{ _('problems.tests.input') }}</th>
+    <th>{{ _('problems.tests.pattern') }}</th>
+</tr>
+</thead>
+<tbody>
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtest', id=problem.id) }}">
+<tr>
+    <td>
+        <span class="glyphicon glyphicon-plus text-success"></span>
+    </td>
+    <td>
+        <input type="file" name="input_file" />
+    </td>
+    <td>
+        <input type="file" name="pattern_file" style="display: inline;" />
+        <button type="submit" class="btn btn-primary" style="float: right">
+        <span class="glyphicon glyphicon-send" style="font-size: 16px"></span>
+        </button>
+    </td>
+</tr>
+</form>
+{% for test in tests %}
+<tr>
+    <td>
+        <a href="{{ url_for('problems.deltest', id=test.id) }}"
+        data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"
+        ><span class="glyphicon glyphicon-trash text-danger"></span></a>
+        {{ loop.index }}
+    </td>
+    <td><pre>{{ test.input }}</pre></td>
+    <td><pre>{{ test.pattern }}</pre></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+
+{% endblock %}

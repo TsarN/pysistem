@@ -1,0 +1,316 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2016 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2016-05-30 20:28+0300\n"
+"PO-Revision-Date: 2016-05-24 15:51+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+#: locale/views.py:13
+msgid "locale.set.success"
+msgstr "Язык сменён на %(lang)s"
+
+#: locale/views.py:15
+msgid "locale.set.langnotfound"
+msgstr "Язык %(lang)s не найден"
+
+#: problems/views.py:46
+msgid "problems.new.success"
+msgstr "Задача создана"
+
+#: problems/views.py:49
+msgid "problems.edit.success"
+msgstr "Задача обновлена"
+
+#: problems/views.py:52
+msgid "problems.edit.emptyname"
+msgstr "Пустое имя задачи"
+
+#: problems/views.py:73
+msgid "problems.test.notfound"
+msgstr "Нет такого теста"
+
+#: problems/views.py:77
+msgid "problems.deltest.success"
+msgstr "Тест удалён"
+
+#: problems/views.py:92 problems/views.py:97
+msgid "problems.addtest.inputmissing"
+msgstr "Укажите файл ввода"
+
+#: problems/views.py:132 problems/views.py:137
+msgid "problems.addchecker.sourcemissing"
+msgstr "Укажите исходный файл"
+
+#: problems/views.py:157 problems/views.py:169
+msgid "problems.checker.notfound"
+msgstr "Нет такого чекера"
+
+#: problems/views.py:161
+msgid "problems.delchecker.success"
+msgstr "Чекер удалён"
+
+#: problems/views.py:172
+msgid "problems.actchecker.success"
+msgstr "Чекер сделан активным"
+
+#: problems/views.py:193 problems/views.py:198
+msgid "problems.submit.sourcemissing"
+msgstr "Укажите файл посылки"
+
+#: problems/views.py:207
+msgid "problems.submit.selectcompiler"
+msgstr "Выберите компилятор"
+
+#: problems/views.py:213
+msgid "problems.submit.success"
+msgstr "Ваше решение отправлено на проверку"
+
+#: templates/base.html:44 templates/index.html:2
+msgid "title.home"
+msgstr "Главная"
+
+#: templates/base.html:51 templates/problems/checkers.html:10
+#: templates/problems/submissions.html:26
+msgid "common.language"
+msgstr "Язык"
+
+#: templates/base.html:69
+msgid "common.anonymous"
+msgstr "Гость"
+
+#: templates/base.html:74 templates/users/profile.html:2
+msgid "title.profile"
+msgstr "Профиль"
+
+#: templates/base.html:76
+msgid "title.logout"
+msgstr "Выйти"
+
+#: templates/base.html:78 templates/users/login.html:2
+msgid "title.login"
+msgstr "Войти"
+
+#: templates/base.html:79 templates/users/signup.html:2
+msgid "title.signup"
+msgstr "Зарегистрироваться"
+
+#: templates/index.html:5
+msgid "common.helloworld"
+msgstr "Привет, мир!"
+
+#: templates/contests/ctl.html:2
+msgid "title.contestctl"
+msgstr "Управление соревнованиями"
+
+#: templates/contests/ctl.html:7 templates/problems/edit.html:31
+#: templates/users/login.html:7 templates/users/profile.html:7
+#: templates/users/signup.html:7
+msgid "common.error"
+msgstr "Ошибка"
+
+#: templates/contests/ctl.html:10
+msgid "contest.new"
+msgstr "Новое соревнование"
+
+#: templates/contests/ctl.html:14 templates/contests/ctl.html:16
+#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
+#: templates/problems/edit.html:48 templates/problems/edit.html:51
+msgid "common.name"
+msgstr "Имя"
+
+#: templates/contests/list.html:2
+msgid "title.contestlist"
+msgstr "Список соревнований"
+
+#: templates/errors/403.html:2
+msgid "title.error.403"
+msgstr "403 - Доступ запрещён"
+
+#: templates/errors/403.html:5
+msgid "error.permission"
+msgstr "Доступ запрещён"
+
+#: templates/errors/403.html:6 templates/errors/404.html:6
+msgid "common.back"
+msgstr "На главную"
+
+#: templates/errors/404.html:2
+msgid "title.error.404"
+msgstr "404 - страница не найдена"
+
+#: templates/errors/404.html:5
+msgid "error.404.text"
+msgstr "Мы не смогли найти страницу, к которой Вы обратились"
+
+#: templates/problems/base.html:10 templates/problems/edit.html:61
+#: templates/problems/edit.html:63
+msgid "common.statement"
+msgstr "Условие"
+
+#: templates/problems/base.html:13
+msgid "title.problem.submissions"
+msgstr "Решения"
+
+#: templates/problems/base.html:17
+msgid "title.problem.edit"
+msgstr "Редактировать задачу"
+
+#: templates/problems/base.html:20
+msgid "title.problem.testpairs"
+msgstr "Тестовые пары"
+
+#: templates/problems/base.html:23
+msgid "title.problem.checkers"
+msgstr "Чекеры"
+
+#: templates/problems/checkers.html:9 templates/problems/submissions.html:14
+#: templates/problems/submissions.html:25
+msgid "common.source"
+msgstr "Исходный код"
+
+#: templates/problems/checkers.html:38 templates/problems/tests.html:34
+msgid "common.delete"
+msgstr "Удалить"
+
+#: templates/problems/edit.html:9 templates/problems/edit.html:36
+msgid "title.problem.new"
+msgstr "Новая задача"
+
+#: templates/problems/edit.html:55 templates/problems/edit.html:57
+msgid "common.description"
+msgstr "Описание"
+
+#: templates/problems/edit.html:73 templates/users/profile.html:36
+msgid "common.update"
+msgstr "Обновить"
+
+#: templates/problems/submissions.html:5
+msgid "problems.submissions.new"
+msgstr "Отправить решение"
+
+#: templates/problems/submissions.html:8
+msgid "common.compiler"
+msgstr "Компилятор"
+
+#: templates/problems/submissions.html:16
+msgid "common.submit"
+msgstr "Отправить"
+
+#: templates/problems/submissions.html:27
+msgid "submissions.status"
+msgstr "Статус"
+
+#: templates/problems/submissions.html:41
+msgid "problems.submissions.recheck"
+msgstr "Перепроверить"
+
+#: templates/problems/submissions.html:45
+msgid "problems.submissions.reject"
+msgstr "Отклонить"
+
+#: templates/problems/submissions.html:49
+msgid "problems.submissions.delete"
+msgstr "Удалить"
+
+#: templates/problems/tests.html:9
+msgid "problems.tests.input"
+msgstr "Ввод"
+
+#: templates/problems/tests.html:10
+msgid "problems.tests.pattern"
+msgstr "Шаблон"
+
+#: templates/users/login.html:10 templates/users/login.html:19
+msgid "common.login"
+msgstr "Войти"
+
+#: templates/users/login.html:14 templates/users/signup.html:14
+msgid "common.username"
+msgstr "Имя пользователя"
+
+#: templates/users/login.html:17 templates/users/signup.html:17
+msgid "common.password"
+msgstr "Пароль"
+
+#: templates/users/profile.html:14 templates/users/profile.html:17
+msgid "common.firstname"
+msgstr "Имя"
+
+#: templates/users/profile.html:21 templates/users/profile.html:24
+msgid "common.lastname"
+msgstr "Фамилия"
+
+#: templates/users/profile.html:28 templates/users/profile.html:31
+msgid "common.email"
+msgstr "E-Mail"
+
+#: templates/users/signup.html:10 templates/users/signup.html:22
+msgid "common.signup"
+msgstr "Зарегистрироваться"
+
+#: templates/users/signup.html:20
+msgid "common.passwordconfirmation"
+msgstr "Подтверждение пароля"
+
+#: users/decorators.py:10
+msgid "error.permission.authrequired"
+msgstr "Для просмотра страницы необходимо авторизироваться"
+
+#: users/views.py:19
+msgid "auth.login.success"
+msgstr "Вы вошли в систему"
+
+#: users/views.py:41
+msgid "auth.signup.success"
+msgstr "Вы зарегистрировались в системе"
+
+#: users/views.py:44
+msgid "auth.signup.shortpassword"
+msgstr "Пароль слишком короткий"
+
+#: users/views.py:46
+msgid "auth.signup.mismatchedpasswords"
+msgstr "Пароли не совпадают"
+
+#: users/views.py:48
+msgid "auth.signup.exists"
+msgstr "Пользователь уже существует"
+
+#: users/views.py:50
+msgid "auth.signup.invalidusername"
+msgstr "Такое имя нельзя использовать"
+
+#: users/views.py:56
+msgid "auth.logout.success"
+msgstr "Вы вышли из системы"
+
+#: users/views.py:70
+msgid "profile.update.success"
+msgstr "Профиль пользователя был обновлён"
+
+#~ msgid "auth.login.invalidcredentials"
+#~ msgstr "Неверный логин или пароль"
+
+#~ msgid "common.action"
+#~ msgstr "Действие"
+
+#~ msgid "problems.tests.new"
+#~ msgstr "Новый тест"
+
+#~ msgid "problems.notfound"
+#~ msgstr "Нет такой задачи"
+

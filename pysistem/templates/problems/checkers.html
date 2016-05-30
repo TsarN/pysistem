@@ -1,0 +1,58 @@
+{% extends "problems/base.html" %}
+{% block problem_navbar_link_checkers %}active{% endblock %}
+{% block problem_content %}
+<table class="table">
+<thead>
+<tr>
+    <th></th>
+    <th>{{ _('common.name') }}</th>
+    <th>{{ _('common.source') }}</th>
+    <th>{{ _('common.language') }}</th>
+</tr>
+</thead>
+<tbody>
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addchecker', id=problem.id) }}">
+<tr>
+    <td>
+        <span class="glyphicon glyphicon-plus text-success"></span>
+    </td>
+    <td><input type="text" name="name" placeholder="{{ _('common.name') }}" /></td>
+    <td>
+        <input type="file" name="source_file" />
+    </td>
+    <td>
+        <select name="lang">
+            <option value="c" selected="selected">C</option>
+            <option value="c++">C++</option>
+        </select>
+        <button type="submit" class="btn btn-primary" style="float: right">
+        <span class="glyphicon glyphicon-send" style="font-size: 16px"></span>
+        </button>
+    </td>
+</tr>
+</form>
+{% for checker in checkers[::-1] %}
+<tr>
+    <td>
+        <a href="{{ url_for('problems.delchecker', id=checker.id) }}"
+        data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"
+        ><span class="glyphicon glyphicon-trash text-danger"></span></a>
+        {{ loop.revindex }}
+    </td>
+    <td>
+        {% if checker.status == 7 %}
+            <b>ACT</b>
+        {% else %}
+            <a href="{{ url_for('problems.actchecker', id=checker.id) }}"><b>ACT</b></a>
+        {% endif %}
+        {{ checker.name }}
+    </td>
+    <td><pre>{{ checker.source }}</pre></td>
+    <td>
+        {{ checker.lang.upper() }}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
