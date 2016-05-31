@@ -1,4 +1,4 @@
-from pysistem import db, app, celery, SqlAlchemyTask
+from pysistem import db, app, pool
 from pysistem.submissions.const import *
 from pysistem.users.model import User
 from pysistem.compilers.model import Compiler
@@ -125,9 +125,10 @@ class Submission(db.Model):
             return checker.check(self)
 
     def async_check(self):
-        return submission_check.delay(self.id)
+        print("async_check()")
+        pool.submit(submission_check, self.id)
+        print("end async_check()")
 
-@celery.task(base=SqlAlchemyTask)
 def submission_check(id):
     if Submission.query.get(id).compile()[0]:
         Submission.query.get(id).check()

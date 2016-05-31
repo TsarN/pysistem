@@ -10,7 +10,4 @@ SQLALCHEMY_DATABASE_URI = "sqlite:///sistem.db"
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 #SQLALCHEMY_ECHO = True
 DIR = os.path.dirname(os.path.realpath(__file__))
-
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_IMPORTS = ("pysistem.submissions.model")
+PROCESSES=4

@@ -4,6 +4,7 @@ import tempfile
 import hashlib
 import os
 import shlex
+from time import sleep
 
 class Compiler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,15 +34,20 @@ class Compiler(db.Model):
         hasher.update(str.encode(exe))
         input_path = tempfile.gettempdir() + '/pysistem_runner_input_' + str(self.id) + hasher.hexdigest()
 
-        input_file = open(input_path, 'w')
-        input_file.write(stdin)
-        input_file.close()
+        with open(input_path, 'w') as input_file:
+            input_file.write(stdin)
+
+        output_path = tempfile.gettempdir() + '/pysistem_runner_output_' + str(self.id) + hasher.hexdigest()
 
         cmd = shlex.split(self.cmd_run.replace('%exe%', exe).replace('%src%', src_path))
-        cmd = ['runsbox', str(time_limit), str(memory_limit), input_path, '/dev/stdout'] + cmd
+        cmd = ['runsbox', str(time_limit), str(memory_limit), input_path, output_path] + cmd
 
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
+        p = subprocess.Popen(cmd)
+        p.wait()
+        stdout = b''
+        with open(output_path, "rb") as output_file:
+            stdout = output_file.read()
         
         os.remove(input_path)
-        return (p.returncode, stdout or b'', stderr or b'')
+        os.remove(output_path)
+        return (p.returncode, stdout, b'')
