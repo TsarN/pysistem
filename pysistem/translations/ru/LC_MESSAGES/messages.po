@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-05-30 20:28+0300\n"
+"POT-Creation-Date: 2016-05-31 18:33+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -27,55 +27,55 @@ msgstr "Язык сменён на %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "Язык %(lang)s не найден"
 
-#: problems/views.py:46
+#: problems/views.py:52
 msgid "problems.new.success"
 msgstr "Задача создана"
 
-#: problems/views.py:49
+#: problems/views.py:55
 msgid "problems.edit.success"
 msgstr "Задача обновлена"
 
-#: problems/views.py:52
+#: problems/views.py:58
 msgid "problems.edit.emptyname"
 msgstr "Пустое имя задачи"
 
-#: problems/views.py:73
+#: problems/views.py:79
 msgid "problems.test.notfound"
 msgstr "Нет такого теста"
 
-#: problems/views.py:77
+#: problems/views.py:83
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:92 problems/views.py:97
+#: problems/views.py:98 problems/views.py:103
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:132 problems/views.py:137
+#: problems/views.py:138 problems/views.py:143
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:157 problems/views.py:169
+#: problems/views.py:163 problems/views.py:175
 msgid "problems.checker.notfound"
 msgstr "Нет такого чекера"
 
-#: problems/views.py:161
+#: problems/views.py:167
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:172
+#: problems/views.py:178
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:193 problems/views.py:198
+#: problems/views.py:199 problems/views.py:204
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:207
+#: problems/views.py:213
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:213
+#: problems/views.py:219
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
@@ -156,8 +156,8 @@ msgstr "404 - страница не найдена"
 msgid "error.404.text"
 msgstr "Мы не смогли найти страницу, к которой Вы обратились"
 
-#: templates/problems/base.html:10 templates/problems/edit.html:61
-#: templates/problems/edit.html:63
+#: templates/problems/base.html:10 templates/problems/edit.html:75
+#: templates/problems/edit.html:77
 msgid "common.statement"
 msgstr "Условие"
 
@@ -190,11 +190,21 @@ msgstr "Удалить"
 msgid "title.problem.new"
 msgstr "Новая задача"
 
-#: templates/problems/edit.html:55 templates/problems/edit.html:57
+#: templates/problems/edit.html:55 templates/problems/edit.html:58
+#: templates/problems/view.html:4
+msgid "common.timelimit"
+msgstr "Лимит времени"
+
+#: templates/problems/edit.html:62 templates/problems/edit.html:65
+#: templates/problems/view.html:5
+msgid "common.memorylimit"
+msgstr "Лимит памяти"
+
+#: templates/problems/edit.html:69 templates/problems/edit.html:71
 msgid "common.description"
 msgstr "Описание"
 
-#: templates/problems/edit.html:73 templates/users/profile.html:36
+#: templates/problems/edit.html:87 templates/users/profile.html:36
 msgid "common.update"
 msgstr "Обновить"
 
@@ -233,6 +243,14 @@ msgstr "Ввод"
 #: templates/problems/tests.html:10
 msgid "problems.tests.pattern"
 msgstr "Шаблон"
+
+#: templates/problems/view.html:4
+msgid "common.units.milliseconds"
+msgstr "мс"
+
+#: templates/problems/view.html:5
+msgid "common.units.kilobytes"
+msgstr "КБ"
 
 #: templates/users/login.html:10 templates/users/login.html:19
 msgid "common.login"
@@ -301,16 +319,3 @@ msgstr "Вы вышли из системы"
 #: users/views.py:70
 msgid "profile.update.success"
 msgstr "Профиль пользователя был обновлён"
-
-#~ msgid "auth.login.invalidcredentials"
-#~ msgstr "Неверный логин или пароль"
-
-#~ msgid "common.action"
-#~ msgstr "Действие"
-
-#~ msgid "problems.tests.new"
-#~ msgstr "Новый тест"
-
-#~ msgid "problems.notfound"
-#~ msgstr "Нет такой задачи"
-

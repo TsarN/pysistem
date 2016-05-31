@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-05-30 20:28+0300\n"
+"POT-Creation-Date: 2016-05-31 18:33+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -26,55 +26,55 @@ msgstr "Language changed to %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "No such language: %(lang)s"
 
-#: problems/views.py:46
+#: problems/views.py:52
 msgid "problems.new.success"
 msgstr "New problem created"
 
-#: problems/views.py:49
+#: problems/views.py:55
 msgid "problems.edit.success"
 msgstr "Changes saved"
 
-#: problems/views.py:52
+#: problems/views.py:58
 msgid "problems.edit.emptyname"
 msgstr "Problem name is empty"
 
-#: problems/views.py:73
+#: problems/views.py:79
 msgid "problems.test.notfound"
 msgstr "No such test"
 
-#: problems/views.py:77
+#: problems/views.py:83
 msgid "problems.deltest.success"
 msgstr "Test was deleted"
 
-#: problems/views.py:92 problems/views.py:97
+#: problems/views.py:98 problems/views.py:103
 msgid "problems.addtest.inputmissing"
 msgstr "No input file"
 
-#: problems/views.py:132 problems/views.py:137
+#: problems/views.py:138 problems/views.py:143
 msgid "problems.addchecker.sourcemissing"
 msgstr "No souce file"
 
-#: problems/views.py:157 problems/views.py:169
+#: problems/views.py:163 problems/views.py:175
 msgid "problems.checker.notfound"
 msgstr "No such checker"
 
-#: problems/views.py:161
+#: problems/views.py:167
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:172
+#: problems/views.py:178
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:193 problems/views.py:198
+#: problems/views.py:199 problems/views.py:204
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:207
+#: problems/views.py:213
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:213
+#: problems/views.py:219
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
@@ -155,8 +155,8 @@ msgstr "404 - Page not found"
 msgid "error.404.text"
 msgstr "Sorry, but we couldn't find page that you've requested"
 
-#: templates/problems/base.html:10 templates/problems/edit.html:61
-#: templates/problems/edit.html:63
+#: templates/problems/base.html:10 templates/problems/edit.html:75
+#: templates/problems/edit.html:77
 msgid "common.statement"
 msgstr "Statement"
 
@@ -189,11 +189,21 @@ msgstr "Delete"
 msgid "title.problem.new"
 msgstr "New problem"
 
-#: templates/problems/edit.html:55 templates/problems/edit.html:57
+#: templates/problems/edit.html:55 templates/problems/edit.html:58
+#: templates/problems/view.html:4
+msgid "common.timelimit"
+msgstr "Time limit"
+
+#: templates/problems/edit.html:62 templates/problems/edit.html:65
+#: templates/problems/view.html:5
+msgid "common.memorylimit"
+msgstr "Memory limit"
+
+#: templates/problems/edit.html:69 templates/problems/edit.html:71
 msgid "common.description"
 msgstr "Description"
 
-#: templates/problems/edit.html:73 templates/users/profile.html:36
+#: templates/problems/edit.html:87 templates/users/profile.html:36
 msgid "common.update"
 msgstr "Update"
 
@@ -232,6 +242,14 @@ msgstr "Input"
 #: templates/problems/tests.html:10
 msgid "problems.tests.pattern"
 msgstr "Pattern"
+
+#: templates/problems/view.html:4
+msgid "common.units.milliseconds"
+msgstr "ms"
+
+#: templates/problems/view.html:5
+msgid "common.units.kilobytes"
+msgstr "KiB"
 
 #: templates/users/login.html:10 templates/users/login.html:19
 msgid "common.login"
@@ -312,4 +330,10 @@ msgstr "Profile was successfully updated"
 
 #~ msgid "problems.notfound"
 #~ msgstr "No such problem"
+
+#~ msgid "common.time_limit"
+#~ msgstr ""
+
+#~ msgid "common.memory_limit"
+#~ msgstr ""
 

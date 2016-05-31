@@ -1,6 +1,8 @@
 from pysistem import app, babel, db, redirect_url
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
-from pysistem.problems.model import Problem, TestPair, Checker
+from pysistem.problems.model import Problem
+from pysistem.test_pairs.model import TestPair
+from pysistem.checkers.model import Checker
 from pysistem.submissions.model import Submission
 from pysistem.submissions.const import *
 from pysistem.compilers.model import Compiler
@@ -35,11 +37,15 @@ def edit(id):
         name = request.form.get('name', '')
         description = request.form.get('description', '')
         statement = request.form.get('statement', '')
+        time_limit = request.form.get('time_limit', 1000)
+        memory_limit = request.form.get('memory_limit', 65536)
 
         if len(name.strip(' \t\n\r')) > 0:
             problem.name = name
             problem.description = description
             problem.statement = statement
+            problem.time_limit = int(time_limit)
+            problem.memory_limit = int(memory_limit)
             db.session.merge(problem)
             db.session.commit()
             if is_new:

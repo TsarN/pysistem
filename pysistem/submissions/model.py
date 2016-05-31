@@ -2,10 +2,12 @@ from pysistem import db, app, pool
 from pysistem.submissions.const import *
 from pysistem.users.model import User
 from pysistem.compilers.model import Compiler
-from pysistem.problems.model import Problem, Checker
+from pysistem.problems.model import Problem
+from pysistem.checkers.model import Checker
 import tempfile
 import os
 from pysistem.conf import DIR
+from datetime import datetime
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,6 +17,7 @@ class Submission(db.Model):
     compile_log_stderr = db.Column(db.String)
     compile_log_stdout = db.Column(db.String)
     tests_passed = db.Column(db.Integer)
+    submitted = db.Column(db.DateTime, default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', back_populates='submissions')

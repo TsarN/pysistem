@@ -1,6 +1,8 @@
 {% extends "problems/base.html" %}
 {% block problem_navbar_link_view %}active{% endblock %}
 {% block problem_content %}
+<i>{{ _('common.timelimit') }}: {{ problem.time_limit }} {{ _('common.units.milliseconds') }}</i><br />
+<i>{{ _('common.memorylimit') }}: {{ problem.memory_limit }} {{ _('common.units.kilobytes') }}</i><br />
 <p>
 {{ problem.statement|safe }}
 </p>
