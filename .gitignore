@@ -6,3 +6,4 @@ pip-delete-this-directory.txt
 *.mo
 *.pot
 dump.rdb
+pysistem/storage/*
