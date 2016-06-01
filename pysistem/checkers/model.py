@@ -84,7 +84,7 @@ class Checker(db.Model):
         for test in self.problem.test_pairs:
             print("TESTING ON", submission.tests_passed + 1)
             db.session.commit()
-            result, stdout, stderr = submission.run(test.input)
+            result, stdout, stderr = submission.run(test.input, submission.problem.time_limit, submission.problem.memory_limit)
             # DETERMINING RESULT
             if result & 8:
                 submission.result = RESULT_IE

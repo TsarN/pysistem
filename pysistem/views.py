@@ -8,6 +8,7 @@ from pysistem.submissions.model import Submission
 
 from pysistem.conf import LANGUAGES
 from flask_babel import gettext
+from datetime import datetime
 
 @babel.localeselector
 def get_locale():
@@ -16,6 +17,7 @@ def get_locale():
 @app.before_request
 def before_request():
     g.user = User()
+    g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 @app.route('/')
 def index():
