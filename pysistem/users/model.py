@@ -1,6 +1,7 @@
 from pysistem import db, app
 from flask import session
 import hashlib
+from flask_babel import gettext
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -50,7 +51,7 @@ class User(db.Model):
             session['user_id'] = q[0].id
             return True, q[0]
         else:
-            return False, 'auth.login.invalidcredentials'
+            return False, gettext('auth.login.invalidcredentials')
 
     def signpasswd(username, password):
         if password is None:

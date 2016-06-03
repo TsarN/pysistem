@@ -9,6 +9,7 @@
     <li role="presentation" class="{% block problem_navbar_link_view %}{% endblock %}">
         <a href="{{ url_for('problems.view', id=problem.id) }}">{{ _('common.statement') }}</a>
     </li>
+    {% if g.user.id %}
     <li role="presentation" class="{% block problem_navbar_link_submissions %}{% endblock %}">
         <a href="{{ url_for('problems.submissions', id=problem.id) }}">{{ _('title.problem.submissions') }}</a>
     </li>
@@ -22,6 +23,7 @@
     <li role="presentation" class="{% block problem_navbar_link_checkers %}{% endblock %}">
         <a href="{{ url_for('problems.checkers', id=problem.id) }}">{{ _('title.problem.checkers') }}</a>
     </li>
+    {% endif %}
     {% endif %}
 </ul>
 <br />

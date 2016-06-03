@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-05-31 18:33+0300\n"
+"POT-Creation-Date: 2016-06-03 16:11+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -54,7 +54,7 @@ msgstr "No input file"
 msgid "problems.addchecker.sourcemissing"
 msgstr "No souce file"
 
-#: problems/views.py:163 problems/views.py:175
+#: problems/views.py:163 problems/views.py:176
 msgid "problems.checker.notfound"
 msgstr "No such checker"
 
@@ -62,48 +62,48 @@ msgstr "No such checker"
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:178
+#: problems/views.py:179
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:199 problems/views.py:204
+#: problems/views.py:201 problems/views.py:206
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:213
+#: problems/views.py:215
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:219
+#: problems/views.py:221
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: templates/base.html:44 templates/index.html:2
+#: templates/base.html:50 templates/index.html:2
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:51 templates/problems/checkers.html:10
+#: templates/base.html:57 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:26
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:69
+#: templates/base.html:75
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:74 templates/users/profile.html:2
+#: templates/base.html:80 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:76
+#: templates/base.html:82
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:78 templates/users/login.html:2
+#: templates/base.html:84 templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:79 templates/users/signup.html:2
+#: templates/base.html:85 templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
 
@@ -111,29 +111,13 @@ msgstr "Sign Up"
 msgid "common.helloworld"
 msgstr "Hello, world!"
 
-#: templates/contests/ctl.html:2
-msgid "title.contestctl"
-msgstr "Contest control"
+#: templates/contests/base.html:10
+msgid "contests.scoreboard"
+msgstr "Scoreboard"
 
-#: templates/contests/ctl.html:7 templates/problems/edit.html:31
-#: templates/users/login.html:7 templates/users/profile.html:7
-#: templates/users/signup.html:7
-msgid "common.error"
-msgstr "Error"
-
-#: templates/contests/ctl.html:10
-msgid "contest.new"
-msgstr "New contest"
-
-#: templates/contests/ctl.html:14 templates/contests/ctl.html:16
-#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
-#: templates/problems/edit.html:48 templates/problems/edit.html:51
-msgid "common.name"
-msgstr "Name"
-
-#: templates/contests/list.html:2
-msgid "title.contestlist"
-msgstr "Contest list"
+#: templates/contests/scoreboard.html:8
+msgid "common.user"
+msgstr "User"
 
 #: templates/errors/403.html:2
 msgid "title.error.403"
@@ -160,21 +144,26 @@ msgstr "Sorry, but we couldn't find page that you've requested"
 msgid "common.statement"
 msgstr "Statement"
 
-#: templates/problems/base.html:13
+#: templates/problems/base.html:14
 msgid "title.problem.submissions"
 msgstr "Submissions"
 
-#: templates/problems/base.html:17
+#: templates/problems/base.html:18
 msgid "title.problem.edit"
 msgstr "Edit problem"
 
-#: templates/problems/base.html:20
+#: templates/problems/base.html:21
 msgid "title.problem.testpairs"
 msgstr "Test pairs"
 
-#: templates/problems/base.html:23
+#: templates/problems/base.html:24
 msgid "title.problem.checkers"
 msgstr "Checkers"
+
+#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
+#: templates/problems/edit.html:48 templates/problems/edit.html:51
+msgid "common.name"
+msgstr "Name"
 
 #: templates/problems/checkers.html:9 templates/problems/submissions.html:14
 #: templates/problems/submissions.html:25
@@ -188,6 +177,11 @@ msgstr "Delete"
 #: templates/problems/edit.html:9 templates/problems/edit.html:36
 msgid "title.problem.new"
 msgstr "New problem"
+
+#: templates/problems/edit.html:31 templates/users/login.html:7
+#: templates/users/profile.html:7 templates/users/signup.html:7
+msgid "common.error"
+msgstr "Error"
 
 #: templates/problems/edit.html:55 templates/problems/edit.html:58
 #: templates/problems/view.html:4
@@ -287,6 +281,10 @@ msgstr "Password confirmation"
 msgid "error.permission.authrequired"
 msgstr "Please log in to view this page"
 
+#: users/model.py:54
+msgid "auth.login.invalidcredentials"
+msgstr "Invalid credentials"
+
 #: users/views.py:19
 msgid "auth.login.success"
 msgstr "You were authorized"
@@ -318,22 +316,4 @@ msgstr "You were logged out"
 #: users/views.py:70
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
-
-#~ msgid "auth.login.invalidcredentials"
-#~ msgstr "Invalid credentials"
-
-#~ msgid "common.action"
-#~ msgstr "Action"
-
-#~ msgid "problems.tests.new"
-#~ msgstr "New test"
-
-#~ msgid "problems.notfound"
-#~ msgstr "No such problem"
-
-#~ msgid "common.time_limit"
-#~ msgstr ""
-
-#~ msgid "common.memory_limit"
-#~ msgstr ""
 

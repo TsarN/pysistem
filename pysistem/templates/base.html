@@ -1,3 +1,4 @@
+{% if not g.raw_content %}
 <!doctype html>
 <html>
 <head>
@@ -106,7 +107,10 @@ alert-dismissible" role="alert">
                 </div>
             {% endfor %}
         {% endwith %}
+{% endif %}
         {% block content %}{% endblock %}
+{% if not g.raw_content %}
     </div>
 </body>
 </html>
+{% endif %}

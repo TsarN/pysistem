@@ -169,6 +169,7 @@ def delchecker(id):
     return redirect(redirect_url())
 
 @mod.route('/actchecker/<int:id>', methods=['GET', 'POST'])
+@requires_admin
 def actchecker(id):
     checker = Checker.query.get(id)
     if checker is None:
@@ -180,6 +181,7 @@ def actchecker(id):
     return redirect(redirect_url())
 
 @mod.route('/<int:id>/submissions', methods=['GET', 'POST'])
+@requires_login
 def submissions(id, username=None):
     problem = Problem.query.get(id)
     if problem is None:

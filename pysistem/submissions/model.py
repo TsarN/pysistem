@@ -79,7 +79,7 @@ class Submission(db.Model):
 
         return result, stdout, stderr
 
-    def run(self, stdin='', time_limit=1000, memory_limit=65536):
+    def run(self, stdin='', time_limit=1000, memory_limit=65536, commit_waiting=True):
         self.status = STATUS_CHECKING
         db.session.commit()
 
@@ -94,7 +94,8 @@ class Submission(db.Model):
         os.remove(source_path)
         self.result = result
         self.status = STATUS_WAIT
-        db.session.commit()
+        if commit_waiting:
+            db.session.commit()
 
         return result, stdout, stderr
 

@@ -1,0 +1,99 @@
+{% extends "contests/base.html" %}
+{% block contest_content %}
+<div class="row">
+
+<div class="col-sm-6 col-md-4">
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        {{ _('contests.info') }}
+    </div>
+    <div class="panel-body">
+        {{ _('contests.start') }}: {{ contest.start.strftime("%c") }} <br />
+        {{ _('contests.end') }}: {{ contest.end.strftime("%c") }}
+        {{ _('contests.remaining') }}: 
+        <span id="contest_remaining">
+            {% if (contest.end - g.now).total_seconds() > 0 %}
+            {{ (contest.end - g.now).total_seconds()|timeonly }}
+            {% else %}
+            <i>{{ _('contests.finished') }}</i>
+            {% endif %}
+        </span>
+<script type="text/javascript">
+    var updateTimeInterval;
+    var timestamp = Math.floor({{ contest.end.timestamp() * 1000 }});
+    function timeFormat(ms) {
+        if (ms < 0)
+            return "<i>{{ _('contests.finished') }}</i>";
+        var seconds = Math.floor(ms / 1000);
+        var minutes = Math.floor(seconds / 60);
+        var hours = Math.floor(minutes / 60);
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+
+        hours = (hours < 10) ? ("0" + hours) : hours;
+        minutes = (minutes < 10) ? ("0" + minutes) : minutes;
+        seconds = (seconds < 10) ? ("0" + seconds) : seconds;
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
+    function updateTime() {
+        $("#contest_remaining").html(timeFormat(
+            timestamp - Date.now()));
+        if (timestamp < Date.now()) {
+            clearInterval(updateTimeInterval);
+        }
+    }
+
+    $(document).ready(function() {
+        updateTimeInterval = setInterval(updateTime, 1000);
+    })
+
+</script>
+
+    </div>
+</div>
+</div>
+
+
+<div class="col-sm-6 col-md-4">
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        {{ _('contests.scoreboard') }}
+    </div>
+    <div class="panel-body">
+        {{ _('contests.scoreboard') }}
+        <a href="{{ url_for('contests.scoreboard', id=contest.id) }}" class="btn btn-primary" style="float: right;">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+</div>
+</div>
+
+</div>
+<hr />
+<div class="row">
+
+{% for problem in contest.problems %}
+<div class="col-sm-6 col-md-4">
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a href="{{ url_for('problems.view', id=problem.id) }}">{{ problem.name }}</a>
+    </div>
+    <div class="panel-body">
+        {{ problem.description }}
+        <div style="float: right">
+            {% if g.user.role == 'admin' %}
+            <a href="#" class="btn btn-danger">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+            {% endif %}
+            <a href="{{ url_for('problems.view', id=problem.id) }}" class="btn btn-primary">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

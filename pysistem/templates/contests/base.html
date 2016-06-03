@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ contest.name }}{% endblock %}
+{% block content %}
+{% block contest_nav %}
+<h2 class="text-center page-header">
+<div style="float: left; display: {% block contest_link_back %}none{% endblock %};">
+<a href="{{ url_for('contests.main', id=contest.id) }}">
+    <span class="glyphicon glyphicon-chevron-left">
+    </span>
+</div>
+</a>
+    {{ contest.name }}
+</h2>
+{% endblock %}
+{% block contest_content %}
+{% endblock %}
+{% endblock %}
