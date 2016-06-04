@@ -31,6 +31,25 @@
 <div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
 {% endif %}
 {% if not problem.id %}
+{% endif %}
+{% if not problem.id %}
+<h2 class="page-header text-center">{{ _('title.problems.import') }}</h2>
+<form method="POST" enctype="multipart/form-data" role="form" class="form-horizontal" action="{{ url_for('problems.import_') }}">
+    <div class="form-group">
+        <label for="import_file" class="col-sm-6 control-label">
+            {{ _('problems.import.file') }}
+        </label>
+        <div class="col-sm-6">
+            <input type="file" id="import_file" name="import_file" />
+        </div>
+    </div>
+    <div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
+    <button type="submit" name="import_problem" class="btn btn-primary btn-block">
+        {{ _('problems.import') }}
+    </button>
+    </div>
+</form><br />
+<div style="height: 65px;"></div>
 <div class="page-header text-center">
     <h2>
     {{ _('title.problem.new') }}
@@ -41,7 +60,7 @@
     {% if problem.id %}
         {{ url_for('problems.edit', id=problem.id) }}
     {% else %}
-        {{ url_for('problems.edit', id=-1) }}
+        {{ url_for('problems.edit') }}
     {% endif %}
 " role="form" class="form-horizontal">
 <div class="form-group">
@@ -84,7 +103,11 @@
 </script>
 <div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
 <button type="submit" name="update_info" class="btn btn-lg btn-primary btn-block">
+{% if problem.id %}
     {{ _('common.update') }}
+{% else %}
+    {{ _('common.create') }}
+{% endif %}
 </button>
 </div>
 </form>

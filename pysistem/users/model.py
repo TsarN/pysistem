@@ -12,7 +12,7 @@ class User(db.Model):
     email = db.Column(db.String(32))
     role = db.Column(db.String(8))
 
-    submissions = db.relationship('Submission', back_populates='user')
+    submissions = db.relationship('Submission', cascade = "all,delete", backref='user')
 
     def __init__(self, username=None, password=None, first_name=None, last_name=None, email=None, role='user'):
         if username is None:

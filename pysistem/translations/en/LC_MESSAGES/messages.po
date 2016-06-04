@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-03 16:11+0300\n"
+"POT-Creation-Date: 2016-06-04 21:53+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -26,84 +26,92 @@ msgstr "Language changed to %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "No such language: %(lang)s"
 
-#: problems/views.py:52
+#: problems/views.py:54
 msgid "problems.new.success"
 msgstr "New problem created"
 
-#: problems/views.py:55
+#: problems/views.py:57
 msgid "problems.edit.success"
 msgstr "Changes saved"
 
-#: problems/views.py:58
+#: problems/views.py:60
 msgid "problems.edit.emptyname"
 msgstr "Problem name is empty"
 
-#: problems/views.py:79
+#: problems/views.py:82 problems/views.py:87
+msgid "problems.import.filemissing"
+msgstr "No problem file"
+
+#: problems/views.py:95
+msgid "problems.import.error"
+msgstr "Importing failed"
+
+#: problems/views.py:124
 msgid "problems.test.notfound"
 msgstr "No such test"
 
-#: problems/views.py:83
+#: problems/views.py:128
 msgid "problems.deltest.success"
 msgstr "Test was deleted"
 
-#: problems/views.py:98 problems/views.py:103
+#: problems/views.py:143 problems/views.py:148
 msgid "problems.addtest.inputmissing"
 msgstr "No input file"
 
-#: problems/views.py:138 problems/views.py:143
+#: problems/views.py:183 problems/views.py:188
 msgid "problems.addchecker.sourcemissing"
 msgstr "No souce file"
 
-#: problems/views.py:163 problems/views.py:176
+#: problems/views.py:208 problems/views.py:221
 msgid "problems.checker.notfound"
 msgstr "No such checker"
 
-#: problems/views.py:167
+#: problems/views.py:212
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:179
+#: problems/views.py:224
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:201 problems/views.py:206
+#: problems/views.py:246 problems/views.py:251
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:215
+#: problems/views.py:260
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:221
+#: problems/views.py:266
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: templates/base.html:50 templates/index.html:2
+#: templates/base.html:51 templates/index.html:2
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:57 templates/problems/checkers.html:10
+#: templates/base.html:58 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:26
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:75
+#: templates/base.html:76
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:80 templates/users/profile.html:2
+#: templates/base.html:81 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:82
+#: templates/base.html:83
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:84 templates/users/login.html:2
+#: templates/base.html:85 templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:85 templates/users/signup.html:2
+#: templates/base.html:86 templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
 
@@ -111,7 +119,27 @@ msgstr "Sign Up"
 msgid "common.helloworld"
 msgstr "Hello, world!"
 
-#: templates/contests/base.html:10
+#: templates/contests/main.html:8
+msgid "contests.info"
+msgstr "Information"
+
+#: templates/contests/main.html:11
+msgid "contests.start"
+msgstr "Starts at"
+
+#: templates/contests/main.html:12
+msgid "contests.end"
+msgstr "Ends at"
+
+#: templates/contests/main.html:13
+msgid "contests.remaining"
+msgstr "Remaining time"
+
+#: templates/contests/main.html:18 templates/contests/main.html:26
+msgid "contests.finished"
+msgstr "Finished"
+
+#: templates/contests/main.html:61 templates/contests/main.html:64
 msgid "contests.scoreboard"
 msgstr "Scoreboard"
 
@@ -139,8 +167,8 @@ msgstr "404 - Page not found"
 msgid "error.404.text"
 msgstr "Sorry, but we couldn't find page that you've requested"
 
-#: templates/problems/base.html:10 templates/problems/edit.html:75
-#: templates/problems/edit.html:77
+#: templates/problems/base.html:10 templates/problems/edit.html:94
+#: templates/problems/edit.html:96
 msgid "common.statement"
 msgstr "Statement"
 
@@ -160,8 +188,21 @@ msgstr "Test pairs"
 msgid "title.problem.checkers"
 msgstr "Checkers"
 
+#: templates/problems/base.html:28
+msgid "common.more"
+msgstr "More"
+
+#: templates/problems/base.html:34
+msgid "problems.export"
+msgstr "Export"
+
+#: templates/problems/base.html:39 templates/problems/checkers.html:38
+#: templates/problems/tests.html:34
+msgid "common.delete"
+msgstr "Delete"
+
 #: templates/problems/checkers.html:8 templates/problems/checkers.html:19
-#: templates/problems/edit.html:48 templates/problems/edit.html:51
+#: templates/problems/edit.html:67 templates/problems/edit.html:70
 msgid "common.name"
 msgstr "Name"
 
@@ -170,11 +211,7 @@ msgstr "Name"
 msgid "common.source"
 msgstr "Source"
 
-#: templates/problems/checkers.html:38 templates/problems/tests.html:34
-msgid "common.delete"
-msgstr "Delete"
-
-#: templates/problems/edit.html:9 templates/problems/edit.html:36
+#: templates/problems/edit.html:9 templates/problems/edit.html:55
 msgid "title.problem.new"
 msgstr "New problem"
 
@@ -183,23 +220,39 @@ msgstr "New problem"
 msgid "common.error"
 msgstr "Error"
 
-#: templates/problems/edit.html:55 templates/problems/edit.html:58
+#: templates/problems/edit.html:36
+msgid "title.problems.import"
+msgstr "Import problem from file"
+
+#: templates/problems/edit.html:40
+msgid "problems.import.file"
+msgstr "Problem file"
+
+#: templates/problems/edit.html:48
+msgid "problems.import"
+msgstr "Import"
+
+#: templates/problems/edit.html:74 templates/problems/edit.html:77
 #: templates/problems/view.html:4
 msgid "common.timelimit"
 msgstr "Time limit"
 
-#: templates/problems/edit.html:62 templates/problems/edit.html:65
+#: templates/problems/edit.html:81 templates/problems/edit.html:84
 #: templates/problems/view.html:5
 msgid "common.memorylimit"
 msgstr "Memory limit"
 
-#: templates/problems/edit.html:69 templates/problems/edit.html:71
+#: templates/problems/edit.html:88 templates/problems/edit.html:90
 msgid "common.description"
 msgstr "Description"
 
-#: templates/problems/edit.html:87 templates/users/profile.html:36
+#: templates/problems/edit.html:107 templates/users/profile.html:36
 msgid "common.update"
 msgstr "Update"
+
+#: templates/problems/edit.html:109
+msgid "common.create"
+msgstr "Create"
 
 #: templates/problems/submissions.html:5
 msgid "problems.submissions.new"

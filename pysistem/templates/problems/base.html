@@ -23,6 +23,24 @@
     <li role="presentation" class="{% block problem_navbar_link_checkers %}{% endblock %}">
         <a href="{{ url_for('problems.checkers', id=problem.id) }}">{{ _('title.problem.checkers') }}</a>
     </li>
+    <li role="presentation" class="dropdown">
+        <a id="problem-more-dropdown" class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {{ _('common.more') }}
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="problem-more-dropdown">
+            <li>
+                <a href="{{ url_for('problems.export', id=problem.id) }}" target="_blank">
+                    {{ _('problems.export') }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('problems.delete', id=problem.id) }}">
+                    {{ _('common.delete') }}
+                </a>
+            </li>
+        </ul>
+    </li>
     {% endif %}
     {% endif %}
 </ul>

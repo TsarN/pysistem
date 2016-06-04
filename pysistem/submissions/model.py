@@ -20,13 +20,8 @@ class Submission(db.Model):
     submitted = db.Column(db.DateTime, default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', back_populates='submissions')
-
     compiler_id = db.Column(db.Integer, db.ForeignKey('compiler.id'))
-    compiler = db.relationship('Compiler', back_populates='submissions')
-
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
-    problem = db.relationship('Problem', back_populates='submissions')
 
     def __init__(self, source=None, user=None, compiler=None, problem=None):
         self.source = source

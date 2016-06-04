@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-03 16:11+0300\n"
+"POT-Creation-Date: 2016-06-04 21:53+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -27,84 +27,92 @@ msgstr "Язык сменён на %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "Язык %(lang)s не найден"
 
-#: problems/views.py:52
+#: problems/views.py:54
 msgid "problems.new.success"
 msgstr "Задача создана"
 
-#: problems/views.py:55
+#: problems/views.py:57
 msgid "problems.edit.success"
 msgstr "Задача обновлена"
 
-#: problems/views.py:58
+#: problems/views.py:60
 msgid "problems.edit.emptyname"
 msgstr "Пустое имя задачи"
 
-#: problems/views.py:79
+#: problems/views.py:82 problems/views.py:87
+msgid "problems.import.filemissing"
+msgstr "Укажите файл с задачей"
+
+#: problems/views.py:95
+msgid "problems.import.error"
+msgstr "Ошибка импорта"
+
+#: problems/views.py:124
 msgid "problems.test.notfound"
 msgstr "Нет такого теста"
 
-#: problems/views.py:83
+#: problems/views.py:128
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:98 problems/views.py:103
+#: problems/views.py:143 problems/views.py:148
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:138 problems/views.py:143
+#: problems/views.py:183 problems/views.py:188
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:163 problems/views.py:176
+#: problems/views.py:208 problems/views.py:221
 msgid "problems.checker.notfound"
 msgstr "Нет такого чекера"
 
-#: problems/views.py:167
+#: problems/views.py:212
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:179
+#: problems/views.py:224
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:201 problems/views.py:206
+#: problems/views.py:246 problems/views.py:251
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:215
+#: problems/views.py:260
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:221
+#: problems/views.py:266
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: templates/base.html:50 templates/index.html:2
+#: templates/base.html:51 templates/index.html:2
 msgid "title.home"
 msgstr "Главная"
 
-#: templates/base.html:57 templates/problems/checkers.html:10
+#: templates/base.html:58 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:26
 msgid "common.language"
 msgstr "Язык"
 
-#: templates/base.html:75
+#: templates/base.html:76
 msgid "common.anonymous"
 msgstr "Гость"
 
-#: templates/base.html:80 templates/users/profile.html:2
+#: templates/base.html:81 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Профиль"
 
-#: templates/base.html:82
+#: templates/base.html:83
 msgid "title.logout"
 msgstr "Выйти"
 
-#: templates/base.html:84 templates/users/login.html:2
+#: templates/base.html:85 templates/users/login.html:2
 msgid "title.login"
 msgstr "Войти"
 
-#: templates/base.html:85 templates/users/signup.html:2
+#: templates/base.html:86 templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Зарегистрироваться"
 
@@ -112,7 +120,27 @@ msgstr "Зарегистрироваться"
 msgid "common.helloworld"
 msgstr "Привет, мир!"
 
-#: templates/contests/base.html:10
+#: templates/contests/main.html:8
+msgid "contests.info"
+msgstr "Информация"
+
+#: templates/contests/main.html:11
+msgid "contests.start"
+msgstr "Начало"
+
+#: templates/contests/main.html:12
+msgid "contests.end"
+msgstr "Конец"
+
+#: templates/contests/main.html:13
+msgid "contests.remaining"
+msgstr "Осталось"
+
+#: templates/contests/main.html:18 templates/contests/main.html:26
+msgid "contests.finished"
+msgstr "Турнир окончен"
+
+#: templates/contests/main.html:61 templates/contests/main.html:64
 msgid "contests.scoreboard"
 msgstr "Турнирная таблица"
 
@@ -140,8 +168,8 @@ msgstr "404 - страница не найдена"
 msgid "error.404.text"
 msgstr "Мы не смогли найти страницу, к которой Вы обратились"
 
-#: templates/problems/base.html:10 templates/problems/edit.html:75
-#: templates/problems/edit.html:77
+#: templates/problems/base.html:10 templates/problems/edit.html:94
+#: templates/problems/edit.html:96
 msgid "common.statement"
 msgstr "Условие"
 
@@ -161,8 +189,21 @@ msgstr "Тестовые пары"
 msgid "title.problem.checkers"
 msgstr "Чекеры"
 
+#: templates/problems/base.html:28
+msgid "common.more"
+msgstr "Больше"
+
+#: templates/problems/base.html:34
+msgid "problems.export"
+msgstr "Экспортировать"
+
+#: templates/problems/base.html:39 templates/problems/checkers.html:38
+#: templates/problems/tests.html:34
+msgid "common.delete"
+msgstr "Удалить"
+
 #: templates/problems/checkers.html:8 templates/problems/checkers.html:19
-#: templates/problems/edit.html:48 templates/problems/edit.html:51
+#: templates/problems/edit.html:67 templates/problems/edit.html:70
 msgid "common.name"
 msgstr "Имя"
 
@@ -171,11 +212,7 @@ msgstr "Имя"
 msgid "common.source"
 msgstr "Исходный код"
 
-#: templates/problems/checkers.html:38 templates/problems/tests.html:34
-msgid "common.delete"
-msgstr "Удалить"
-
-#: templates/problems/edit.html:9 templates/problems/edit.html:36
+#: templates/problems/edit.html:9 templates/problems/edit.html:55
 msgid "title.problem.new"
 msgstr "Новая задача"
 
@@ -184,23 +221,39 @@ msgstr "Новая задача"
 msgid "common.error"
 msgstr "Ошибка"
 
-#: templates/problems/edit.html:55 templates/problems/edit.html:58
+#: templates/problems/edit.html:36
+msgid "title.problems.import"
+msgstr "Импортировать задачу из файла"
+
+#: templates/problems/edit.html:40
+msgid "problems.import.file"
+msgstr "Файл с задачей"
+
+#: templates/problems/edit.html:48
+msgid "problems.import"
+msgstr "Импортировать"
+
+#: templates/problems/edit.html:74 templates/problems/edit.html:77
 #: templates/problems/view.html:4
 msgid "common.timelimit"
 msgstr "Лимит времени"
 
-#: templates/problems/edit.html:62 templates/problems/edit.html:65
+#: templates/problems/edit.html:81 templates/problems/edit.html:84
 #: templates/problems/view.html:5
 msgid "common.memorylimit"
 msgstr "Лимит памяти"
 
-#: templates/problems/edit.html:69 templates/problems/edit.html:71
+#: templates/problems/edit.html:88 templates/problems/edit.html:90
 msgid "common.description"
 msgstr "Описание"
 
-#: templates/problems/edit.html:87 templates/users/profile.html:36
+#: templates/problems/edit.html:107 templates/users/profile.html:36
 msgid "common.update"
 msgstr "Обновить"
+
+#: templates/problems/edit.html:109
+msgid "common.create"
+msgstr "Создать"
 
 #: templates/problems/submissions.html:5
 msgid "problems.submissions.new"

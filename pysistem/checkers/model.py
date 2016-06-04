@@ -17,7 +17,6 @@ class Checker(db.Model):
     lang = db.Column(db.String(8))
 
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
-    problem = db.relationship('Problem', back_populates='checkers')
 
     def __init__(self, name='', source='', problem=None, lang='c'):
         self.name = name
@@ -37,6 +36,11 @@ class Checker(db.Model):
 
     def get_exe_path(self):
         return DIR + '/storage/checkers_bin/' + str(self.id)
+
+    def get_ext(self):
+        if self.lang == 'c++':
+            return 'cpp'
+        return self.lang
 
     def compile(self):
         if self.status not in [STATUS_CWAIT, STATUS_COMPILEFAIL, STATUS_WAIT]:

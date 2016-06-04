@@ -13,7 +13,7 @@ class Compiler(db.Model):
     cmd_compile = db.Column(db.String(8192))
     cmd_run = db.Column(db.String(8192))
 
-    submissions = db.relationship('Submission', back_populates='compiler')
+    submissions = db.relationship('Submission', cascade = "all,delete", backref='compiler')
 
     def __init__(self, name=None, lang=None, cmd_compile=None, cmd_run=None):
         self.name = name

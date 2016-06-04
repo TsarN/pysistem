@@ -1,5 +1,5 @@
 from pysistem import app, babel, db, redirect_url
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
+from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from pysistem.problems.model import Problem
 from pysistem.test_pairs.model import TestPair
 from pysistem.checkers.model import Checker
@@ -27,8 +27,9 @@ def new():
     return render_template('problems/edit.html', problem=Problem())
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
+@mod.route('/new/post', methods=['POST'])
 @requires_admin
-def edit(id):
+def edit(id=-1):
     error = None
     problem = Problem.query.get(id)
     if request.method == 'POST':
@@ -46,19 +47,63 @@ def edit(id):
             problem.statement = statement
             problem.time_limit = int(time_limit)
             problem.memory_limit = int(memory_limit)
-            db.session.merge(problem)
+            if is_new:
+                db.session.add(problem)
             db.session.commit()
             if is_new:
                 flash(gettext('problems.new.success'))
-                return redirect(url_for('problems.view', id=id))
+                return redirect(url_for('problems.view', id=problem.id))
             else:
                 flash(gettext('problems.edit.success'))
-                return redirect(url_for('problems.edit', id=id))
+                return redirect(url_for('problems.edit', id=problem.id))
         else:
             error = gettext('problems.edit.emptyname')  
+    else:
+        if problem is None:
+            return render_template('errors/404.html'), 404
+    return render_template('problems/edit.html', problem=problem, error=error)
+
+@mod.route('/<int:id>/export')
+@requires_admin
+def export(id):
+    problem = Problem.query.get(id)
     if problem is None:
         return render_template('errors/404.html'), 404
-    return render_template('problems/edit.html', problem=problem, error=error)
+    content = problem.export_gzip()
+    response = Response(content, mimetype='application/gzip')
+    response.headers['Content-Disposition'] = 'attachment; filename=%s.pysistem.gz' % problem.transliterate_name()
+    return response
+
+@mod.route('/import', methods=['POST'])
+@requires_admin
+def import_():
+    problem = Problem()
+    if 'import_file' not in request.files:
+        flash('::warning ' + gettext('problems.import.filemissing'))
+        return redirect(url_for('problems.new'))
+
+    import_file = request.files['import_file']
+    if import_file.filename == '':
+        flash('::warning ' + gettext('problems.import.filemissing'))
+        return redirect(url_for('problems.new'))
+
+    if import_file:
+        if problem.import_gzip(import_file.stream.read()):
+            db.session.add(problem)
+            db.session.commit()
+            return redirect(url_for('problems.view', id=problem.id))
+    flash('::danger ' + gettext('problems.import.error'))
+    return redirect(url_for('problems.new'))
+
+@mod.route('/<int:id>/delete')
+@requires_admin
+def delete(id):
+    problem = Problem.query.get(id)
+    if problem is None:
+        return render_template('errors/404.html'), 404
+    db.session.delete(problem)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 @mod.route('/<int:id>/tests', methods=['GET', 'POST'])
 @requires_admin

@@ -7,7 +7,6 @@ class TestPair(db.Model):
     pattern = db.Column(db.String)
 
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
-    problem = db.relationship('Problem', back_populates='test_pairs')
 
     def __init__(self, input='', pattern='', problem=None):
         self.input = input

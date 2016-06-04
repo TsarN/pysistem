@@ -17,6 +17,7 @@ class Contest(db.Model):
 
     problems = db.relationship('Problem',
         secondary=contest_problem_reltable,
+        cascade = "all,delete", 
         backref=db.backref('contests'))
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
