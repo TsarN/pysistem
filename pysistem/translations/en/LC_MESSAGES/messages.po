@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-04 21:53+0300\n"
+"POT-Creation-Date: 2016-06-05 17:16+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -86,34 +86,44 @@ msgstr "Compiler is not selected"
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: templates/base.html:51 templates/index.html:2
+#: templates/base.html:53 templates/index.html:2
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:58 templates/problems/checkers.html:10
+#: templates/base.html:60 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:26
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:76
+#: templates/base.html:78
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:81 templates/users/profile.html:2
+#: templates/base.html:83 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:83
+#: templates/base.html:85
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:85 templates/users/login.html:2
+#: templates/base.html:87 templates/guest_view_denied.html:14
+#: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:86 templates/users/signup.html:2
+#: templates/base.html:89 templates/guest_view_denied.html:19
+#: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
+
+#: templates/guest_view_denied.html:2
+msgid "title.guestviewdenied"
+msgstr "Authorization required"
+
+#: templates/guest_view_denied.html:9
+msgid "guestviewdenied.reason"
+msgstr "Authorization required to use this server"
 
 #: templates/index.html:5
 msgid "common.helloworld"
@@ -342,31 +352,35 @@ msgstr "Invalid credentials"
 msgid "auth.login.success"
 msgstr "You were authorized"
 
-#: users/views.py:41
+#: users/views.py:29
+msgid "auth.signup.forbidden"
+msgstr "Registration is forbidden on this server"
+
+#: users/views.py:44
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:44
+#: users/views.py:47
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:46
+#: users/views.py:49
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:48
+#: users/views.py:51
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:50
+#: users/views.py:53
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:56
+#: users/views.py:59
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:70
+#: users/views.py:73
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
 

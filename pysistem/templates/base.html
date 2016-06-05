@@ -33,69 +33,72 @@
 </head>
 <body>
 {% block navbar %}
-{% if not g.disable_navbar %}
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                data-target="#main-navbar-collapse" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="{{ url_for('index') }}" class="navbar-brand">PySistem</a>
-            </div>
-
-            <div class="collapse navbar-collapse" id="main-navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="{% block navbar_link_home %}{% endblock%}">
-                        <a href="{{ url_for('index') }}">{{ _('title.home') }}</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                        role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-flag"></span>
-                        {{ _('common.language') }}
-                        <span class="caret" />
-                        </a>
-                        <ul class="dropdown-menu">
-                            {% for lang in config.LANGUAGES %}
-                            <li {% if session.language == lang %}class="active"{% endif %}>
-                                <a href="{{ url_for('locale.set', lang=lang) }}">{{ config.LANGUAGES[lang] }}</a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                        role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-user" />
-                        {% if not g.user.is_guest() %}
-                            {{ g.user.username }}
-                        {% else %}
-                            {{ _('common.anonymous') }}
-                        {% endif %}
-                        <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            {% if not g.user.is_guest() %}
-                                <li><a href="{{ url_for('users.profile') }}">{{ _('title.profile') }}</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="{{ url_for('users.logout') }}">{{ _('title.logout') }}</a></li>
-                            {% else %}
-                                <li><a href="{{ url_for('users.login') }}">{{ _('title.login') }}</a></li>
-                            {% if g.SETTINGS.get('allow_signup', True) %}
-                                <li><a href="{{ url_for('users.signup') }}">{{ _('title.signup') }}</a></li>
-                            {% endif %}
-                            {% endif %}
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+            data-target="#main-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{{ url_for('index') }}" class="navbar-brand">PySistem</a>
         </div>
-    </nav>
-{% endif %}
+
+        <div class="collapse navbar-collapse" id="main-navbar-collapse">
+
+            {% if not g.disable_navbar %}
+            <ul class="nav navbar-nav">
+                <li class="{% block navbar_link_home %}{% endblock%}">
+                    <a href="{{ url_for('index') }}">{{ _('title.home') }}</a></li>
+            </ul>
+            {% endif %}
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                    role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-flag"></span>
+                    {{ _('common.language') }}
+                    <span class="caret" />
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for lang in config.LANGUAGES %}
+                        <li {% if session.language == lang %}class="active"{% endif %}>
+                            <a href="{{ url_for('locale.set', lang=lang) }}">{{ config.LANGUAGES[lang] }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% if not g.disable_navbar %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                    role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-user" />
+                    {% if not g.user.is_guest() %}
+                        {{ g.user.username }}
+                    {% else %}
+                        {{ _('common.anonymous') }}
+                    {% endif %}
+                    <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        {% if not g.user.is_guest() %}
+                            <li><a href="{{ url_for('users.profile') }}">{{ _('title.profile') }}</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{ url_for('users.logout') }}">{{ _('title.logout') }}</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('users.login') }}">{{ _('title.login') }}</a></li>
+                        {% if g.SETTINGS.get('allow_signup', True) %}
+                            <li><a href="{{ url_for('users.signup') }}">{{ _('title.signup') }}</a></li>
+                        {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
 {% endblock %}
     <div class="container" id="content">
         {% with messages = get_flashed_messages() %}

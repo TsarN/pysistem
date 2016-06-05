@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-04 21:53+0300\n"
+"POT-Creation-Date: 2016-06-05 17:16+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -87,34 +87,44 @@ msgstr "Выберите компилятор"
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: templates/base.html:51 templates/index.html:2
+#: templates/base.html:53 templates/index.html:2
 msgid "title.home"
 msgstr "Главная"
 
-#: templates/base.html:58 templates/problems/checkers.html:10
+#: templates/base.html:60 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:26
 msgid "common.language"
 msgstr "Язык"
 
-#: templates/base.html:76
+#: templates/base.html:78
 msgid "common.anonymous"
 msgstr "Гость"
 
-#: templates/base.html:81 templates/users/profile.html:2
+#: templates/base.html:83 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Профиль"
 
-#: templates/base.html:83
+#: templates/base.html:85
 msgid "title.logout"
 msgstr "Выйти"
 
-#: templates/base.html:85 templates/users/login.html:2
+#: templates/base.html:87 templates/guest_view_denied.html:14
+#: templates/users/login.html:2
 msgid "title.login"
 msgstr "Войти"
 
-#: templates/base.html:86 templates/users/signup.html:2
+#: templates/base.html:89 templates/guest_view_denied.html:19
+#: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Зарегистрироваться"
+
+#: templates/guest_view_denied.html:2
+msgid "title.guestviewdenied"
+msgstr "Необходима авторизация"
+
+#: templates/guest_view_denied.html:9
+msgid "guestviewdenied.reason"
+msgstr "Для использования сервера необходима авторизация"
 
 #: templates/index.html:5
 msgid "common.helloworld"
@@ -343,31 +353,35 @@ msgstr "Неправильный логин или пароль"
 msgid "auth.login.success"
 msgstr "Вы вошли в систему"
 
-#: users/views.py:41
+#: users/views.py:29
+msgid "auth.signup.forbidden"
+msgstr "Регистрация отключена на этом сервере"
+
+#: users/views.py:44
 msgid "auth.signup.success"
 msgstr "Вы зарегистрировались в системе"
 
-#: users/views.py:44
+#: users/views.py:47
 msgid "auth.signup.shortpassword"
 msgstr "Пароль слишком короткий"
 
-#: users/views.py:46
+#: users/views.py:49
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Пароли не совпадают"
 
-#: users/views.py:48
+#: users/views.py:51
 msgid "auth.signup.exists"
 msgstr "Пользователь уже существует"
 
-#: users/views.py:50
+#: users/views.py:53
 msgid "auth.signup.invalidusername"
 msgstr "Такое имя нельзя использовать"
 
-#: users/views.py:56
+#: users/views.py:59
 msgid "auth.logout.success"
 msgstr "Вы вышли из системы"
 
-#: users/views.py:70
+#: users/views.py:73
 msgid "profile.update.success"
 msgstr "Профиль пользователя был обновлён"
 

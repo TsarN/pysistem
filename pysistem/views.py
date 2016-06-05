@@ -30,7 +30,9 @@ def before_request():
     g.disable_navbar = False
 
     if not SETTINGS.get('allow_guest_view', True):
-        if (g.user.id is None) and (not request.path.startswith('/static/')):
+        if (g.user.id is None) and \
+        (not request.path.startswith('/static/')) and \
+        (not request.path.startswith('/locale/set/')):
             g.disable_navbar = True
             allowed_urls = [url_for('users.login')]
             if SETTINGS.get('allow_signup', True):
