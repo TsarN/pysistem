@@ -86,7 +86,6 @@ class Checker(db.Model):
         submission.result = RESULT_OK
         submission.tests_passed = 0
         for test in self.problem.test_pairs:
-            print("TESTING ON", submission.tests_passed + 1)
             db.session.commit()
             result, stdout, stderr = submission.run(test.input,
                 submission.problem.time_limit, submission.problem.memory_limit,
