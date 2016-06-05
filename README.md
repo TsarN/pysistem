@@ -76,6 +76,10 @@ Check, if everything is OK:
     # /etc/init.d/nginx (re)start
 
 ### Post-installation configuration
+Compile translations:
+
+    $ pybabel compile -d /path/to/virtualenv/pysistem/translations
+
 If you want to use MySQL as your database backend, change `pysistem/conf.py`:
 ```python
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://user:password@localhost/db_name"
