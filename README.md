@@ -80,6 +80,19 @@ Compile translations:
 
     $ pybabel compile -d /path/to/virtualenv/pysistem/translations
 
+Modify default secret key: change `pysistem/conf.py`:
+```python
+SECRET_KEY = 'YOUR_SECRET_KEY_HERE'
+```
+
+You can generate pretty secure secret keys using Python:
+
+    $ python
+    >>> import os
+    >>> os.urandom(24)
+    b'J]x\xbc`\xc6\xf4\xa8\xbdkB\x7f\xff\xd8\xeaY\x93\xc7\xe0\xfa\xd8\x07j\xfd'
+
+
 If you want to use MySQL as your database backend, change `pysistem/conf.py`:
 ```python
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://user:password@localhost/db_name"
