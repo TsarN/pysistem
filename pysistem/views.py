@@ -10,6 +10,8 @@ from pysistem.conf import LANGUAGES
 from flask_babel import gettext
 from datetime import datetime
 
+from pysistem.conf import SETTINGS
+
 @babel.localeselector
 def get_locale():
     return session.get('language') or request.accept_languages.best_match(LANGUAGES.keys())
@@ -20,8 +22,21 @@ def before_request():
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
     g.now = datetime.now()
     g.raw_content = False
-    if request.args.get('raw', False) == '1':
-        g.raw_content = True
+    g.SETTINGS = SETTINGS
+    if SETTINGS.get('allow_raw_content', False):
+        if request.args.get('raw', False) == '1':
+            g.raw_content = True
+
+    g.disable_navbar = False
+
+    if not SETTINGS.get('allow_guest_view', True):
+        if (g.user.id is None) and (not request.path.startswith('/static/')):
+            g.disable_navbar = True
+            allowed_urls = [url_for('users.login')]
+            if SETTINGS.get('allow_signup', True):
+                allowed_urls.append(url_for('users.signup'))
+            if request.path not in allowed_urls:
+                return render_template('guest_view_denied.html', allow_signup=SETTINGS.get('allow_signup', True))
 
 def pad_zero(x, min_len=2):
     return '0' * (max(0, min_len - len(str(x)))) + str(x)

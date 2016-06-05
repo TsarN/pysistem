@@ -25,12 +25,15 @@ def login():
 @mod.route('/signup', methods=['GET', 'POST'])
 @requires_guest
 def signup():
+    if not g.SETTINGS.get('allow_signup', True):
+        flash('::danger ' + gettext('auth.signup.forbidden'))
+        return redirect(url_for('index'))
     error = None
     if request.method == 'POST':
         username = request.form.get('username', '')
         password = request.form.get('password', '')
         password_confirm = request.form.get('passwordConfirm', '')
-        if re.compile(app.config['USERNAME_PATTERN']).match(request.form['username']):
+        if re.compile(g.SETTINGS.get('username_pattern', '.*')).match(request.form['username']):
             if not User.exists(username):
                 if password == password_confirm:
                     if len(password) > 3:

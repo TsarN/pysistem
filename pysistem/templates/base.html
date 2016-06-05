@@ -4,6 +4,7 @@
 <head>
     {% block head %}
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" />
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dtp/dtp.min.css') }}" />
@@ -31,6 +32,8 @@
     {% endblock %}
 </head>
 <body>
+{% block navbar %}
+{% if not g.disable_navbar %}
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -82,7 +85,9 @@
                                 <li><a href="{{ url_for('users.logout') }}">{{ _('title.logout') }}</a></li>
                             {% else %}
                                 <li><a href="{{ url_for('users.login') }}">{{ _('title.login') }}</a></li>
+                            {% if g.SETTINGS.get('allow_signup', True) %}
                                 <li><a href="{{ url_for('users.signup') }}">{{ _('title.signup') }}</a></li>
+                            {% endif %}
                             {% endif %}
                         </ul>
                     </li>
@@ -90,6 +95,8 @@
             </div>
         </div>
     </nav>
+{% endif %}
+{% endblock %}
     <div class="container" id="content">
         {% with messages = get_flashed_messages() %}
             {% for message in messages %}
