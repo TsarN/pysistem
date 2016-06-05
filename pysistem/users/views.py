@@ -33,26 +33,30 @@ def signup():
         username = request.form.get('username', '')
         password = request.form.get('password', '')
         password_confirm = request.form.get('passwordConfirm', '')
-        if re.compile(g.SETTINGS.get('username_pattern', '.*')).match(request.form['username']):
-            if not User.exists(username):
-                if password == password_confirm:
-                    if len(password) > 3:
-                        user = User(username, password)
-                        if g.is_first_time:
-                            user.role = 'admin'
-                        db.session.add(user)
-                        db.session.commit()
-                        User.auth(username, password)
-                        flash(gettext('auth.signup.success'))
-                        return redirect(url_for('index'))
-                    else:
-                        error = gettext('auth.signup.shortpassword')
-                else:
-                    error = gettext('auth.signup.mismatchedpasswords')
-            else:
-                error = gettext('auth.signup.exists')
+        confirm_code = request.form.get('confirmCode', '').strip(' \t\n\r')
+        if g.is_first_time and (confirm_code != app.config['CONFIRM_CODE']):
+            error = gettext('auth.signup.admin.invalidcode')
         else:
-            error = gettext('auth.signup.invalidusername')
+            if re.compile(g.SETTINGS.get('username_pattern', '.*')).match(request.form['username']):
+                if not User.exists(username):
+                    if password == password_confirm:
+                        if len(password) > 3:
+                            user = User(username, password)
+                            if g.is_first_time:
+                                user.role = 'admin'
+                            db.session.add(user)
+                            db.session.commit()
+                            User.auth(username, password)
+                            flash(gettext('auth.signup.success'))
+                            return redirect(url_for('index'))
+                        else:
+                            error = gettext('auth.signup.shortpassword')
+                    else:
+                        error = gettext('auth.signup.mismatchedpasswords')
+                else:
+                    error = gettext('auth.signup.exists')
+            else:
+                error = gettext('auth.signup.invalidusername')
     return render_template('users/signup.html', error=error)
 
 @mod.route('/logout', methods=['GET', 'POST'])

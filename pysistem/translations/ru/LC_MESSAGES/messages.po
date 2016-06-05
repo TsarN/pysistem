@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-05 21:22+0300\n"
+"POT-Creation-Date: 2016-06-05 21:52+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -407,13 +407,21 @@ msgstr "E-Mail"
 msgid "common.signup.admin"
 msgstr "Регистрация администратора"
 
-#: templates/users/signup.html:13 templates/users/signup.html:28
+#: templates/users/signup.html:13 templates/users/signup.html:38
 msgid "common.signup"
 msgstr "Зарегистрироваться"
 
 #: templates/users/signup.html:26
 msgid "common.passwordconfirmation"
 msgstr "Подтверждение пароля"
+
+#: templates/users/signup.html:32
+msgid "signup.admin.code.label"
+msgstr "Код доступа из консоли сервера"
+
+#: templates/users/signup.html:34
+msgid "signup.admin.code"
+msgstr "Код доступа"
 
 #: users/decorators.py:10
 msgid "error.permission.authrequired"
@@ -431,31 +439,35 @@ msgstr "Вы вошли в систему"
 msgid "auth.signup.forbidden"
 msgstr "Регистрация отключена на этом сервере"
 
-#: users/views.py:46
+#: users/views.py:38
+msgid "auth.signup.admin.invalidcode"
+msgstr "Неверный код"
+
+#: users/views.py:50
 msgid "auth.signup.success"
 msgstr "Вы зарегистрировались в системе"
 
-#: users/views.py:49
+#: users/views.py:53
 msgid "auth.signup.shortpassword"
 msgstr "Пароль слишком короткий"
 
-#: users/views.py:51
+#: users/views.py:55
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Пароли не совпадают"
 
-#: users/views.py:53
+#: users/views.py:57
 msgid "auth.signup.exists"
 msgstr "Пользователь уже существует"
 
-#: users/views.py:55
+#: users/views.py:59
 msgid "auth.signup.invalidusername"
 msgstr "Такое имя нельзя использовать"
 
-#: users/views.py:61
+#: users/views.py:65
 msgid "auth.logout.success"
 msgstr "Вы вышли из системы"
 
-#: users/views.py:75
+#: users/views.py:79
 msgid "profile.update.success"
 msgstr "Профиль пользователя был обновлён"
 

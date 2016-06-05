@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-05 21:22+0300\n"
+"POT-Creation-Date: 2016-06-05 21:52+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -406,13 +406,21 @@ msgstr "E-Mail address"
 msgid "common.signup.admin"
 msgstr "Sign Up as Administrator"
 
-#: templates/users/signup.html:13 templates/users/signup.html:28
+#: templates/users/signup.html:13 templates/users/signup.html:38
 msgid "common.signup"
 msgstr "Sign Up"
 
 #: templates/users/signup.html:26
 msgid "common.passwordconfirmation"
 msgstr "Password confirmation"
+
+#: templates/users/signup.html:32
+msgid "signup.admin.code.label"
+msgstr "Access code from server's console"
+
+#: templates/users/signup.html:34
+msgid "signup.admin.code"
+msgstr "Access code"
 
 #: users/decorators.py:10
 msgid "error.permission.authrequired"
@@ -430,31 +438,35 @@ msgstr "You were authorized"
 msgid "auth.signup.forbidden"
 msgstr "Registration is forbidden on this server"
 
-#: users/views.py:46
+#: users/views.py:38
+msgid "auth.signup.admin.invalidcode"
+msgstr "Invalid access code"
+
+#: users/views.py:50
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:49
+#: users/views.py:53
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:51
+#: users/views.py:55
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:53
+#: users/views.py:57
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:55
+#: users/views.py:59
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:61
+#: users/views.py:65
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:75
+#: users/views.py:79
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
 

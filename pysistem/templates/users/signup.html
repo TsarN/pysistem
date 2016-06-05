@@ -25,6 +25,16 @@
     <div class="form-group">
         <input type="password" class="form-control" name="passwordConfirm" placeholder="{{ _('common.passwordconfirmation') }}" />
     </div>
+    {% if g.is_first_time %}
+    <br />
+    <div class="form-group">
+        <label for="confirmCode">
+            {{ _('signup.admin.code.label') }}
+        </label>
+        <input type="text" autocomplete="off" id="confirmCode" class="form-control" name="confirmCode" placeholder="{{ _('signup.admin.code') }}" />
+    </div>
+    <br />
+    {% endif %}
     <button type="submit" class="btn btn-lg btn-primary btn-block">{{ _('common.signup') }}</button>
 </form>
 </div>
