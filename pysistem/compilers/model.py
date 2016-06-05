@@ -26,8 +26,8 @@ class Compiler(db.Model):
 
     def compile(self, src, exe):
         cmd = self.cmd_compile.replace('%exe%', exe).replace('%src%', src)
-        result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return (result.returncode == 0, result.stdout or '', result.stderr or '')
+        result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return (result.returncode == 0, result.stdout or '')
 
     def run(self, exe, src_path='', time_limit=1000, memory_limit=65536, stdin=''):
         hasher = hashlib.new('md5')

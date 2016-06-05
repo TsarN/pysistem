@@ -11,11 +11,10 @@ from datetime import datetime
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    source = db.Column(db.String)
+    source = db.Column(db.String(2**20))
     status = db.Column(db.Integer)
     result = db.Column(db.Integer)
-    compile_log_stderr = db.Column(db.String)
-    compile_log_stdout = db.Column(db.String)
+    compile_log = db.Column(db.String(2**20))
     tests_passed = db.Column(db.Integer)
     submitted = db.Column(db.DateTime, default=datetime.now)
 
@@ -59,20 +58,19 @@ class Submission(db.Model):
         source_file.write(self.source)
         source_file.close()
 
-        result, stdout, stderr = self.compiler.compile(source_path, self.get_exe_path())
+        result, output = self.compiler.compile(source_path, self.get_exe_path())
         if result:
             self.status = STATUS_WAIT
         else:
             self.status = STATUS_COMPILEFAIL
 
-        self.compile_log_stdout = stdout
-        self.compile_log_stderr = stderr
+        self.compile_log = output
 
         db.session.commit()
 
         os.remove(source_path)
 
-        return result, stdout, stderr
+        return result, output
 
     def run(self, stdin='', time_limit=1000, memory_limit=65536, commit_waiting=True):
         self.status = STATUS_CHECKING
@@ -88,8 +86,8 @@ class Submission(db.Model):
 
         os.remove(source_path)
         self.result = result
-        self.status = STATUS_WAIT
-        if commit_waiting:
+        if commit_waiting:  
+            self.status = STATUS_WAIT
             db.session.commit()
 
         return result, stdout, stderr
@@ -113,6 +111,9 @@ class Submission(db.Model):
                 return STR_STATUS[self.status] + ' (' + str(self.tests_passed + 1) + ')'
             else:
                 return STR_STATUS[self.status]
+
+    def is_compile_failed(self):
+        return self.status == STATUS_COMPILEFAIL
 
     def check(self):
         checker = Checker.query \

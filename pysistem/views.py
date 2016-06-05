@@ -55,6 +55,51 @@ def timeonly_filter(seconds):
     seconds = int(seconds % 60)
     return pad_zero(hours) + ':' + pad_zero(minutes) + ':' + pad_zero(seconds)
 
+@app.template_filter('naturaltime')
+def naturaltime_filter(time=False):
+
+    # http://stackoverflow.com/a/1551394
+
+    now = datetime.now()
+    if type(time) is int:
+        diff = now - datetime.fromtimestamp(time)
+    elif isinstance(time,datetime):
+        diff = now - time
+    elif not time:
+        diff = now - now
+    second_diff = int(diff.seconds)
+    day_diff = int(diff.days)
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 10:
+            return gettext('naturaltime.justnow')
+        if second_diff < 60:
+            return str(second_diff) + " " + gettext('naturaltime.secondsago')
+        if second_diff < 120:
+            return gettext('naturaltime.minuteago')
+        if second_diff < 3600:
+            return str(second_diff // 60) + " " + gettext('naturaltime.minutesago')
+        if second_diff < 7200:
+            return gettext('naturaltime.hourago')
+        if second_diff < 86400:
+            return str(second_diff // 3600) + " " + gettext('naturaltime.hoursago')
+    if day_diff == 1:
+        return gettext('naturaltime.yesterday')
+    if day_diff < 7:
+        return str(day_diff) + " " + gettext('naturaltime.daysago')
+    if day_diff < 14:
+        return gettext('naturaltime.weekago')
+    if day_diff < 31:
+        return str(day_diff // 7) + " " + gettext('naturaltime.weeksago')
+    if day_diff < 60:
+        return gettext('naturaltime.monthago')
+    if day_diff < 365:
+        return str(day_diff // 30) + " " + gettext('naturaltime.monthsago')
+    return str(day_diff // 365) + " " + gettext('naturaltime.yearsago')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -75,3 +120,6 @@ app.register_blueprint(problems_module)
 
 from pysistem.contests.views import mod as contests_module
 app.register_blueprint(contests_module)
+
+from pysistem.submissions.views import mod as submissions_module
+app.register_blueprint(submissions_module)

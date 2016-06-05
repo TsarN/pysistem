@@ -1,4 +1,4 @@
-import sqlite3
+import os
 from flask import Flask, g, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
@@ -26,3 +26,7 @@ import pysistem.views
 
 db.create_all()
 db.session.commit()
+
+for d in conf.CREATE_DIRS:
+    if not os.path.exists(conf.DIR + d):
+        os.makedirs(conf.DIR + d)

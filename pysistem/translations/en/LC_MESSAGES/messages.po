@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-05 17:43+0300\n"
+"POT-Creation-Date: 2016-06-05 21:22+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,6 +17,58 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+
+#: views.py:78
+msgid "naturaltime.justnow"
+msgstr "just now"
+
+#: views.py:80
+msgid "naturaltime.secondsago"
+msgstr "seconds ago"
+
+#: views.py:82
+msgid "naturaltime.minuteago"
+msgstr "a minute ago"
+
+#: views.py:84
+msgid "naturaltime.minutesago"
+msgstr "minutes ago"
+
+#: views.py:86
+msgid "naturaltime.hourago"
+msgstr "an hour ago"
+
+#: views.py:88
+msgid "naturaltime.hoursago"
+msgstr "hours ago"
+
+#: views.py:90
+msgid "naturaltime.yesterday"
+msgstr "yesterday"
+
+#: views.py:92
+msgid "naturaltime.daysago"
+msgstr "days ago"
+
+#: views.py:94
+msgid "naturaltime.weekago"
+msgstr "a week ago"
+
+#: views.py:96
+msgid "naturaltime.weeksago"
+msgstr "weeks ago"
+
+#: views.py:98
+msgid "naturaltime.monthago"
+msgstr "a month ago"
+
+#: views.py:100
+msgid "naturaltime.monthsago"
+msgstr "months ago"
+
+#: views.py:101
+msgid "naturaltime.yearsago"
+msgstr "years ago"
 
 #: locale/views.py:13
 msgid "locale.set.success"
@@ -91,7 +143,7 @@ msgid "title.home"
 msgstr "Home"
 
 #: templates/base.html:62 templates/problems/checkers.html:10
-#: templates/problems/submissions.html:26
+#: templates/problems/submissions.html:45
 msgid "common.language"
 msgstr "Language"
 
@@ -216,8 +268,8 @@ msgstr "Delete"
 msgid "common.name"
 msgstr "Name"
 
-#: templates/problems/checkers.html:9 templates/problems/submissions.html:14
-#: templates/problems/submissions.html:25
+#: templates/problems/checkers.html:9 templates/problems/submissions.html:32
+#: templates/problems/submissions.html:44
 msgid "common.source"
 msgstr "Source"
 
@@ -225,8 +277,8 @@ msgstr "Source"
 msgid "title.problem.new"
 msgstr "New problem"
 
-#: templates/problems/edit.html:31 templates/users/login.html:7
-#: templates/users/profile.html:7 templates/users/signup.html:7
+#: templates/problems/edit.html:31 templates/users/login.html:6
+#: templates/users/profile.html:7 templates/users/signup.html:6
 msgid "common.error"
 msgstr "Error"
 
@@ -264,31 +316,49 @@ msgstr "Update"
 msgid "common.create"
 msgstr "Create"
 
-#: templates/problems/submissions.html:5
+#: templates/problems/submissions.html:11
+#: templates/problems/submissions.html:19
+msgid "common.hide"
+msgstr "Hide"
+
+#: templates/problems/submissions.html:13
+#: templates/problems/submissions.html:56
+msgid "common.show"
+msgstr "Show"
+
+#: templates/problems/submissions.html:23
 msgid "problems.submissions.new"
 msgstr "Submit solution"
 
-#: templates/problems/submissions.html:8
+#: templates/problems/submissions.html:26
 msgid "common.compiler"
 msgstr "Compiler"
 
-#: templates/problems/submissions.html:16
+#: templates/problems/submissions.html:34
 msgid "common.submit"
 msgstr "Submit"
 
-#: templates/problems/submissions.html:27
+#: templates/problems/submissions.html:43
+msgid "submissions.submitted"
+msgstr "Submitted"
+
+#: templates/problems/submissions.html:46
 msgid "submissions.status"
 msgstr "Status"
 
-#: templates/problems/submissions.html:41
+#: templates/problems/submissions.html:64
+msgid "problems.submissions.viewcompilelog"
+msgstr "View log"
+
+#: templates/problems/submissions.html:70
 msgid "problems.submissions.recheck"
 msgstr "Recheck"
 
-#: templates/problems/submissions.html:45
+#: templates/problems/submissions.html:74
 msgid "problems.submissions.reject"
 msgstr "Reject"
 
-#: templates/problems/submissions.html:49
+#: templates/problems/submissions.html:78
 msgid "problems.submissions.delete"
 msgstr "Delete"
 
@@ -308,7 +378,7 @@ msgstr "ms"
 msgid "common.units.kilobytes"
 msgstr "KiB"
 
-#: templates/users/login.html:10 templates/users/login.html:19
+#: templates/users/login.html:9 templates/users/login.html:19
 msgid "common.login"
 msgstr "Log In"
 
@@ -332,11 +402,11 @@ msgstr "Last name"
 msgid "common.email"
 msgstr "E-Mail address"
 
-#: templates/users/signup.html:12
+#: templates/users/signup.html:11
 msgid "common.signup.admin"
 msgstr "Sign Up as Administrator"
 
-#: templates/users/signup.html:14 templates/users/signup.html:28
+#: templates/users/signup.html:13 templates/users/signup.html:28
 msgid "common.signup"
 msgstr "Sign Up"
 

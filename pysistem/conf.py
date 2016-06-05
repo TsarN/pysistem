@@ -16,3 +16,8 @@ SETTINGS = {
     "allow_raw_content": False,
     "username_pattern": "^[A-Za-z0-9_]{3,15}$"
 }
+
+CREATE_DIRS = (
+    '/storage/checkers_bin',
+    '/storage/submissions_bin'
+)

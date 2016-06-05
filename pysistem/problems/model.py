@@ -12,7 +12,7 @@ class Problem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.String(256))
-    statement = db.Column(db.String)
+    statement = db.Column(db.String(2**20))
     time_limit = db.Column(db.Integer)
     memory_limit = db.Column(db.Integer)
 

@@ -2,6 +2,24 @@
 {% block problem_navbar_link_submissions %}active{% endblock %}
 {% block problem_content %}
 
+<script type="text/javascript">
+    function load_submission(id) {
+        sub = $('#submission' + id + '_source');
+        if (sub.html() != '') {
+            sub.toggle();
+            if (sub.is(':visible'))
+                return "{{ _('common.hide') }}"
+            else
+                return "{{ _('common.show') }}"
+        }
+        sub.load(
+            '/submission/' + id + '/source', function() {
+                sub.show()
+        })
+        return "{{ _('common.hide') }}";
+    }
+</script>
+
 <h3>{{ _('problems.submissions.new') }}</h3>
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.submissions', id=problem.id) }}">
@@ -22,6 +40,7 @@
 <thead>
 <tr>
     <th>ID</th>
+    <th>{{ _('submissions.submitted') }}</th>
     <th>{{ _('common.source') }}</th>
     <th>{{ _('common.language') }}</th>
     <th>{{ _('submissions.status') }}</th>
@@ -31,10 +50,20 @@
 {% for submission in submissions[::-1] %}
 <tr>
     <td>{{ submission.id }}</td>
-    <td><pre>{{ submission.source }}</pre></td>
+    <td>{{ submission.submitted|naturaltime }}</td>
+    <td><pre id="submission{{ submission.id }}_source" style="display: none;"></pre>
+        <a href="/submission/{{ submission.id }}/source"
+        onclick="$(this).html(load_submission({{ submission.id }})); return false;">{{ _('common.show') }}</a>
+    </td>
     <td>{{ submission.compiler.name }}</td>
     <td>
         {{ submission.get_str_result(color=True)|safe }}
+        {% if (g.user.role == 'admin') or submission.is_compile_failed() %}
+        <br />
+        <a target="_blank" href="{{ url_for('submissions.compilelog', id=submission.id) }}">
+            {{ _('problems.submissions.viewcompilelog') }}
+        </a>
+        {% endif %}
         {% if g.user.role == 'admin' %}
         <br />
         <a href="{{ url_for('problems.rechecksub', id=submission.id) }}">

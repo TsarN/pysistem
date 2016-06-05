@@ -10,10 +10,10 @@ from pysistem.conf import DIR
 class Checker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256))
-    source = db.Column(db.String)
+    source = db.Column(db.String(2**20))
     status = db.Column(db.Integer)
-    compile_log_stderr = db.Column(db.String)
-    compile_log_stdout = db.Column(db.String)
+    compile_log_stderr = db.Column(db.String(2**20))
+    compile_log_stdout = db.Column(db.String(2**20))
     lang = db.Column(db.String(8))
 
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))

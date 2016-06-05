@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-05 17:43+0300\n"
+"POT-Creation-Date: 2016-06-05 21:22+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -18,6 +18,58 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+
+#: views.py:78
+msgid "naturaltime.justnow"
+msgstr "только что"
+
+#: views.py:80
+msgid "naturaltime.secondsago"
+msgstr "секунд назад"
+
+#: views.py:82
+msgid "naturaltime.minuteago"
+msgstr "минуту назад"
+
+#: views.py:84
+msgid "naturaltime.minutesago"
+msgstr "минут назад"
+
+#: views.py:86
+msgid "naturaltime.hourago"
+msgstr "час назад"
+
+#: views.py:88
+msgid "naturaltime.hoursago"
+msgstr "часов назад"
+
+#: views.py:90
+msgid "naturaltime.yesterday"
+msgstr "вчера"
+
+#: views.py:92
+msgid "naturaltime.daysago"
+msgstr "дней назад"
+
+#: views.py:94
+msgid "naturaltime.weekago"
+msgstr "неделю назад"
+
+#: views.py:96
+msgid "naturaltime.weeksago"
+msgstr "недель назад"
+
+#: views.py:98
+msgid "naturaltime.monthago"
+msgstr "месяц назад"
+
+#: views.py:100
+msgid "naturaltime.monthsago"
+msgstr "месяцев назад"
+
+#: views.py:101
+msgid "naturaltime.yearsago"
+msgstr "лет назад"
 
 #: locale/views.py:13
 msgid "locale.set.success"
@@ -92,7 +144,7 @@ msgid "title.home"
 msgstr "Главная"
 
 #: templates/base.html:62 templates/problems/checkers.html:10
-#: templates/problems/submissions.html:26
+#: templates/problems/submissions.html:45
 msgid "common.language"
 msgstr "Язык"
 
@@ -217,8 +269,8 @@ msgstr "Удалить"
 msgid "common.name"
 msgstr "Имя"
 
-#: templates/problems/checkers.html:9 templates/problems/submissions.html:14
-#: templates/problems/submissions.html:25
+#: templates/problems/checkers.html:9 templates/problems/submissions.html:32
+#: templates/problems/submissions.html:44
 msgid "common.source"
 msgstr "Исходный код"
 
@@ -226,8 +278,8 @@ msgstr "Исходный код"
 msgid "title.problem.new"
 msgstr "Новая задача"
 
-#: templates/problems/edit.html:31 templates/users/login.html:7
-#: templates/users/profile.html:7 templates/users/signup.html:7
+#: templates/problems/edit.html:31 templates/users/login.html:6
+#: templates/users/profile.html:7 templates/users/signup.html:6
 msgid "common.error"
 msgstr "Ошибка"
 
@@ -265,31 +317,49 @@ msgstr "Обновить"
 msgid "common.create"
 msgstr "Создать"
 
-#: templates/problems/submissions.html:5
+#: templates/problems/submissions.html:11
+#: templates/problems/submissions.html:19
+msgid "common.hide"
+msgstr "Скрыть"
+
+#: templates/problems/submissions.html:13
+#: templates/problems/submissions.html:56
+msgid "common.show"
+msgstr "Показать"
+
+#: templates/problems/submissions.html:23
 msgid "problems.submissions.new"
 msgstr "Отправить решение"
 
-#: templates/problems/submissions.html:8
+#: templates/problems/submissions.html:26
 msgid "common.compiler"
 msgstr "Компилятор"
 
-#: templates/problems/submissions.html:16
+#: templates/problems/submissions.html:34
 msgid "common.submit"
 msgstr "Отправить"
 
-#: templates/problems/submissions.html:27
+#: templates/problems/submissions.html:43
+msgid "submissions.submitted"
+msgstr "Отправлено"
+
+#: templates/problems/submissions.html:46
 msgid "submissions.status"
 msgstr "Статус"
 
-#: templates/problems/submissions.html:41
+#: templates/problems/submissions.html:64
+msgid "problems.submissions.viewcompilelog"
+msgstr "Посмотреть лог"
+
+#: templates/problems/submissions.html:70
 msgid "problems.submissions.recheck"
 msgstr "Перепроверить"
 
-#: templates/problems/submissions.html:45
+#: templates/problems/submissions.html:74
 msgid "problems.submissions.reject"
 msgstr "Отклонить"
 
-#: templates/problems/submissions.html:49
+#: templates/problems/submissions.html:78
 msgid "problems.submissions.delete"
 msgstr "Удалить"
 
@@ -309,7 +379,7 @@ msgstr "мс"
 msgid "common.units.kilobytes"
 msgstr "КБ"
 
-#: templates/users/login.html:10 templates/users/login.html:19
+#: templates/users/login.html:9 templates/users/login.html:19
 msgid "common.login"
 msgstr "Войти"
 
@@ -333,11 +403,11 @@ msgstr "Фамилия"
 msgid "common.email"
 msgstr "E-Mail"
 
-#: templates/users/signup.html:12
+#: templates/users/signup.html:11
 msgid "common.signup.admin"
 msgstr "Регистрация администратора"
 
-#: templates/users/signup.html:14 templates/users/signup.html:28
+#: templates/users/signup.html:13 templates/users/signup.html:28
 msgid "common.signup"
 msgstr "Зарегистрироваться"
 
