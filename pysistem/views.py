@@ -18,6 +18,7 @@ def get_locale():
 
 @app.before_request
 def before_request():
+    g.is_first_time = (User.query.count() == 0)
     g.user = User()
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
     g.now = datetime.now()
@@ -29,16 +30,20 @@ def before_request():
 
     g.disable_navbar = False
 
-    if not SETTINGS.get('allow_guest_view', True):
+    if not SETTINGS.get('allow_guest_view', True) or g.is_first_time:
         if (g.user.id is None) and \
         (not request.path.startswith('/static/')) and \
         (not request.path.startswith('/locale/set/')):
             g.disable_navbar = True
-            allowed_urls = [url_for('users.login')]
-            if SETTINGS.get('allow_signup', True):
-                allowed_urls.append(url_for('users.signup'))
-            if request.path not in allowed_urls:
-                return render_template('guest_view_denied.html', allow_signup=SETTINGS.get('allow_signup', True))
+            if g.is_first_time:
+                if not request.path.startswith(url_for('users.signup')):
+                    return redirect(url_for('users.signup'))
+            else:
+                allowed_urls = [url_for('users.login')]
+                if SETTINGS.get('allow_signup', True):
+                    allowed_urls.append(url_for('users.signup'))
+                if request.path not in allowed_urls:
+                    return render_template('guest_view_denied.html', allow_signup=SETTINGS.get('allow_signup', True))
 
 def pad_zero(x, min_len=2):
     return '0' * (max(0, min_len - len(str(x)))) + str(x)

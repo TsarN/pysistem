@@ -25,7 +25,7 @@ def login():
 @mod.route('/signup', methods=['GET', 'POST'])
 @requires_guest
 def signup():
-    if not g.SETTINGS.get('allow_signup', True):
+    if not g.SETTINGS.get('allow_signup', True) and not g.is_first_time:
         flash('::danger ' + gettext('auth.signup.forbidden'))
         return redirect(url_for('index'))
     error = None
@@ -38,6 +38,8 @@ def signup():
                 if password == password_confirm:
                     if len(password) > 3:
                         user = User(username, password)
+                        if g.is_first_time:
+                            user.role = 'admin'
                         db.session.add(user)
                         db.session.commit()
                         User.auth(username, password)

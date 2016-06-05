@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-05 17:16+0300\n"
+"POT-Creation-Date: 2016-06-05 17:43+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -86,33 +86,33 @@ msgstr "Compiler is not selected"
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: templates/base.html:53 templates/index.html:2
+#: templates/base.html:54 templates/index.html:2
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:60 templates/problems/checkers.html:10
+#: templates/base.html:62 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:26
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:78
+#: templates/base.html:81
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:83 templates/users/profile.html:2
+#: templates/base.html:86 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:85
+#: templates/base.html:88
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:87 templates/guest_view_denied.html:14
+#: templates/base.html:90 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:89 templates/guest_view_denied.html:19
+#: templates/base.html:92 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
@@ -121,7 +121,7 @@ msgstr "Sign Up"
 msgid "title.guestviewdenied"
 msgstr "Authorization required"
 
-#: templates/guest_view_denied.html:9
+#: templates/guest_view_denied.html:8
 msgid "guestviewdenied.reason"
 msgstr "Authorization required to use this server"
 
@@ -312,11 +312,11 @@ msgstr "KiB"
 msgid "common.login"
 msgstr "Log In"
 
-#: templates/users/login.html:14 templates/users/signup.html:14
+#: templates/users/login.html:14 templates/users/signup.html:20
 msgid "common.username"
 msgstr "Username"
 
-#: templates/users/login.html:17 templates/users/signup.html:17
+#: templates/users/login.html:17 templates/users/signup.html:23
 msgid "common.password"
 msgstr "Password"
 
@@ -332,11 +332,15 @@ msgstr "Last name"
 msgid "common.email"
 msgstr "E-Mail address"
 
-#: templates/users/signup.html:10 templates/users/signup.html:22
+#: templates/users/signup.html:12
+msgid "common.signup.admin"
+msgstr "Sign Up as Administrator"
+
+#: templates/users/signup.html:14 templates/users/signup.html:28
 msgid "common.signup"
 msgstr "Sign Up"
 
-#: templates/users/signup.html:20
+#: templates/users/signup.html:26
 msgid "common.passwordconfirmation"
 msgstr "Password confirmation"
 
@@ -356,31 +360,31 @@ msgstr "You were authorized"
 msgid "auth.signup.forbidden"
 msgstr "Registration is forbidden on this server"
 
-#: users/views.py:44
+#: users/views.py:46
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:47
+#: users/views.py:49
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:49
+#: users/views.py:51
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:51
+#: users/views.py:53
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:53
+#: users/views.py:55
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:59
+#: users/views.py:61
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:73
+#: users/views.py:75
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
 
