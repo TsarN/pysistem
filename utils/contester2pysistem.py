@@ -71,6 +71,9 @@ for child in root:
             elif fnmatch.fnmatch(name.lower(), pat):
                 tests_pattern.append(zf.read(name).decode(args.encoding))
 
+        if len(tests_pattern) < len(tests_input):
+            tests_pattern = [''] * len(tests_input)
+
         info['test_pairs'] = [{
             'input': tests_input[i], 
             'pattern': tests_pattern[i]
