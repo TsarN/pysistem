@@ -191,7 +191,7 @@ msgstr "Чекеры"
 
 #: templates/problems/base.html:28
 msgid "common.more"
-msgstr "Больше"
+msgstr "Ещё"
 
 #: templates/problems/base.html:34
 msgid "problems.export"
