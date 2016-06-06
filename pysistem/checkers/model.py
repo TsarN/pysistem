@@ -4,7 +4,7 @@ from pysistem.problems.model import Problem
 from pysistem.submissions.const import *
 import tempfile
 import os
-from subprocess import Popen, PIPE, run
+from subprocess import Popen, PIPE, run, STDOUT
 from pysistem.conf import DIR
 
 class Checker(db.Model):
@@ -12,8 +12,7 @@ class Checker(db.Model):
     name = db.Column(db.String(256))
     source = db.Column(db.String(2**20))
     status = db.Column(db.Integer)
-    compile_log_stderr = db.Column(db.String(2**20))
-    compile_log_stdout = db.Column(db.String(2**20))
+    compile_log = db.Column(db.String(2**20))
     lang = db.Column(db.String(8))
 
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
@@ -22,8 +21,7 @@ class Checker(db.Model):
         self.name = name
         self.source = source
         self.status = STATUS_CWAIT
-        self.compile_log_stdout = ''
-        self.compile_log_stderr = ''
+        self.compile_log = ''
         self.lang = lang
 
         if type(problem) is int:
@@ -56,10 +54,9 @@ class Checker(db.Model):
         if self.lang == 'c++':
             cmd = 'g++ -x c++ --std=gnu++11 -o ' + self.get_exe_path() + ' - -lchecker -lsbox'
 
-        p = Popen(cmd, shell=True, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        p = Popen(cmd, shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         stdout, stderr = p.communicate(input=self.source.encode())
-        self.compile_log_stdout = stdout.decode()
-        self.compile_log_stderr = stderr.decode()
+        self.compile_log = stdout.decode()
         success = (p.returncode == 0)
 
         if success:
@@ -69,7 +66,7 @@ class Checker(db.Model):
             self.status = STATUS_COMPILEFAIL
             db.session.commit()
 
-        return success, stdout, stderr
+        return success, stdout
 
     def set_act(self):
         if self.status == STATUS_DONE:
@@ -85,68 +82,109 @@ class Checker(db.Model):
     def check(self, submission):
         submission.result = RESULT_OK
         submission.tests_passed = 0
+        submission.check_log = ''
+        result, stdout, stderr = (-1, b'', b'')
+        cstdout, cstderr = (b'', b'')
         for test in self.problem.test_pairs:
             db.session.commit()
             result, stdout, stderr = submission.run(test.input,
                 submission.problem.time_limit, submission.problem.memory_limit,
                 commit_waiting=False)
             # DETERMINING RESULT
+
+
+            subres = RESULT_OK
+
             if result & 8:
-                submission.result = RESULT_IE
+                subres = RESULT_IE
+            elif result & 16:
+                subres = RESULT_SV
+            elif result & 4:
+                subres = RESULT_ML
+            elif result & 1:
+                subres = RESULT_TL
+            elif result & 2:
+                subres = RESULT_RE
+
+            if subres == RESULT_OK:
+
+                # NOTHING WRONG: CHECK FOR OK/WA/PE
+                input_path = tempfile.gettempdir() + '/pysistem_checker_input_' + \
+                             str(submission.id) + '_' + str(test.id)
+                output_path = tempfile.gettempdir() + '/pysistem_checker_output_' + \
+                             str(submission.id) + '_' + str(test.id)
+                pattern_path = tempfile.gettempdir() + '/pysistem_checker_pattern_' + \
+                             str(submission.id) + '_' + str(test.id)
+
+                with open(input_path, 'w') as input_file, \
+                     open(output_path, 'w') as output_file, \
+                     open(pattern_path, 'w') as pattern_file:
+                     print(test.input, file=input_file)
+                     print(test.pattern, file=pattern_file)
+                     print(stdout.decode(), file=output_file)
+
+                cmd = [self.get_exe_path(), input_path, output_path, pattern_path]
+                p = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+                cstdout, cstderr = p.communicate()
+                r = p.returncode
+
+                os.remove(input_path)
+                os.remove(output_path)
+                os.remove(pattern_path)
+
+                if r == 1:
+                    subres = RESULT_PE
+                elif r == 2:
+                    subres = RESULT_WA
+                elif r == 3:
+                    subres = RESULT_IE
+
+
+            submission.result = subres
+            if submission.result == RESULT_OK:
+                submission.tests_passed += 1
+            else:
                 break
-
-            if result & 16:
-                submission.result = RESULT_SV
-                break
-
-            if result & 4:
-                submission.result = RESULT_ML
-                break
-
-            if result & 1:
-                submission.result = RESULT_TL
-                break
-
-            if result & 2:
-                submission.result = RESULT_RE
-                break
-
-            # NOTHING WRONG: CHECK FOR OK/WA/PE
-            input_path = tempfile.gettempdir() + '/pysistem_checker_input_' + \
-                         str(submission.id) + '_' + str(test.id)
-            output_path = tempfile.gettempdir() + '/pysistem_checker_output_' + \
-                         str(submission.id) + '_' + str(test.id)
-            pattern_path = tempfile.gettempdir() + '/pysistem_checker_pattern_' + \
-                         str(submission.id) + '_' + str(test.id)
-
-            with open(input_path, 'w') as input_file, \
-                 open(output_path, 'w') as output_file, \
-                 open(pattern_path, 'w') as pattern_file:
-                 print(test.input, file=input_file)
-                 print(test.pattern, file=pattern_file)
-                 print(stdout.decode(), file=output_file)
-
-            cmd = [self.get_exe_path(), input_path, output_path, pattern_path]
-            r = run(cmd).returncode
-
-            os.remove(input_path)
-            os.remove(output_path)
-            os.remove(pattern_path)
-
-            if r == 1:
-                submission.result = RESULT_PE
-                break
-
-            if r == 2:
-                submission.result = RESULT_WA
-                break
-
-            if r == 3:
-                submission.result = RESULT_IE
-                break
-
-            submission.tests_passed += 1
-
         submission.done()
+        submission.check_log = '''
+---------- checker ----------
+%s
+---------- input ----------
+%s
+---------- output ----------
+%s
+---------- pattern ----------
+%s
+---------- compiler ----------
+%s
+------------------------------
+Verdict = %s
+Test = %d
+TestID = %d
+ProblemID = %d
+ProblemTimeLimit = %d
+ProblemMemoryLimit = %d
+SubmissionID = %d
+UserID = %d
+Username = %s
+CompilerID = %d
+Compiler = %s
+''' % (
+    cstdout.decode(),
+    test.input,
+    stdout.decode(),
+    test.pattern,
+    submission.compile_log,
+    submission.get_str_result(failed_test=False),
+    submission.tests_passed + 1,
+    test.id,
+    submission.problem.id,
+    submission.problem.time_limit,
+    submission.problem.memory_limit,
+    submission.id,
+    submission.user.id,
+    submission.user.username,
+    submission.compiler.id,
+    submission.compiler.name)
         db.session.commit()
         return submission.result

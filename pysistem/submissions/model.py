@@ -15,6 +15,7 @@ class Submission(db.Model):
     status = db.Column(db.Integer)
     result = db.Column(db.Integer)
     compile_log = db.Column(db.String(2**20))
+    check_log = db.Column(db.String(2**20))
     tests_passed = db.Column(db.Integer)
     submitted = db.Column(db.DateTime, default=datetime.now)
 
@@ -95,11 +96,12 @@ class Submission(db.Model):
     def done(self):
         self.status = STATUS_DONE
 
-    def get_str_result(self, color=False):
+    def get_str_result(self, color=False, failed_test=True):
         if self.status in [STATUS_DONE, STATUS_ACT]:
             res = STR_RESULT[self.result]
-            if self.result not in [RESULT_OK, RESULT_RJ]:
-                res += ' (' + str(self.tests_passed + 1) + ')'
+            if failed_test:
+                if self.result not in [RESULT_OK, RESULT_RJ]:
+                    res += ' (' + str(self.tests_passed + 1) + ')'
             if color:
                 if self.result in [RESULT_OK] :
                     res = '<span class="text-success">' + res + '</span>'
@@ -107,7 +109,7 @@ class Submission(db.Model):
                     res = '<span class="text-danger">' + res + '</span>'
             return res
         else:
-            if self.status == STATUS_CHECKING:
+            if (self.status == STATUS_CHECKING) and failed_test:
                 return STR_STATUS[self.status] + ' (' + str(self.tests_passed + 1) + ')'
             else:
                 return STR_STATUS[self.status]
@@ -125,9 +127,7 @@ class Submission(db.Model):
             return checker.check(self)
 
     def async_check(self):
-        print("async_check()")
         pool.submit(submission_check, self.id)
-        print("end async_check()")
 
 def submission_check(id):
     if Submission.query.get(id).compile()[0]:

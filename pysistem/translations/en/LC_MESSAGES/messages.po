@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-05 21:52+0300\n"
+"POT-Creation-Date: 2016-06-06 09:21+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -348,17 +348,21 @@ msgstr "Status"
 
 #: templates/problems/submissions.html:64
 msgid "problems.submissions.viewcompilelog"
-msgstr "View log"
+msgstr "View compilation log"
 
 #: templates/problems/submissions.html:70
+msgid "problems.submissions.viewchecklog"
+msgstr "View checking log"
+
+#: templates/problems/submissions.html:73
 msgid "problems.submissions.recheck"
 msgstr "Recheck"
 
-#: templates/problems/submissions.html:74
+#: templates/problems/submissions.html:77
 msgid "problems.submissions.reject"
 msgstr "Reject"
 
-#: templates/problems/submissions.html:78
+#: templates/problems/submissions.html:81
 msgid "problems.submissions.delete"
 msgstr "Delete"
 

@@ -66,6 +66,9 @@
         {% endif %}
         {% if g.user.role == 'admin' %}
         <br />
+        <a target="_blank" href="{{ url_for('submissions.checklog', id=submission.id) }}">
+            {{ _('problems.submissions.viewchecklog') }}
+        </a><br />
         <a href="{{ url_for('problems.rechecksub', id=submission.id) }}">
             {{ _('problems.submissions.recheck') }}
         </a><br />
