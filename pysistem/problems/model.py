@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pysistem import db
 from pysistem.contests.model import contest_problem_reltable
 from pysistem.submissions.const import *

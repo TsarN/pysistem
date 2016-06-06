@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pysistem import app, babel, db
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from pysistem.submissions.model import Submission

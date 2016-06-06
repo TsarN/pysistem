@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pysistem import db
 from pysistem.problems.model import Problem
 

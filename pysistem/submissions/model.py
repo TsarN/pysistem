@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pysistem import db, app, pool
 from pysistem.submissions.const import *
 from pysistem.users.model import User
