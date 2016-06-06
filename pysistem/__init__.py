@@ -29,15 +29,17 @@ def redirect_url(default='index'):
 
 import pysistem.views
 
-db.create_all()
-db.session.commit()
+try:
+    db.create_all()
+    db.session.commit()
 
-for d in conf.CREATE_DIRS:
-    if not os.path.exists(conf.DIR + d):
-        os.makedirs(conf.DIR + d)
+    for d in conf.CREATE_DIRS:
+        if not os.path.exists(conf.DIR + d):
+            os.makedirs(conf.DIR + d)
 
-from pysistem.users.model import User
-if User.query.count() == 0:
-    print('---- SIGN UP CONFIRMATION CODE ----')
-    print(app.config['CONFIRM_CODE'])
-    print('---- SIGN UP CONFIRMATION CODE ----')
+    from pysistem.users.model import User
+    if User.query.count() == 0:
+        print('---- SIGN UP CONFIRMATION CODE ----')
+        print(app.config['CONFIRM_CODE'])
+        print('---- SIGN UP CONFIRMATION CODE ----')
+except: pass
