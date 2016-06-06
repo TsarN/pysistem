@@ -3,8 +3,8 @@ from pysistem.problems.model import Problem
 
 class TestPair(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    input = db.Column(db.String(2**20))
-    pattern = db.Column(db.String(2**20))
+    input = db.Column(db.Text)
+    pattern = db.Column(db.Text)
 
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
 

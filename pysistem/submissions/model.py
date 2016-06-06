@@ -11,11 +11,11 @@ from datetime import datetime
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    source = db.Column(db.String(2**20))
+    source = db.Column(db.Text)
     status = db.Column(db.Integer)
     result = db.Column(db.Integer)
-    compile_log = db.Column(db.String(2**20))
-    check_log = db.Column(db.String(2**20))
+    compile_log = db.Column(db.Text)
+    check_log = db.Column(db.Text)
     tests_passed = db.Column(db.Integer)
     submitted = db.Column(db.DateTime, default=datetime.now)
 
