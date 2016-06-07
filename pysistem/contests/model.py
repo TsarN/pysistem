@@ -18,8 +18,7 @@ class Contest(db.Model):
     unfreeze_after_end = db.Column(db.Boolean)
 
     problems = db.relationship('Problem',
-        secondary=contest_problem_reltable,
-        cascade = "all,delete-orphan", 
+        secondary=contest_problem_reltable, 
         backref=db.backref('contests'))
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
@@ -37,16 +36,18 @@ class Contest(db.Model):
         freeze = self.freeze
         if (self.unfreeze_after_end and (datetime.now() > self.end)) \
             or (admin and (g.user.role == 'admin')):
-            freeze = None
+            freeze = self.end
         return freeze
 
     def is_frozen(self):
-        freeze = self.get_freeze_time()
-        return freeze and (freeze < datetime.now())
+        return (g.user.role != 'admin') and self.is_admin_frozen()
 
     def is_admin_frozen(self):
-        freeze = self.get_freeze_time(admin=False)
-        return freeze and (freeze < datetime.now())
+        if self.unfreeze_after_end and (datetime.now() > self.end):
+            return False
+        if datetime.now() < self.freeze:
+            return False
+        return True
 
     def rate_user(self, user):
         solved, penalty = 0, 0

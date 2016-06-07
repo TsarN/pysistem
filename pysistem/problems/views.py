@@ -2,6 +2,10 @@
 from pysistem import app, babel, db, redirect_url
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from pysistem.problems.model import Problem
+from pysistem.problems.decorators import yield_problem
+from pysistem.test_pairs.decorators import yield_test_pair
+from pysistem.checkers.decorators import yield_checker
+from pysistem.submissions.decorators import yield_submission
 from pysistem.test_pairs.model import TestPair
 from pysistem.checkers.model import Checker
 from pysistem.submissions.model import Submission
@@ -15,12 +19,9 @@ from werkzeug.utils import secure_filename
 mod = Blueprint('problems', __name__, url_prefix='/problem')
 
 @mod.route('/<int:id>')
-def view(id):
-    error = None
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
-    return render_template('problems/view.html', problem=problem, error=error)
+@yield_problem()
+def view(id, problem):
+    return render_template('problems/view.html', problem=problem)
 
 @mod.route('/new')
 @requires_admin
@@ -66,10 +67,8 @@ def edit(id=-1):
 
 @mod.route('/<int:id>/export')
 @requires_admin
-def export(id):
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
+@yield_problem()
+def export(id, problem):
     content = problem.export_gzip()
     response = Response(content, mimetype='application/gzip')
     response.headers['Content-Disposition'] = 'attachment; filename=%s.pysistem.gz' % problem.transliterate_name()
@@ -98,45 +97,32 @@ def import_():
 
 @mod.route('/<int:id>/delete')
 @requires_admin
-def delete(id):
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
+@yield_problem()
+def delete(id, problem):
     db.session.delete(problem)
     db.session.commit()
     return redirect(url_for('index'))
 
 @mod.route('/<int:id>/tests', methods=['GET', 'POST'])
 @requires_admin
-def tests(id):
-    error = None
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
-
+@yield_problem()
+def tests(id, problem):
     tests = TestPair.query.filter(TestPair.problem_id == problem.id).all()
-    return render_template('problems/tests.html', problem=problem, tests=tests, error=error)
+    return render_template('problems/tests.html', problem=problem, tests=tests)
 
 @mod.route('/deltest/<int:id>', methods=['GET', 'POST'])
 @requires_admin
-def deltest(id):
-    test = TestPair.query.get(id)
-    if test is None:
-        flash('::danger ' + gettext('problems.test.notfound'))
-    else:
-        db.session.delete(test)
-        db.session.commit()
-        flash(gettext('problems.deltest.success'))
-
+@yield_test_pair()
+def deltest(id, test):
+    db.session.delete(test)
+    db.session.commit()
+    flash(gettext('problems.deltest.success'))
     return redirect(redirect_url())
 
 @mod.route('/addtest/<int:id>', methods=['POST'])
 @requires_admin
-def addtest(id):
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
-
+@yield_problem()
+def addtest(id, problem):
     input_str = ''
     pattern_str = ''
 
@@ -163,21 +149,15 @@ def addtest(id):
 
 @mod.route('/<int:id>/checkers')
 @requires_admin
-def checkers(id):
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
-
+@yield_problem()
+def checkers(id, problem):
     checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
     return render_template('problems/checkers.html', problem=problem, checkers=checkers)
 
 @mod.route('/<int:id>/addchecker', methods=['POST'])
 @requires_admin
-def addchecker(id):
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
-
+@yield_problem()
+def addchecker(id, problem):
     source = ''
 
     if 'source_file' not in request.files:
@@ -203,36 +183,26 @@ def addchecker(id):
 
 @mod.route('/delchecker/<int:id>', methods=['GET', 'POST'])
 @requires_admin
-def delchecker(id):
-    checker = Checker.query.get(id)
-    if checker is None:
-        flash('::danger ' + gettext('problems.checker.notfound'))
-    else:
-        db.session.delete(checker)
-        db.session.commit()
-        flash(gettext('problems.delchecker.success'))
-
+@yield_checker()
+def delchecker(id, checker):
+    db.session.delete(checker)
+    db.session.commit()
+    flash(gettext('problems.delchecker.success'))
     return redirect(redirect_url())
 
 @mod.route('/actchecker/<int:id>', methods=['GET', 'POST'])
 @requires_admin
-def actchecker(id):
-    checker = Checker.query.get(id)
-    if checker is None:
-        flash('::danger ' + gettext('problems.checker.notfound'))
-    else:
-        checker.set_act()
-        flash(gettext('problems.actchecker.success'))
-        
+@yield_checker()
+def actchecker(id, checker):
+    checker.set_act()
+    flash(gettext('problems.actchecker.success'))
     return redirect(redirect_url())
 
 @mod.route('/<int:id>/submissions', methods=['GET', 'POST'])
+@mod.route('/<int:id>/submissions/user/<username>')
 @requires_login
-def submissions(id, username=None):
-    problem = Problem.query.get(id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
-
+@yield_problem()
+def submissions(id, problem, username=None):
     user = g.user
     if username is not None:
         user = User.query.filter( \
@@ -274,17 +244,10 @@ def submissions(id, username=None):
     return render_template('problems/submissions.html', \
         problem=problem, submissions=submissions, compilers=compilers)
 
-@mod.route('/<int:id>/submissions/user/<username>', methods=['GET', 'POST'])
-@requires_admin
-def submissions_user(id, username):
-    return submissions(id, username)
-
 @mod.route('/submission/<int:id>/recheck')
 @requires_admin
-def rechecksub(id):
-    submission = Submission.query.get(id)
-    if submission is None:
-        return render_template('errors/404.html'), 404
+@yield_submission()
+def rechecksub(id, submission):
     submission.status = STATUS_CWAIT
     db.session.commit()
     submission.async_check()
@@ -292,10 +255,8 @@ def rechecksub(id):
 
 @mod.route('/submission/<int:id>/reject')
 @requires_admin
-def rejectsub(id):
-    submission = Submission.query.get(id)
-    if submission is None:
-        return render_template('errors/404.html'), 404
+@yield_submission()
+def rejectsub(id, submission):
     submission.result = RESULT_RJ
     submission.status = STATUS_DONE
     db.session.commit()
@@ -303,10 +264,8 @@ def rejectsub(id):
 
 @mod.route('/submission/<int:id>/delete')
 @requires_admin
-def delsub(id):
-    submission = Submission.query.get(id)
-    if submission is None:
-        return render_template('errors/404.html'), 404
+@yield_submission()
+def delsub(id, submission):
     db.session.delete(submission)
     db.session.commit()
     return redirect(redirect_url())

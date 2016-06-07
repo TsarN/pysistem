@@ -6,41 +6,33 @@ from pysistem.contests.model import Contest
 from pysistem.users.model import User
 from pysistem.problems.model import Problem
 from pysistem.users.decorators import requires_login, requires_admin
+from pysistem.contests.decorators import yield_contest
+from pysistem.problems.decorators import yield_problem
 from datetime import datetime
 
 mod = Blueprint('contests', __name__, url_prefix='/contest')
 
 @mod.route('/<int:id>/linkwith/<int:problem_id>')
 @requires_admin
-def linkwith(id, problem_id):
-    contest = Contest.query.get(id)
-    if contest is None:
-        return render_template('errors/404.html'), 404
-    problem = Problem.query.get(problem_id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
+@yield_contest()
+@yield_problem(field='problem_id')
+def linkwith(id, problem_id, contest, problem):
     contest.problems.append(problem)
     db.session.commit()
     return redirect(redirect_url())
 
 @mod.route('/<int:id>/unlinkwith/<int:problem_id>')
 @requires_admin
-def unlinkwith(id, problem_id):
-    contest = Contest.query.get(id)
-    if contest is None:
-        return render_template('errors/404.html'), 404
-    problem = Problem.query.get(problem_id)
-    if problem is None:
-        return render_template('errors/404.html'), 404
+@yield_contest()
+@yield_problem(field='problem_id')
+def unlinkwith(id, problem_id, contest, problem):
     contest.problems.remove(problem)
     db.session.commit()
     return redirect(redirect_url())
 
 @mod.route('/<int:id>')
-def problems(id):
-    contest = Contest.query.get(id)
-    if contest is None:
-        return render_template('errors/404.html'), 404
+@yield_contest()
+def problems(id, contest):
     addable_problems = Problem.query.all()
     if (g.user.role == 'admin') and (len(contest.problems) > 0):
         addable_problems = \
@@ -64,6 +56,7 @@ def edit(id=-1):
         start = datetime.strptime(request.form.get('start', g.now_formatted), "%Y-%m-%d %H:%M")
         end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
         freeze = datetime.strptime(request.form.get('freeze', g.now_formatted), "%Y-%m-%d %H:%M")
+        unfreeze_after_end = bool(request.form.get('unfreeze_after_end', False))
 
         if (start > freeze) or (freeze > end) or (start > end) or not \
             (start and end and freeze):
@@ -74,6 +67,7 @@ def edit(id=-1):
                 contest.start = start
                 contest.end = end
                 contest.freeze = freeze
+                contest.unfreeze_after_end = unfreeze_after_end
                 if is_new:
                     db.session.add(contest)
                 db.session.commit()
@@ -92,10 +86,8 @@ def edit(id=-1):
 
 @mod.route('<int:id>/delete')
 @requires_admin
-def delete(id):
-    contest = Contest.query.get(id)
-    if contest is None:
-        return render_template('errors/404.html'), 404
+@yield_contest()
+def delete(id, contest):
     db.session.delete(contest)
     db.session.commit()
     return redirect(url_for('index'))
@@ -109,10 +101,8 @@ def format_time(mins):
            ("0" * (mins < 10) + str(mins))
 
 @mod.route('/<int:id>/scoreboard')
-def scoreboard(id):
-    contest = Contest.query.get(id)
-    if contest is None:
-        return render_template('errors/404.html'), 404
+@yield_contest()
+def scoreboard(id, contest):
     problems = contest.problems
     users = []
     for user in User.query.all():

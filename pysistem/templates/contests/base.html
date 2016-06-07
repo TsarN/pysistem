@@ -4,10 +4,23 @@
 {% block contest_nav %}
 <script type="text/javascript">
     var updateTimeInterval;
-    var timestamp = Math.floor({{ contest.end.timestamp() * 1000 }});
+    var cfinished = false;
+    var timestamp = Math.floor(
+        {% if g.now < contest.start %}
+            {{ contest.start.timestamp() * 1000 }}
+        {% else %}
+            {{ contest.end.timestamp() * 1000 }}
+        {% endif %}
+    );
     function timeFormat(ms) {
-        if (ms < 0)
-            return "<i>{{ _('contests.finished') }}</i>";
+        if (cfinished) {
+            clearInterval(updateTimeInterval);
+            return $("#contest_remaining").html()
+        }
+        if (ms < 0) {
+            window.location.reload()
+            return "00:00:00"
+        }
         var seconds = Math.floor(ms / 1000);
         var minutes = Math.floor(seconds / 60);
         var hours = Math.floor(minutes / 60);
@@ -24,7 +37,7 @@
         $("#contest_remaining").html(timeFormat(
             timestamp - Date.now()));
         if (timestamp < Date.now()) {
-            clearInterval(updateTimeInterval);
+            cfinished = true;
         }
     }
 
@@ -49,6 +62,32 @@
     </a>
     {{ contest.name }}
 </h2>
+{% if g.user.role == 'admin' %}
+<div id="modal-confirm-delete" class="modal fade" tabindex="-1" role="dialog">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ _('contests.delete.confirm') }}</h4>
+    </div>
+    <div class="modal-footer">
+        <div>
+            <a href="#" onclick="$('#modal-confirm-delete').modal('hide')"
+            class="btn btn-default">
+                {{ _('common.cancel') }}
+            </a>
+            <a href="{{ url_for('contests.delete', id=contest.id) }}"
+            class="btn btn-danger">
+                {{ _('common.delete') }}
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% endif %}
 <div class="row">
 <div class="col-sm-3" id="contest-sidebar">
     <ul class="nav nav-pills nav-stacked">
@@ -63,19 +102,36 @@
             <a href="{{ url_for('contests.edit', id=contest.id) }}">{{ _('contests.edit') }}</a>
         </li>
         <li role="presentation">
-            <a href="{{ url_for('contests.delete', id=contest.id) }}">{{ _('common.delete') }}</a>
+            <a href="{{ url_for('contests.delete', id=contest.id) }}" id="delbtn">{{ _('common.delete') }}</a>
         </li>
+        <script type="text/javascript">
+            $("#delbtn").click(function() {
+                $('#modal-confirm-delete').modal('show');
+                return false;
+            })
+        </script>
         {% endif %}
     </ul>
     <hr />
     {{ _('contests.start') }}: {{ contest.start.strftime("%c") }} <br />
-    {{ _('contests.end') }}: {{ contest.end.strftime("%c") }}
-    {{ _('contests.remaining') }}: 
+    {{ _('contests.end') }}: {{ contest.end.strftime("%c") }} <br />
+    {% if g.now >= contest.start %}
+        {{ _('contests.remaining') }}:
+    {% else %}
+        {{ _('contests.beforestart') }}:
+    {% endif %}
     <span id="contest_remaining">
-        {% if (contest.end - g.now).total_seconds() > 0 %}
-        {{ (contest.end - g.now).total_seconds()|timeonly }}
+        {% if g.now >= contest.start %}
+            {% if (contest.end - g.now).total_seconds() > 0 %}
+            {{ (contest.end - g.now).total_seconds()|timeonly }}
+            {% else %}
+            <i>{{ _('contests.finished') }}</i>
+            <script type="text/javascript">
+                cfinished = true;
+            </script>
+            {% endif %}
         {% else %}
-        <i>{{ _('contests.finished') }}</i>
+            {{ (contest.start - g.now).total_seconds()|timeonly }}
         {% endif %}
     </span>
     <br />

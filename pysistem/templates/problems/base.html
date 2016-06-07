@@ -5,6 +5,32 @@
 <h2 class="text-center page-header">
     {{ problem.name }}
 </h2>
+{% if g.user.role == 'admin' %}
+<div id="modal-confirm-delete" class="modal fade" tabindex="-1" role="dialog">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ _('problems.delete.confirm') }}</h4>
+    </div>
+    <div class="modal-footer">
+        <div>
+            <a href="#" onclick="$('#modal-confirm-delete').modal('hide')"
+            class="btn btn-default">
+                {{ _('common.cancel') }}
+            </a>
+            <a href="{{ url_for('problems.delete', id=problem.id) }}"
+            class="btn btn-danger">
+                {{ _('common.delete') }}
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% endif %}
 <ul class="nav nav-tabs">
     <li role="presentation" class="{% block problem_navbar_link_view %}{% endblock %}">
         <a href="{{ url_for('problems.view', id=problem.id) }}">{{ _('common.statement') }}</a>
@@ -35,9 +61,15 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('problems.delete', id=problem.id) }}">
+                <a href="{{ url_for('problems.delete', id=problem.id) }}" id="delbtn">
                     {{ _('common.delete') }}
                 </a>
+                <script type="text/javascript">
+                    $("#delbtn").click(function() {
+                        $('#modal-confirm-delete').modal('show');
+                        return false;
+                    })
+                </script>
             </li>
         </ul>
     </li>
