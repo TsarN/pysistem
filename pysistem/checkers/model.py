@@ -87,6 +87,7 @@ class Checker(db.Model):
         result, stdout, stderr = (-1, b'', b'')
         cstdout, cstderr = (b'', b'')
         for test in self.problem.test_pairs:
+            cstdout, cstderr = (b'', b'')
             db.session.commit()
             result, stdout, stderr = submission.run(test.input,
                 submission.problem.time_limit, submission.problem.memory_limit,
