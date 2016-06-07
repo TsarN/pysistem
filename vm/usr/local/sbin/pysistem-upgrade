@@ -1,0 +1,11 @@
+#!/bin/bash
+if [ ! $UID -eq 0 ]; then
+	echo "Run as root"
+	exit 1
+fi
+sudo -u pysistem -- "/usr/local/lib/pysistem/upgrade.sh" $@
+echo "Updating services..."
+(cd "/home/pysistem/env/pysistem/temporary/vm" && tar -cf - *) | (cd /; tar -xf --no-same-owner -)
+echo "Cleaning up..."
+rm -rf "/home/pysistem/env/pysistem/temporary/vm"
+echo "Done"

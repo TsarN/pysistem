@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ ! $UID -eq 0 ]; then
+	echo "Run as root"
+	exit 1
+fi
+sudo -u pysistem -- "/usr/local/lib/pysistem/start.sh" $@

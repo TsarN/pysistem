@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ ! $UID -eq 0 ]; then
+	echo "Run as root"
+	exit 1
+fi
+echo "            !!! WARNING !!!            "
+echo " THIS WILL ERASE ALL THE PYSISTEM DATA "
+echo "PLEASE, STOP PYSISTEM BEFORE DOING THIS"
+echo " ENTER MYSQL ROOT PASSWORD TO PROCEED  "
+sudo -u pysistem -- "/usr/local/lib/pysistem/fixdb.sh" $@
