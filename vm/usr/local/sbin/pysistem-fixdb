@@ -7,4 +7,5 @@ echo "            !!! WARNING !!!            "
 echo " THIS WILL ERASE ALL THE PYSISTEM DATA "
 echo "PLEASE, STOP PYSISTEM BEFORE DOING THIS"
 echo " ENTER MYSQL ROOT PASSWORD TO PROCEED  "
+HOME="/home/pysistem"
 sudo -u pysistem -- "/usr/local/lib/pysistem/fixdb.sh" $@
