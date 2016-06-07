@@ -18,7 +18,7 @@ def source(id, submission):
 @yield_submission()
 def compilelog(id, submission):
     if (g.user.role != 'admin') and \
-        ((sub.user_id != g.user.id) or not submission.is_compile_failed()):
+        ((submission.user_id != g.user.id) or not submission.is_compile_failed()):
         return render_template('errors/403.html'), 403
     return Response(submission.compile_log, mimetype='text/plain')
 
