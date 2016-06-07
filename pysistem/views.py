@@ -6,6 +6,7 @@ import re
 from pysistem.users.model import User
 from pysistem.contests.model import Contest
 from pysistem.submissions.model import Submission
+from pysistem.problems.model import Problem
 
 from pysistem.conf import LANGUAGES
 from flask_babel import gettext
@@ -55,6 +56,17 @@ def timeonly_filter(seconds):
     minutes = int(seconds % 3600 // 60)
     seconds = int(seconds % 60)
     return pad_zero(hours) + ':' + pad_zero(minutes) + ':' + pad_zero(seconds)
+
+@app.template_filter('shortstr')
+def shortstr_filter(s, length=5):
+    if len(s) > length:
+        return s[:length] + '...'
+    else:
+        return s
+
+@app.template_filter('dtp')
+def dtp_filter(date):
+    return date.strftime("%Y-%m-%d %H:%M")
 
 @app.template_filter('naturaltime')
 def naturaltime_filter(time=False):

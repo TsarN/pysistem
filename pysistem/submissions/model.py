@@ -97,23 +97,31 @@ class Submission(db.Model):
     def done(self):
         self.status = STATUS_DONE
 
-    def get_str_result(self, color=False, failed_test=True):
+    def get_str_result(self, color=False, failed_test=True, only_color=False):
         if self.status in [STATUS_DONE, STATUS_ACT]:
             res = STR_RESULT[self.result]
             if failed_test:
                 if self.result not in [RESULT_OK, RESULT_RJ]:
                     res += ' (' + str(self.tests_passed + 1) + ')'
-            if color:
+            if color or only_color:
                 if self.result in [RESULT_OK] :
+                    if only_color:
+                        return 'success'
                     res = '<span class="text-success">' + res + '</span>'
                 else:
+                    if only_color:
+                        return 'danger'
                     res = '<span class="text-danger">' + res + '</span>'
             return res
         else:
+            res = STR_STATUS[self.status]
             if (self.status == STATUS_CHECKING) and failed_test:
-                return STR_STATUS[self.status] + ' (' + str(self.tests_passed + 1) + ')'
-            else:
-                return STR_STATUS[self.status]
+                res += ' (' + str(self.tests_passed + 1) + ')'
+            if color or only_color:
+                if only_color:
+                    return 'warning'
+                res = '<span class="text-warning">' + res + '</span>'
+            return res
 
     def is_compile_failed(self):
         return self.status == STATUS_COMPILEFAIL

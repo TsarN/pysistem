@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pysistem import db
 from datetime import datetime
+from flask import g
 
 contest_problem_reltable = db.Table('contest_problem_reltable',
     db.Column('contest_id', db.Integer, db.ForeignKey('contest.id'), nullable=False),
@@ -18,7 +19,7 @@ class Contest(db.Model):
 
     problems = db.relationship('Problem',
         secondary=contest_problem_reltable,
-        cascade = "all,delete", 
+        cascade = "all,delete-orphan", 
         backref=db.backref('contests'))
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
@@ -32,12 +33,28 @@ class Contest(db.Model):
     def __repr__(self):
         return '<Contest %r>' % self.name
 
+    def get_freeze_time(self, admin=True):
+        freeze = self.freeze
+        if (self.unfreeze_after_end and (datetime.now() > self.end)) \
+            or (admin and (g.user.role == 'admin')):
+            freeze = None
+        return freeze
+
+    def is_frozen(self):
+        freeze = self.get_freeze_time()
+        return freeze and (freeze < datetime.now())
+
+    def is_admin_frozen(self):
+        freeze = self.get_freeze_time(admin=False)
+        return freeze and (freeze < datetime.now())
+
     def rate_user(self, user):
         solved, penalty = 0, 0
+        freeze = self.get_freeze_time()
         for problem in self.problems:
-            s = problem.user_succeed(user)
+            s = problem.user_succeed(user, freeze=freeze)
             if s[0]:
                 solved += 1
-                penalty += problem.get_user_failed_attempts(user) * 20
+                penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
                 penalty += max(0, (s[1] - self.start).total_seconds() // 60)
         return solved, int(penalty)

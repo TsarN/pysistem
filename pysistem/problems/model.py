@@ -31,7 +31,7 @@ class Problem(db.Model):
     def __repr__(self):
         return '<Problem %r>' % self.name
 
-    def get_user_failed_attempts(self, user):
+    def get_user_failed_attempts(self, user, freeze=None):
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
@@ -39,6 +39,8 @@ class Problem(db.Model):
         )).all()
         ans = 0
         for sub in subs:
+            if freeze and sub.submitted > freeze:
+                break
             if sub.status in [STATUS_DONE, STATUS_ACT]:
                 if sub.result in [RESULT_OK]:
                     break
@@ -47,21 +49,46 @@ class Problem(db.Model):
                         ans += 1
         return ans
 
-    def user_succeed(self, user):
+    def user_succeed(self, user, freeze=None):
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
             user.id == Submission.user_id
         )).all()
 
+        last_sub = None
+
         for sub in subs:
+            if freeze and sub.submitted > freeze:
+                break
+            last_sub = sub.submitted
             if sub.status in [STATUS_DONE, STATUS_ACT]:
                 if sub.result in [RESULT_OK]:
                     return True, sub.submitted
-        last_sub = None
-        if len(subs) > 0:
-            last_sub = subs[-1].submitted
         return False, last_sub
+
+    def user_status(self, user, color=True, failed_test=False, only_color=False):
+        from pysistem.submissions.model import Submission
+        subs = Submission.query.filter(db.and_(
+            self.id == Submission.problem_id,
+            user.id == Submission.user_id
+        )).all()
+
+        attempted = None
+
+        for sub in subs:
+            if sub.status in [STATUS_DONE, STATUS_ACT]:
+                if sub.result in [RESULT_OK]:
+                    return sub.get_str_result(color=color, failed_test=failed_test, only_color=only_color)
+                elif sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
+                    attempted = sub
+            elif sub.status in [STATUS_CHECKING]:
+                attempted = sub
+        if attempted:
+            return attempted.get_str_result(color=color, failed_test=failed_test, only_color=only_color)
+        else:
+            return ""
+        
 
     def export_gzip(self):
         to_write = pickle.dumps({

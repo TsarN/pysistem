@@ -1,0 +1,89 @@
+{% extends "contests/base.html" %}
+{% block contest_nav_link_problems %}active{% endblock %}
+{% block contest_content %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#btn-addproblem").click(function() {
+            $("#modal-addproblem").modal()
+            
+        })
+        $("#modal-addproblem-problemlist").DataTable({
+            "paging": false,
+            "info": false,
+            "language": {
+                "search": "{{ _('datatables.search') }} ",
+                "emptyTable": "{{ _('datatables.emptytable') }}",
+                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+            }
+        })
+    })
+</script>
+{% if g.user.role == 'admin' %}
+<a href="#" style="float: right; margin-bottom: 16px" class="btn btn-primary" id="btn-addproblem">
+    {{ _('contests.addproblem') }}
+</a>
+
+<div id="modal-addproblem" class="modal fade" tabindex="-1" role="dialog">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ _('contests.addproblem.title') }}</h4>
+    </div>
+    <div class="modal-body" id="modal-addproblem-body">
+        <table class="table table-stripped" id="modal-addproblem-problemlist">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>{{ _('common.name') }}</th>
+                <th>{{ _('common.description') }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        {% for problem in addable_problems %}
+        <tr>
+            <td>{{ problem.id }}</td>
+            <td><a href="{{ url_for('problems.view', id=problem.id) }}" target="_blank">
+                {{ problem.name }}
+            </a></td>
+            <td>{{ problem.description or '' }}</td>
+            <td>
+                <a href="{{ url_for('contests.linkwith', id=contest.id, problem_id=problem.id) }}"
+                id="modal-addproblem-problem{{ problem.id }}" class="btn btn-primary" style="float: right">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+</div>
+</div>
+{% endif %}
+
+<table class="table table-striped">
+<tbody>
+{% for problem in contest.problems %}
+<tr class="{{ problem.user_status(g.user, only_color=True) }}">
+    <td>
+        {% if g.user.role == 'admin' %}
+        <a href="{{ url_for('contests.unlinkwith', id=contest.id, problem_id=problem.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>
+        {% endif %}
+        <a href="{{ url_for('problems.view', id=problem.id) }}">
+            {{ loop.index }}. {{ problem.name }}
+        </a>
+    </td>
+    <td>
+        {% if g.user.id %}
+        {{ problem.user_status(g.user, color=False)|safe }}
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

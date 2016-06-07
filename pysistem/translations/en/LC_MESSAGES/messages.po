@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-06 09:21+0300\n"
+"POT-Creation-Date: 2016-06-07 18:50+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,123 +18,139 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:78
+#: views.py:91
 msgid "naturaltime.justnow"
 msgstr "just now"
 
-#: views.py:80
+#: views.py:93
 msgid "naturaltime.secondsago"
 msgstr "seconds ago"
 
-#: views.py:82
+#: views.py:95
 msgid "naturaltime.minuteago"
 msgstr "a minute ago"
 
-#: views.py:84
+#: views.py:97
 msgid "naturaltime.minutesago"
 msgstr "minutes ago"
 
-#: views.py:86
+#: views.py:99
 msgid "naturaltime.hourago"
 msgstr "an hour ago"
 
-#: views.py:88
+#: views.py:101
 msgid "naturaltime.hoursago"
 msgstr "hours ago"
 
-#: views.py:90
+#: views.py:103
 msgid "naturaltime.yesterday"
 msgstr "yesterday"
 
-#: views.py:92
+#: views.py:105
 msgid "naturaltime.daysago"
 msgstr "days ago"
 
-#: views.py:94
+#: views.py:107
 msgid "naturaltime.weekago"
 msgstr "a week ago"
 
-#: views.py:96
+#: views.py:109
 msgid "naturaltime.weeksago"
 msgstr "weeks ago"
 
-#: views.py:98
+#: views.py:111
 msgid "naturaltime.monthago"
 msgstr "a month ago"
 
-#: views.py:100
+#: views.py:113
 msgid "naturaltime.monthsago"
 msgstr "months ago"
 
-#: views.py:101
+#: views.py:114
 msgid "naturaltime.yearsago"
 msgstr "years ago"
 
-#: locale/views.py:13
+#: contests/views.py:70
+msgid "contests.edit.invaliddates"
+msgstr "Dates are invalid: Start &le; Freeze &le; End"
+
+#: contests/views.py:81
+msgid "contests.new.success"
+msgstr "Contest created"
+
+#: contests/views.py:84
+msgid "contests.edit.success"
+msgstr "Contest updated"
+
+#: contests/views.py:87
+msgid "contests.edit.emptyname"
+msgstr "Contest name is empty"
+
+#: locale/views.py:14
 msgid "locale.set.success"
 msgstr "Language changed to %(lang)s"
 
-#: locale/views.py:15
+#: locale/views.py:16
 msgid "locale.set.langnotfound"
 msgstr "No such language: %(lang)s"
 
-#: problems/views.py:54
+#: problems/views.py:55
 msgid "problems.new.success"
 msgstr "New problem created"
 
-#: problems/views.py:57
+#: problems/views.py:58
 msgid "problems.edit.success"
 msgstr "Changes saved"
 
-#: problems/views.py:60
+#: problems/views.py:61
 msgid "problems.edit.emptyname"
 msgstr "Problem name is empty"
 
-#: problems/views.py:82 problems/views.py:87
+#: problems/views.py:83 problems/views.py:88
 msgid "problems.import.filemissing"
 msgstr "No problem file"
 
-#: problems/views.py:95
+#: problems/views.py:96
 msgid "problems.import.error"
 msgstr "Importing failed"
 
-#: problems/views.py:124
+#: problems/views.py:125
 msgid "problems.test.notfound"
 msgstr "No such test"
 
-#: problems/views.py:128
+#: problems/views.py:129
 msgid "problems.deltest.success"
 msgstr "Test was deleted"
 
-#: problems/views.py:143 problems/views.py:148
+#: problems/views.py:144 problems/views.py:149
 msgid "problems.addtest.inputmissing"
 msgstr "No input file"
 
-#: problems/views.py:183 problems/views.py:188
+#: problems/views.py:184 problems/views.py:189
 msgid "problems.addchecker.sourcemissing"
 msgstr "No souce file"
 
-#: problems/views.py:208 problems/views.py:221
+#: problems/views.py:209 problems/views.py:222
 msgid "problems.checker.notfound"
 msgstr "No such checker"
 
-#: problems/views.py:212
+#: problems/views.py:213
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:224
+#: problems/views.py:225
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:246 problems/views.py:251
+#: problems/views.py:247 problems/views.py:252
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:260
+#: problems/views.py:261
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:266
+#: problems/views.py:267
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
@@ -181,29 +197,104 @@ msgstr "Authorization required to use this server"
 msgid "common.helloworld"
 msgstr "Hello, world!"
 
-#: templates/contests/main.html:8
-msgid "contests.info"
-msgstr "Information"
-
-#: templates/contests/main.html:11
-msgid "contests.start"
-msgstr "Starts at"
-
-#: templates/contests/main.html:12
-msgid "contests.end"
-msgstr "Ends at"
-
-#: templates/contests/main.html:13
-msgid "contests.remaining"
-msgstr "Remaining time"
-
-#: templates/contests/main.html:18 templates/contests/main.html:26
+#: templates/contests/base.html:10 templates/contests/base.html:78
 msgid "contests.finished"
 msgstr "Finished"
 
-#: templates/contests/main.html:61 templates/contests/main.html:64
+#: templates/contests/base.html:56
+msgid "contests.problems"
+msgstr "Problems"
+
+#: templates/contests/base.html:59
 msgid "contests.scoreboard"
 msgstr "Scoreboard"
+
+#: templates/contests/base.html:62
+msgid "contests.edit"
+msgstr "Edit contest"
+
+#: templates/contests/base.html:65 templates/contests/problems.html:74
+#: templates/problems/base.html:39 templates/problems/checkers.html:38
+#: templates/problems/tests.html:34
+msgid "common.delete"
+msgstr "Delete"
+
+#: templates/contests/base.html:71 templates/contests/edit.html:49
+#: templates/contests/edit.html:52
+msgid "contests.start"
+msgstr "Starts at"
+
+#: templates/contests/base.html:72 templates/contests/edit.html:56
+#: templates/contests/edit.html:59
+msgid "contests.end"
+msgstr "Ends at"
+
+#: templates/contests/base.html:73
+msgid "contests.remaining"
+msgstr "Remaining time"
+
+#: templates/contests/base.html:83
+msgid "contest.frozen"
+msgstr "Scoreboard is frozen"
+
+#: templates/contests/base.html:85
+msgid "contest.adminfrozen"
+msgstr "Scoreboard is frozen for unprivileged users"
+
+#: templates/contests/edit.html:7
+msgid "contests.new"
+msgstr "New contest"
+
+#: templates/contests/edit.html:32 templates/problems/edit.html:31
+#: templates/users/login.html:6 templates/users/profile.html:7
+#: templates/users/signup.html:6
+msgid "common.error"
+msgstr "Error"
+
+#: templates/contests/edit.html:42 templates/contests/edit.html:45
+#: templates/contests/problems.html:40 templates/problems/checkers.html:8
+#: templates/problems/checkers.html:19 templates/problems/edit.html:67
+#: templates/problems/edit.html:70
+msgid "common.name"
+msgstr "Name"
+
+#: templates/contests/edit.html:63 templates/contests/edit.html:66
+msgid "contests.freeze"
+msgstr "Freeze"
+
+#: templates/contests/edit.html:72 templates/problems/edit.html:107
+#: templates/users/profile.html:36
+msgid "common.update"
+msgstr "Update"
+
+#: templates/contests/edit.html:74 templates/problems/edit.html:109
+msgid "common.create"
+msgstr "Create"
+
+#: templates/contests/problems.html:14
+msgid "datatables.search"
+msgstr "Search"
+
+#: templates/contests/problems.html:15
+msgid "datatables.emptytable"
+msgstr "No records here"
+
+#: templates/contests/problems.html:16
+msgid "datatables.zerorecords"
+msgstr "No records found"
+
+#: templates/contests/problems.html:23
+msgid "contests.addproblem"
+msgstr "Add problem"
+
+#: templates/contests/problems.html:33
+msgid "contests.addproblem.title"
+msgstr "Add problem to contest"
+
+#: templates/contests/problems.html:41 templates/problems/edit.html:88
+#: templates/problems/edit.html:90
+msgid "common.description"
+msgstr "Description"
 
 #: templates/contests/scoreboard.html:8
 msgid "common.user"
@@ -258,16 +349,6 @@ msgstr "More"
 msgid "problems.export"
 msgstr "Export"
 
-#: templates/problems/base.html:39 templates/problems/checkers.html:38
-#: templates/problems/tests.html:34
-msgid "common.delete"
-msgstr "Delete"
-
-#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
-#: templates/problems/edit.html:67 templates/problems/edit.html:70
-msgid "common.name"
-msgstr "Name"
-
 #: templates/problems/checkers.html:9 templates/problems/submissions.html:32
 #: templates/problems/submissions.html:44
 msgid "common.source"
@@ -276,11 +357,6 @@ msgstr "Source"
 #: templates/problems/edit.html:9 templates/problems/edit.html:55
 msgid "title.problem.new"
 msgstr "New problem"
-
-#: templates/problems/edit.html:31 templates/users/login.html:6
-#: templates/users/profile.html:7 templates/users/signup.html:6
-msgid "common.error"
-msgstr "Error"
 
 #: templates/problems/edit.html:36
 msgid "title.problems.import"
@@ -303,18 +379,6 @@ msgstr "Time limit"
 #: templates/problems/view.html:5
 msgid "common.memorylimit"
 msgstr "Memory limit"
-
-#: templates/problems/edit.html:88 templates/problems/edit.html:90
-msgid "common.description"
-msgstr "Description"
-
-#: templates/problems/edit.html:107 templates/users/profile.html:36
-msgid "common.update"
-msgstr "Update"
-
-#: templates/problems/edit.html:109
-msgid "common.create"
-msgstr "Create"
 
 #: templates/problems/submissions.html:11
 #: templates/problems/submissions.html:19
@@ -426,51 +490,50 @@ msgstr "Access code from server's console"
 msgid "signup.admin.code"
 msgstr "Access code"
 
-#: users/decorators.py:10
+#: users/decorators.py:11
 msgid "error.permission.authrequired"
 msgstr "Please log in to view this page"
 
-#: users/model.py:54
+#: users/model.py:55
 msgid "auth.login.invalidcredentials"
 msgstr "Invalid credentials"
 
-#: users/views.py:19
+#: users/views.py:20
 msgid "auth.login.success"
 msgstr "You were authorized"
 
-#: users/views.py:29
+#: users/views.py:30
 msgid "auth.signup.forbidden"
 msgstr "Registration is forbidden on this server"
 
-#: users/views.py:38
+#: users/views.py:39
 msgid "auth.signup.admin.invalidcode"
 msgstr "Invalid access code"
 
-#: users/views.py:50
+#: users/views.py:51
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:53
+#: users/views.py:54
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:55
+#: users/views.py:56
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:57
+#: users/views.py:58
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:59
+#: users/views.py:60
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:65
+#: users/views.py:66
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:79
+#: users/views.py:80
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
-

@@ -50,7 +50,17 @@
 {% for submission in submissions[::-1] %}
 <tr>
     <td>{{ submission.id }}</td>
-    <td>{{ submission.submitted|naturaltime }}</td>
+    <td>
+        <span name="st{{ submission.id }}">
+            {{ submission.submitted|naturaltime }}
+        </span>
+        <span style="display: none" name="st{{ submission.id }}">
+            {{ submission.submitted|dtp }}
+        </span>&nbsp;
+        <a href="#" onclick="$('[name=st{{ submission.id }}]').toggle(); return false;">
+            <span class="glyphicon glyphicon-time"></span>
+        </a>
+    </td>
     <td><pre id="submission{{ submission.id }}_source" style="display: none;"></pre>
         <a href="/submission/{{ submission.id }}/source"
         onclick="$(this).html(load_submission({{ submission.id }})); return false;">{{ _('common.show') }}</a>

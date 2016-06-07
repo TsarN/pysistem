@@ -2,16 +2,95 @@
 {% block title %}{{ contest.name }}{% endblock %}
 {% block content %}
 {% block contest_nav %}
+<script type="text/javascript">
+    var updateTimeInterval;
+    var timestamp = Math.floor({{ contest.end.timestamp() * 1000 }});
+    function timeFormat(ms) {
+        if (ms < 0)
+            return "<i>{{ _('contests.finished') }}</i>";
+        var seconds = Math.floor(ms / 1000);
+        var minutes = Math.floor(seconds / 60);
+        var hours = Math.floor(minutes / 60);
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+
+        hours = (hours < 10) ? ("0" + hours) : hours;
+        minutes = (minutes < 10) ? ("0" + minutes) : minutes;
+        seconds = (seconds < 10) ? ("0" + seconds) : seconds;
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
+    function updateTime() {
+        $("#contest_remaining").html(timeFormat(
+            timestamp - Date.now()));
+        if (timestamp < Date.now()) {
+            clearInterval(updateTimeInterval);
+        }
+    }
+
+    function toggleSidebar() {
+        $("#contest-content")
+        .toggleClass("col-sm-9")
+        .toggleClass("col-sm-12")
+
+        $("#contest-sidebar").toggle()
+    }
+
+    $(document).ready(function() {
+        updateTimeInterval = setInterval(updateTime, 1000);
+        $("#contest-sidebar-toggle").click(function() {
+            toggleSidebar()
+        })
+    })
+</script>
 <h2 class="text-center page-header">
-<div style="float: left; display: {% block contest_link_back %}none{% endblock %};">
-<a href="{{ url_for('contests.main', id=contest.id) }}">
-    <span class="glyphicon glyphicon-chevron-left">
-    </span>
-</div>
-</a>
+    <a href="#" id="contest-sidebar-toggle" style="float: left; color: gray">
+        <span class="glyphicon glyphicon-list"></span>
+    </a>
     {{ contest.name }}
 </h2>
+<div class="row">
+<div class="col-sm-3" id="contest-sidebar">
+    <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="{% block contest_nav_link_problems %}{% endblock %}">
+            <a href="{{ url_for('contests.problems', id=contest.id) }}">{{ _('contests.problems') }}</a>
+        </li>
+        <li role="presentation" class="{% block contest_nav_link_scoreboard %}{% endblock %}">
+            <a href="{{ url_for('contests.scoreboard', id=contest.id) }}">{{ _('contests.scoreboard') }}</a>
+        </li>
+        {% if g.user.role == 'admin' %}
+        <li role="presentation" class="{% block contest_nav_link_edit %}{% endblock %}">
+            <a href="{{ url_for('contests.edit', id=contest.id) }}">{{ _('contests.edit') }}</a>
+        </li>
+        <li role="presentation">
+            <a href="{{ url_for('contests.delete', id=contest.id) }}">{{ _('common.delete') }}</a>
+        </li>
+        {% endif %}
+    </ul>
+    <hr />
+    {{ _('contests.start') }}: {{ contest.start.strftime("%c") }} <br />
+    {{ _('contests.end') }}: {{ contest.end.strftime("%c") }}
+    {{ _('contests.remaining') }}: 
+    <span id="contest_remaining">
+        {% if (contest.end - g.now).total_seconds() > 0 %}
+        {{ (contest.end - g.now).total_seconds()|timeonly }}
+        {% else %}
+        <i>{{ _('contests.finished') }}</i>
+        {% endif %}
+    </span>
+    <br />
+    {% if contest.is_frozen() %}
+    <b>{{ _('contest.frozen') }}</b>
+    {% elif contest.is_admin_frozen() %}
+    <b>{{ _('contest.adminfrozen') }}</b>
+    {% endif %}
+</div>
+<div class="col-sm-9" id="contest-content">
 {% endblock %}
 {% block contest_content %}
+{% endblock %}
+{% block contest_nav_end %}
+</div>
+</div>
 {% endblock %}
 {% endblock %}
