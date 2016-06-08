@@ -103,7 +103,7 @@ def format_time(mins):
 @mod.route('/<int:id>/scoreboard')
 @yield_contest()
 def scoreboard(id, contest):
-    cache_name = '/contests/scoreboard/%d/%s' % (contest.id, g.user.role or 'guest')
+    cache_name = '/contests/scoreboard/%d/%s/%s' % (contest.id, g.user.role or 'guest', session.get('language'))
     score = cache.get(cache_name)
     if score is None:
         problems = contest.problems

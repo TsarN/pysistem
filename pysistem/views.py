@@ -73,7 +73,8 @@ def naturaldate_filter(date):
     try:
         raise NotImplementedError
         import humanize
-        humanize.i18n.activate(session.get('language'))
+        if session.get('language') != "en":
+            humanize.i18n.activate(session.get('language'))
         return humanize.naturaldate(date)
     except: pass
     return dtp_filter(date)
@@ -83,7 +84,8 @@ def naturaltime_filter(time=False):
     now = datetime.now()
     try:
         import humanize
-        humanize.i18n.activate(session.get('language'))
+        if session.get('language') != "en":
+            humanize.i18n.activate(session.get('language'))
         return humanize.naturaltime(time)
     except: pass
     # http://stackoverflow.com/a/1551394
