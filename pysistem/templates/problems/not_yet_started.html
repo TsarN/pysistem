@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{{ _('title.error.403') }}{% endblock %}
+{% block content %}
+<div class="alert alert-danger" role="alert">
+<b>{{ _('problems.error.notyetstarted') }}</b><br />
+<a href="{{ url_for('index') }}">{{ _('common.back') }}</a>
+</div>
+{% endblock %}

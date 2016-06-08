@@ -12,8 +12,26 @@ def yield_problem(field='id', yield_field='problem'):
         def decorated_function(*args, **kwargs):
             problem = Problem.query.get(int(kwargs.get(field)))
             if problem is None:
-                return render_template('errors/404.html')
+                return render_template('errors/404.html'), 404
             kwargs[yield_field] = problem
             return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+def guard_problem(field='problem'):
+    # Guard problem 'problem' from unauthorized access
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            problem = kwargs.get(field)
+            if problem is None:
+                return render_template('errors/404.html'), 404
+            if (len(problem.contests) > 0) and (g.user.role != 'admin'):
+                for contest in problem.contests:
+                    if g.now >= contest.start:
+                        return f(*args, **kwargs)
+                return render_template('problems/not_yet_started.html'), 403
+            else:
+                return f(*args, **kwargs)
         return decorated_function
     return decorator

@@ -12,7 +12,7 @@ def yield_submission(field='id', yield_field='submission'):
         def decorated_function(*args, **kwargs):
             submission = Submission.query.get(int(kwargs.get(field)))
             if submission is None:
-                return render_template('errors/404.html')
+                return render_template('errors/404.html'), 404
             kwargs[yield_field] = submission
             return f(*args, **kwargs)
         return decorated_function

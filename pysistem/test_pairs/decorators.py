@@ -12,7 +12,7 @@ def yield_test_pair(field='id', yield_field='test'):
         def decorated_function(*args, **kwargs):
             test = TestPair.query.get(int(kwargs.get(field)))
             if test is None:
-                return render_template('errors/404.html')
+                return render_template('errors/404.html'), 404
             kwargs[yield_field] = test
             return f(*args, **kwargs)
         return decorated_function

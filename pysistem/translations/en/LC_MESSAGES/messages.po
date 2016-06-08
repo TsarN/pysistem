@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-07 21:06+0300\n"
+"POT-Creation-Date: 2016-06-08 12:47+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -94,55 +94,55 @@ msgstr "Language changed to %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "No such language: %(lang)s"
 
-#: problems/views.py:56
+#: problems/views.py:55
 msgid "problems.new.success"
 msgstr "New problem created"
 
-#: problems/views.py:59
+#: problems/views.py:58
 msgid "problems.edit.success"
 msgstr "Changes saved"
 
-#: problems/views.py:62
+#: problems/views.py:61
 msgid "problems.edit.emptyname"
 msgstr "Problem name is empty"
 
-#: problems/views.py:82 problems/views.py:87
+#: problems/views.py:81 problems/views.py:86
 msgid "problems.import.filemissing"
 msgstr "No problem file"
 
-#: problems/views.py:95
+#: problems/views.py:94
 msgid "problems.import.error"
 msgstr "Importing failed"
 
-#: problems/views.py:119
+#: problems/views.py:118
 msgid "problems.deltest.success"
 msgstr "Test was deleted"
 
-#: problems/views.py:130 problems/views.py:135
+#: problems/views.py:129 problems/views.py:134
 msgid "problems.addtest.inputmissing"
 msgstr "No input file"
 
-#: problems/views.py:164 problems/views.py:169
+#: problems/views.py:163 problems/views.py:168
 msgid "problems.addchecker.sourcemissing"
 msgstr "No souce file"
 
-#: problems/views.py:190
+#: problems/views.py:189
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:198
+#: problems/views.py:197
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:216 problems/views.py:221
+#: problems/views.py:217 problems/views.py:222
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:230
+#: problems/views.py:231
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:236
+#: problems/views.py:237
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
@@ -193,13 +193,13 @@ msgstr "Hello, world!"
 msgid "contests.delete.confirm"
 msgstr "Confirm contest deletion"
 
-#: templates/contests/base.html:79 templates/problems/base.html:22
+#: templates/contests/base.html:79 templates/problems/base.html:25
 msgid "common.cancel"
 msgstr "Cancel"
 
 #: templates/contests/base.html:83 templates/contests/base.html:105
-#: templates/contests/problems.html:73 templates/problems/base.html:26
-#: templates/problems/base.html:65 templates/problems/checkers.html:38
+#: templates/contests/problems.html:73 templates/problems/base.html:29
+#: templates/problems/base.html:68 templates/problems/checkers.html:38
 #: templates/problems/tests.html:34
 msgid "common.delete"
 msgstr "Delete"
@@ -216,33 +216,33 @@ msgstr "Scoreboard"
 msgid "contests.edit"
 msgstr "Edit contest"
 
-#: templates/contests/base.html:115 templates/contests/edit.html:55
+#: templates/contests/base.html:116 templates/contests/edit.html:55
 #: templates/contests/edit.html:58
 msgid "contests.start"
 msgstr "Starts at"
 
-#: templates/contests/base.html:116 templates/contests/edit.html:69
+#: templates/contests/base.html:117 templates/contests/edit.html:69
 #: templates/contests/edit.html:72
 msgid "contests.end"
 msgstr "Ends at"
 
-#: templates/contests/base.html:118
+#: templates/contests/base.html:119
 msgid "contests.remaining"
 msgstr "Remaining time"
 
-#: templates/contests/base.html:120
+#: templates/contests/base.html:121
 msgid "contests.beforestart"
 msgstr "Before start"
 
-#: templates/contests/base.html:127
+#: templates/contests/base.html:128
 msgid "contests.finished"
 msgstr "Finished"
 
-#: templates/contests/base.html:138
+#: templates/contests/base.html:139
 msgid "contest.frozen"
 msgstr "Scoreboard is frozen"
 
-#: templates/contests/base.html:140
+#: templates/contests/base.html:141
 msgid "contest.adminfrozen"
 msgstr "Scoreboard is frozen for unprivileged users"
 
@@ -309,7 +309,7 @@ msgstr "Description"
 msgid "common.user"
 msgstr "User"
 
-#: templates/errors/403.html:2
+#: templates/errors/403.html:2 templates/problems/not_yet_started.html:2
 msgid "title.error.403"
 msgstr "403 - Forbidden"
 
@@ -318,6 +318,7 @@ msgid "error.permission"
 msgstr "Permission denied"
 
 #: templates/errors/403.html:6 templates/errors/404.html:6
+#: templates/problems/not_yet_started.html:6
 msgid "common.back"
 msgstr "To index"
 
@@ -329,36 +330,36 @@ msgstr "404 - Page not found"
 msgid "error.404.text"
 msgstr "Sorry, but we couldn't find page that you've requested"
 
-#: templates/problems/base.html:16
+#: templates/problems/base.html:19
 msgid "problems.delete.confirm"
 msgstr "Confirm problem deletion"
 
-#: templates/problems/base.html:36 templates/problems/edit.html:94
+#: templates/problems/base.html:39 templates/problems/edit.html:94
 #: templates/problems/edit.html:96
 msgid "common.statement"
 msgstr "Statement"
 
-#: templates/problems/base.html:40
+#: templates/problems/base.html:43
 msgid "title.problem.submissions"
 msgstr "Submissions"
 
-#: templates/problems/base.html:44
+#: templates/problems/base.html:47
 msgid "title.problem.edit"
 msgstr "Edit problem"
 
-#: templates/problems/base.html:47
+#: templates/problems/base.html:50
 msgid "title.problem.testpairs"
 msgstr "Test pairs"
 
-#: templates/problems/base.html:50
+#: templates/problems/base.html:53
 msgid "title.problem.checkers"
 msgstr "Checkers"
 
-#: templates/problems/base.html:54
+#: templates/problems/base.html:57
 msgid "common.more"
 msgstr "More"
 
-#: templates/problems/base.html:60
+#: templates/problems/base.html:63
 msgid "problems.export"
 msgstr "Export"
 
@@ -392,6 +393,10 @@ msgstr "Time limit"
 #: templates/problems/view.html:5
 msgid "common.memorylimit"
 msgstr "Memory limit"
+
+#: templates/problems/not_yet_started.html:5
+msgid "problems.error.notyetstarted"
+msgstr "Contest hasn't started yet"
 
 #: templates/problems/submissions.html:11
 #: templates/problems/submissions.html:19

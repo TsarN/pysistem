@@ -12,7 +12,7 @@ def yield_checker(field='id', yield_field='checker'):
         def decorated_function(*args, **kwargs):
             checker = Checker.query.get(int(kwargs.get(field)))
             if checker is None:
-                return render_template('errors/404.html')
+                return render_template('errors/404.html'), 404
             kwargs[yield_field] = checker
             return f(*args, **kwargs)
         return decorated_function

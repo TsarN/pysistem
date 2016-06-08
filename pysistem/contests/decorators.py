@@ -12,7 +12,7 @@ def yield_contest(field='id', yield_field='contest'):
         def decorated_function(*args, **kwargs):
             contest = Contest.query.get(int(kwargs.get(field)))
             if contest is None:
-                return render_template('errors/404.html')
+                return render_template('errors/404.html'), 404
             kwargs[yield_field] = contest
             return f(*args, **kwargs)
         return decorated_function

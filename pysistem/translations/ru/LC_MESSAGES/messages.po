@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-07 21:06+0300\n"
+"POT-Creation-Date: 2016-06-08 12:47+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -95,55 +95,55 @@ msgstr "Язык сменён на %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "Язык %(lang)s не найден"
 
-#: problems/views.py:56
+#: problems/views.py:55
 msgid "problems.new.success"
 msgstr "Задача создана"
 
-#: problems/views.py:59
+#: problems/views.py:58
 msgid "problems.edit.success"
 msgstr "Задача обновлена"
 
-#: problems/views.py:62
+#: problems/views.py:61
 msgid "problems.edit.emptyname"
 msgstr "Пустое название задачи"
 
-#: problems/views.py:82 problems/views.py:87
+#: problems/views.py:81 problems/views.py:86
 msgid "problems.import.filemissing"
 msgstr "Укажите файл с задачей"
 
-#: problems/views.py:95
+#: problems/views.py:94
 msgid "problems.import.error"
 msgstr "Ошибка импорта"
 
-#: problems/views.py:119
+#: problems/views.py:118
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:130 problems/views.py:135
+#: problems/views.py:129 problems/views.py:134
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:164 problems/views.py:169
+#: problems/views.py:163 problems/views.py:168
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:190
+#: problems/views.py:189
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:198
+#: problems/views.py:197
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:216 problems/views.py:221
+#: problems/views.py:217 problems/views.py:222
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:230
+#: problems/views.py:231
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:236
+#: problems/views.py:237
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
@@ -194,13 +194,13 @@ msgstr "Привет, мир!"
 msgid "contests.delete.confirm"
 msgstr "Подтвердите удаление турнира"
 
-#: templates/contests/base.html:79 templates/problems/base.html:22
+#: templates/contests/base.html:79 templates/problems/base.html:25
 msgid "common.cancel"
 msgstr "Отмена"
 
 #: templates/contests/base.html:83 templates/contests/base.html:105
-#: templates/contests/problems.html:73 templates/problems/base.html:26
-#: templates/problems/base.html:65 templates/problems/checkers.html:38
+#: templates/contests/problems.html:73 templates/problems/base.html:29
+#: templates/problems/base.html:68 templates/problems/checkers.html:38
 #: templates/problems/tests.html:34
 msgid "common.delete"
 msgstr "Удалить"
@@ -217,33 +217,33 @@ msgstr "Турнирная таблица"
 msgid "contests.edit"
 msgstr "Редактировать турнир"
 
-#: templates/contests/base.html:115 templates/contests/edit.html:55
+#: templates/contests/base.html:116 templates/contests/edit.html:55
 #: templates/contests/edit.html:58
 msgid "contests.start"
 msgstr "Начало"
 
-#: templates/contests/base.html:116 templates/contests/edit.html:69
+#: templates/contests/base.html:117 templates/contests/edit.html:69
 #: templates/contests/edit.html:72
 msgid "contests.end"
 msgstr "Конец"
 
-#: templates/contests/base.html:118
+#: templates/contests/base.html:119
 msgid "contests.remaining"
 msgstr "Осталось"
 
-#: templates/contests/base.html:120
+#: templates/contests/base.html:121
 msgid "contests.beforestart"
 msgstr "До начала"
 
-#: templates/contests/base.html:127
+#: templates/contests/base.html:128
 msgid "contests.finished"
 msgstr "Турнир окончен"
 
-#: templates/contests/base.html:138
+#: templates/contests/base.html:139
 msgid "contest.frozen"
 msgstr "Турнирная таблица заморожена"
 
-#: templates/contests/base.html:140
+#: templates/contests/base.html:141
 msgid "contest.adminfrozen"
 msgstr "Турнирная таблица заморожена для непривилегированных пользователей"
 
@@ -310,7 +310,7 @@ msgstr "Описание"
 msgid "common.user"
 msgstr "Пользователь"
 
-#: templates/errors/403.html:2
+#: templates/errors/403.html:2 templates/problems/not_yet_started.html:2
 msgid "title.error.403"
 msgstr "403 - Доступ запрещён"
 
@@ -319,6 +319,7 @@ msgid "error.permission"
 msgstr "Доступ запрещён"
 
 #: templates/errors/403.html:6 templates/errors/404.html:6
+#: templates/problems/not_yet_started.html:6
 msgid "common.back"
 msgstr "На главную"
 
@@ -330,36 +331,36 @@ msgstr "404 - страница не найдена"
 msgid "error.404.text"
 msgstr "Мы не смогли найти страницу, к которой Вы обратились"
 
-#: templates/problems/base.html:16
+#: templates/problems/base.html:19
 msgid "problems.delete.confirm"
 msgstr "Подтвердите удаление задачи"
 
-#: templates/problems/base.html:36 templates/problems/edit.html:94
+#: templates/problems/base.html:39 templates/problems/edit.html:94
 #: templates/problems/edit.html:96
 msgid "common.statement"
 msgstr "Условие"
 
-#: templates/problems/base.html:40
+#: templates/problems/base.html:43
 msgid "title.problem.submissions"
 msgstr "Решения"
 
-#: templates/problems/base.html:44
+#: templates/problems/base.html:47
 msgid "title.problem.edit"
 msgstr "Редактировать задачу"
 
-#: templates/problems/base.html:47
+#: templates/problems/base.html:50
 msgid "title.problem.testpairs"
 msgstr "Тестовые пары"
 
-#: templates/problems/base.html:50
+#: templates/problems/base.html:53
 msgid "title.problem.checkers"
 msgstr "Чекеры"
 
-#: templates/problems/base.html:54
+#: templates/problems/base.html:57
 msgid "common.more"
 msgstr "Ещё"
 
-#: templates/problems/base.html:60
+#: templates/problems/base.html:63
 msgid "problems.export"
 msgstr "Экспортировать"
 
@@ -393,6 +394,10 @@ msgstr "Лимит времени"
 #: templates/problems/view.html:5
 msgid "common.memorylimit"
 msgstr "Лимит памяти"
+
+#: templates/problems/not_yet_started.html:5
+msgid "problems.error.notyetstarted"
+msgstr "Турнир ещё не начался"
 
 #: templates/problems/submissions.html:11
 #: templates/problems/submissions.html:19

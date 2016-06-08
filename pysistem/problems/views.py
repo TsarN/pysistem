@@ -2,7 +2,7 @@
 from pysistem import app, babel, db, redirect_url
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from pysistem.problems.model import Problem
-from pysistem.problems.decorators import yield_problem
+from pysistem.problems.decorators import yield_problem, guard_problem
 from pysistem.test_pairs.decorators import yield_test_pair
 from pysistem.checkers.decorators import yield_checker
 from pysistem.test_pairs.model import TestPair
@@ -18,6 +18,7 @@ mod = Blueprint('problems', __name__, url_prefix='/problem')
 
 @mod.route('/<int:id>')
 @yield_problem()
+@guard_problem()
 def view(id, problem):
     return render_template('problems/view.html', problem=problem)
 
@@ -200,6 +201,7 @@ def actchecker(id, checker):
 @mod.route('/<int:id>/submissions/user/<username>')
 @requires_login
 @yield_problem()
+@guard_problem()
 def submissions(id, problem, username=None):
     user = g.user
     if username is not None:
