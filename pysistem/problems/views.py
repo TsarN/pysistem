@@ -10,6 +10,7 @@ from pysistem.checkers.model import Checker
 from pysistem.submissions.model import Submission
 from pysistem.compilers.model import Compiler
 from pysistem.users.model import User
+from pysistem.contests.model import Contest
 from pysistem.users.decorators import requires_login, requires_admin
 from flask_babel import gettext
 from werkzeug.utils import secure_filename
@@ -25,7 +26,8 @@ def view(id, problem):
 @mod.route('/new')
 @requires_admin
 def new():
-    return render_template('problems/edit.html', problem=Problem())
+    contest_id = request.args.get('contest_id')
+    return render_template('problems/edit.html', problem=Problem(), contest_id=contest_id)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/new/post', methods=['POST'])
@@ -48,11 +50,19 @@ def edit(id=-1):
             problem.statement = statement
             problem.time_limit = int(time_limit)
             problem.memory_limit = int(memory_limit)
+            redirect_to_contest = None
             if is_new:
                 db.session.add(problem)
+                if request.args.get('contest_id'):
+                    contest = Contest.query.get(int(request.args.get('contest_id')))
+                    if contest is not None:
+                        problem.contests.append(contest)
+                        redirect_to_contest = contest.id
             db.session.commit()
             if is_new:
                 flash(gettext('problems.new.success'))
+                if redirect_to_contest:
+                    return redirect(url_for('contests.problems', id=redirect_to_contest))
                 return redirect(url_for('problems.view', id=problem.id))
             else:
                 flash(gettext('problems.edit.success'))
@@ -89,7 +99,15 @@ def import_():
     if import_file:
         if problem.import_gzip(import_file.stream.read()):
             db.session.add(problem)
+            redirect_to_contest = None
+            if request.args.get('contest_id'):
+                contest = Contest.query.get(int(request.args.get('contest_id')))
+                if contest is not None:
+                    problem.contests.append(contest)
+                    redirect_to_contest = contest.id
             db.session.commit()
+            if redirect_to_contest:
+                return redirect(url_for('contests.problems', id=redirect_to_contest))
             return redirect(url_for('problems.view', id=problem.id))
     flash('::danger ' + gettext('problems.import.error'))
     return redirect(url_for('problems.new'))

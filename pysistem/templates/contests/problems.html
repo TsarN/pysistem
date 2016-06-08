@@ -19,9 +19,14 @@
     })
 </script>
 {% if g.user.role == 'admin' %}
-<a href="#" style="float: right; margin-bottom: 16px" class="btn btn-primary" id="btn-addproblem">
+<div style="float: right; margin-bottom: 16px">
+<a href="{{ url_for('problems.new', contest_id=contest.id) }}" class="btn btn-success" id="btn-newproblem">
+    {{ _('title.problem.new') }}
+</a>
+<a href="#" class="btn btn-primary" id="btn-addproblem">
     {{ _('contests.addproblem') }}
 </a>
+</div>
 
 <div id="modal-addproblem" class="modal fade" tabindex="-1" role="dialog">
 <div class="modal-dialog" role="document">
