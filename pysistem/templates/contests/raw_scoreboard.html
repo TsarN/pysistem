@@ -16,7 +16,7 @@
 </thead>
 <tbody>
 {% for user in users %}
-<tr {% if user.id == g.user.id %}class="active"{% endif %}>
+<tr>
     <td>{{ loop.index }}</td>
     <td>{{ user['username'] }}</td>
     {% for problem in problems %}
