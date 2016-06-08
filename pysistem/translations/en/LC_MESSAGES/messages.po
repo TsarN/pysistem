@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-08 12:47+0300\n"
+"POT-Creation-Date: 2016-06-08 14:16+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,55 +18,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:91
+#: views.py:105
 msgid "naturaltime.justnow"
 msgstr "just now"
 
-#: views.py:93
+#: views.py:107
 msgid "naturaltime.secondsago"
 msgstr "seconds ago"
 
-#: views.py:95
+#: views.py:109
 msgid "naturaltime.minuteago"
 msgstr "a minute ago"
 
-#: views.py:97
+#: views.py:111
 msgid "naturaltime.minutesago"
 msgstr "minutes ago"
 
-#: views.py:99
+#: views.py:113
 msgid "naturaltime.hourago"
 msgstr "an hour ago"
 
-#: views.py:101
+#: views.py:115
 msgid "naturaltime.hoursago"
 msgstr "hours ago"
 
-#: views.py:103
+#: views.py:117
 msgid "naturaltime.yesterday"
 msgstr "yesterday"
 
-#: views.py:105
+#: views.py:119
 msgid "naturaltime.daysago"
 msgstr "days ago"
 
-#: views.py:107
+#: views.py:121
 msgid "naturaltime.weekago"
 msgstr "a week ago"
 
-#: views.py:109
+#: views.py:123
 msgid "naturaltime.weeksago"
 msgstr "weeks ago"
 
-#: views.py:111
+#: views.py:125
 msgid "naturaltime.monthago"
 msgstr "a month ago"
 
-#: views.py:113
+#: views.py:127
 msgid "naturaltime.monthsago"
 msgstr "months ago"
 
-#: views.py:114
+#: views.py:128
 msgid "naturaltime.yearsago"
 msgstr "years ago"
 
@@ -94,55 +94,55 @@ msgstr "Language changed to %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "No such language: %(lang)s"
 
-#: problems/views.py:55
+#: problems/views.py:63
 msgid "problems.new.success"
 msgstr "New problem created"
 
-#: problems/views.py:58
+#: problems/views.py:68
 msgid "problems.edit.success"
 msgstr "Changes saved"
 
-#: problems/views.py:61
+#: problems/views.py:71
 msgid "problems.edit.emptyname"
 msgstr "Problem name is empty"
 
-#: problems/views.py:81 problems/views.py:86
+#: problems/views.py:91 problems/views.py:96
 msgid "problems.import.filemissing"
 msgstr "No problem file"
 
-#: problems/views.py:94
+#: problems/views.py:112
 msgid "problems.import.error"
 msgstr "Importing failed"
 
-#: problems/views.py:118
+#: problems/views.py:136
 msgid "problems.deltest.success"
 msgstr "Test was deleted"
 
-#: problems/views.py:129 problems/views.py:134
+#: problems/views.py:147 problems/views.py:152
 msgid "problems.addtest.inputmissing"
 msgstr "No input file"
 
-#: problems/views.py:163 problems/views.py:168
+#: problems/views.py:181 problems/views.py:186
 msgid "problems.addchecker.sourcemissing"
 msgstr "No souce file"
 
-#: problems/views.py:189
+#: problems/views.py:207
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:197
+#: problems/views.py:215
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:217 problems/views.py:222
+#: problems/views.py:235 problems/views.py:240
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:231
+#: problems/views.py:249
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:237
+#: problems/views.py:255
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
@@ -150,29 +150,33 @@ msgstr "Your solution was sent to testing"
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:62 templates/problems/checkers.html:10
+#: templates/base.html:57 templates/contests/list.html:2
+msgid "title.contestlist"
+msgstr "Contests"
+
+#: templates/base.html:66 templates/problems/checkers.html:10
 #: templates/problems/submissions.html:45
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:81
+#: templates/base.html:85
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:86 templates/users/profile.html:2
+#: templates/base.html:90 templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:88
+#: templates/base.html:92
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:90 templates/guest_view_denied.html:13
+#: templates/base.html:94 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:92 templates/guest_view_denied.html:18
+#: templates/base.html:96 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
@@ -198,17 +202,17 @@ msgid "common.cancel"
 msgstr "Cancel"
 
 #: templates/contests/base.html:83 templates/contests/base.html:105
-#: templates/contests/problems.html:73 templates/problems/base.html:29
+#: templates/contests/problems.html:78 templates/problems/base.html:29
 #: templates/problems/base.html:68 templates/problems/checkers.html:38
 #: templates/problems/tests.html:34
 msgid "common.delete"
 msgstr "Delete"
 
-#: templates/contests/base.html:95
+#: templates/contests/base.html:95 templates/contests/list.html:28
 msgid "contests.problems"
 msgstr "Problems"
 
-#: templates/contests/base.html:98
+#: templates/contests/base.html:98 templates/contests/list.html:74
 msgid "contests.scoreboard"
 msgstr "Scoreboard"
 
@@ -226,15 +230,15 @@ msgstr "Starts at"
 msgid "contests.end"
 msgstr "Ends at"
 
-#: templates/contests/base.html:119
+#: templates/contests/base.html:119 templates/contests/list.html:55
 msgid "contests.remaining"
 msgstr "Remaining time"
 
-#: templates/contests/base.html:121
+#: templates/contests/base.html:121 templates/contests/list.html:57
 msgid "contests.beforestart"
 msgstr "Before start"
 
-#: templates/contests/base.html:128
+#: templates/contests/base.html:128 templates/contests/list.html:65
 msgid "contests.finished"
 msgstr "Finished"
 
@@ -247,6 +251,7 @@ msgid "contest.adminfrozen"
 msgstr "Scoreboard is frozen for unprivileged users"
 
 #: templates/contests/edit.html:7 templates/contests/edit.html:33
+#: templates/contests/list.html:21
 msgid "contests.new"
 msgstr "New contest"
 
@@ -257,9 +262,9 @@ msgid "common.error"
 msgstr "Error"
 
 #: templates/contests/edit.html:48 templates/contests/edit.html:51
-#: templates/contests/problems.html:40 templates/problems/checkers.html:8
-#: templates/problems/checkers.html:19 templates/problems/edit.html:67
-#: templates/problems/edit.html:70
+#: templates/contests/list.html:27 templates/contests/problems.html:45
+#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
+#: templates/problems/edit.html:67 templates/problems/edit.html:70
 msgid "common.name"
 msgstr "Name"
 
@@ -280,27 +285,40 @@ msgstr "Update"
 msgid "common.create"
 msgstr "Create"
 
-#: templates/contests/problems.html:14
+#: templates/contests/list.html:11 templates/contests/problems.html:14
 msgid "datatables.search"
 msgstr "Search"
 
-#: templates/contests/problems.html:15
+#: templates/contests/list.html:12 templates/contests/problems.html:15
 msgid "datatables.emptytable"
 msgstr "No records here"
 
-#: templates/contests/problems.html:16
+#: templates/contests/list.html:13 templates/contests/problems.html:16
 msgid "datatables.zerorecords"
 msgstr "No records found"
 
-#: templates/contests/problems.html:23
+#: templates/contests/list.html:29
+msgid "common.time"
+msgstr "Time"
+
+#: templates/contests/list.html:47
+msgid "common.outof"
+msgstr "out of"
+
+#: templates/contests/problems.html:24 templates/problems/edit.html:9
+#: templates/problems/edit.html:55
+msgid "title.problem.new"
+msgstr "New problem"
+
+#: templates/contests/problems.html:27
 msgid "contests.addproblem"
 msgstr "Add problem"
 
-#: templates/contests/problems.html:33
+#: templates/contests/problems.html:38
 msgid "contests.addproblem.title"
 msgstr "Add problem to contest"
 
-#: templates/contests/problems.html:41 templates/problems/edit.html:88
+#: templates/contests/problems.html:46 templates/problems/edit.html:88
 #: templates/problems/edit.html:90
 msgid "common.description"
 msgstr "Description"
@@ -367,10 +385,6 @@ msgstr "Export"
 #: templates/problems/submissions.html:44
 msgid "common.source"
 msgstr "Source"
-
-#: templates/problems/edit.html:9 templates/problems/edit.html:55
-msgid "title.problem.new"
-msgstr "New problem"
 
 #: templates/problems/edit.html:36
 msgid "title.problems.import"
@@ -555,10 +569,4 @@ msgstr "You were logged out"
 #: users/views.py:80
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
-
-#~ msgid "problems.test.notfound"
-#~ msgstr "No such test"
-
-#~ msgid "problems.checker.notfound"
-#~ msgstr "No such checker"
 

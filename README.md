@@ -9,6 +9,10 @@ PySistem is contest management system written in Python 3, that uses Flask and S
  - Flask-SQLAlchemy with backend (like MySQL)
  - SISTEM Backend (https://github.com/TsarN/sistem-backend)
 
+## Optional python dependencies
+ - Transliterate 
+ - Humanize
+
 ## What database should I use?
 
 MySQL is recommended, though any SQLAlchemy compatible database that supports multithreaded access is fine.

@@ -51,7 +51,11 @@
             {% if not g.disable_navbar %}
             <ul class="nav navbar-nav">
                 <li class="{% block navbar_link_home %}{% endblock%}">
-                    <a href="{{ url_for('index') }}">{{ _('title.home') }}</a></li>
+                    <a href="{{ url_for('index') }}">{{ _('title.home') }}</a>
+                </li>
+                <li class="{% block navbar_link_contests %}{% endblock%}">
+                    <a href="{{ url_for('contests.list') }}">{{ _('title.contestlist') }}</a>
+                </li>
             </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">

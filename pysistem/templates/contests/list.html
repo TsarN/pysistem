@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ _('title.contestlist') }}{% endblock %}
+{% block navbar_link_contests %}active{% endblock %}
+{% block content %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#table-contests").DataTable({
+            "paging": false,
+            "info": false,
+            "language": {
+                "search": "{{ _('datatables.search') }} ",
+                "emptyTable": "{{ _('datatables.emptytable') }}",
+                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+            }
+        })
+    })
+</script>
+{% if g.user.role == 'admin' %}
+<div style="float: right; margin-bottom: 16px">
+<a href="{{ url_for('contests.new') }}" class="btn btn-success" id="btn-newcontest">
+    {{ _('contests.new') }}
+</a>
+</div>
+{% endif %}
+<table class="table table-stripped" id="table-contests">
+<thead>
+<th>{{ _('common.name') }}</th>
+<th>{{ _('contests.problems') }}</th>
+<th>{{ _('common.time') }}</th>
+<th></th>
+</thead>
+<tbody>
+{% for contest in contests %}
+<tr>
+    <td>
+        <a href="{{ url_for('contests.problems', id=contest.id) }}">
+        {% if (g.now >= contest.start) and (g.now <= contest.end) %}
+        <b>{{ contest.name }}</b>
+        {% else %}
+        {{ contest.name }}
+        {% endif %}
+        </a>
+    </td>
+    <td>
+        {% if g.user.id %}
+        {{ contest.rate_user(g.user, do_freeze=False)[0] }}
+        {{ _('common.outof') }}
+        {% endif %}
+        {{ contest.problems|length }}
+    </td>
+    <td>
+
+        {% if (contest.end - g.now).total_seconds() > 0 %}
+        {% if g.now >= contest.start %}
+            {{ _('contests.remaining') }}:
+        {% else %}
+            {{ _('contests.beforestart') }}:
+        {% endif %}
+        {% endif %}
+        <span id="contest{{ contest.id }}_time">
+            {% if g.now >= contest.start %}
+                {% if (contest.end - g.now).total_seconds() > 0 %}
+                {{ (contest.end - g.now).total_seconds()|timeonly }}
+                {% else %}
+                {{ _('contests.finished') }} {{ contest.end|naturaltime }}
+                {% endif %}
+            {% else %}
+                {{ (contest.start - g.now).total_seconds()|timeonly }}
+            {% endif %}
+        </span>
+    </td>
+    <td>
+        <a href="{{ url_for('contests.scoreboard', id=contest.id) }}">
+        {{ _('contests.scoreboard') }} »
+        </a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

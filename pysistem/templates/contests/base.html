@@ -113,8 +113,8 @@
         {% endif %}
     </ul>
     <hr />
-    {{ _('contests.start') }}: {{ contest.start.strftime("%c") }} <br />
-    {{ _('contests.end') }}: {{ contest.end.strftime("%c") }} <br />
+    {{ _('contests.start') }}: {{ contest.start|naturaldate }} <br />
+    {{ _('contests.end') }}: {{ contest.end|naturaldate }} <br />
     {% if g.now >= contest.start %}
         {{ _('contests.remaining') }}:
     {% else %}

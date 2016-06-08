@@ -128,3 +128,8 @@ def scoreboard(id, contest):
 
     return render_template('contests/scoreboard.html',
         contest=contest, problems=problems, users=users)
+
+@mod.route('/list')
+def list():
+    contests = Contest.query.all()
+    return render_template('contests/list.html', contests=contests)

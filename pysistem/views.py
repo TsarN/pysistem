@@ -68,12 +68,26 @@ def shortstr_filter(s, length=5):
 def dtp_filter(date):
     return date.strftime("%Y-%m-%d %H:%M")
 
+@app.template_filter('naturaldate')
+def naturaldate_filter(date):
+    try:
+        raise NotImplementedError
+        import humanize
+        humanize.i18n.activate(session.get('language'))
+        return humanize.naturaldate(date)
+    except: pass
+    return dtp_filter(date)
+
 @app.template_filter('naturaltime')
 def naturaltime_filter(time=False):
-
+    now = datetime.now()
+    try:
+        import humanize
+        humanize.i18n.activate(session.get('language'))
+        return humanize.naturaltime(time)
+    except: pass
     # http://stackoverflow.com/a/1551394
 
-    now = datetime.now()
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):

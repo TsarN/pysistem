@@ -49,9 +49,12 @@ class Contest(db.Model):
             return False
         return True
 
-    def rate_user(self, user):
+    def rate_user(self, user, do_freeze=True):
         solved, penalty = 0, 0
-        freeze = self.get_freeze_time()
+        if do_freeze:   
+            freeze = self.get_freeze_time()
+        else:
+            freeze = None
         for problem in self.problems:
             s = problem.user_succeed(user, freeze=freeze)
             if s[0]:
