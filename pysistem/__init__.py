@@ -19,6 +19,8 @@ app.config['CONFIRM_CODE'] = ''.join(random.SystemRandom().choice( \
 db = SQLAlchemy(app)
 
 babel = Babel(app)
+from werkzeug.contrib.cache import SimpleCache
+cache = SimpleCache()
 
 # Misc functions
 

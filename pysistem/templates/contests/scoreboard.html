@@ -1,46 +1,8 @@
 {% extends "contests/base.html" %}
 {% block contest_nav_link_scoreboard %}active{% endblock %}
 {% block contest_content %}
-<table class="table table-hover">
-<thead>
-<tr>
-    <th>#</th>
-    <th>{{ _('common.user') }}</th>
-    {% for problem in problems %}
-    <th>
-        <a href="{{ url_for('problems.view', id=problem.id) }}">
-        {{ loop.index }}. {{ problem.name }}
-        </a>
-    </th>
-    {% endfor %}
-    <th>+</th>
-    <th>T</th>
-</tr>
-</thead>
-<tbody>
-{% for user in users %}
-<tr {% if user.id == g.user.id %}class="active"{% endif %}>
-    <td>{{ loop.index }}</td>
-    <td>{{ user['username'] }}</td>
-    {% for problem in problems %}
-    <td><b>
-    {% if not user['is_solved'][problem.id]['succeed'] %}
-    {% if user['is_solved'][problem.id]['failed'] > 0 %}
-    -{{ user['is_solved'][problem.id]['failed'] or '' }}
-    {% endif %}
-    {% else %}
-    <span class="text-success">
-    +{{ user['is_solved'][problem.id]['failed'] or '' }}
-    </span>
-    {% endif %}
-    </b><br />
-    {{ user['is_solved'][problem.id]['time'] }}
-    </td>
-    {% endfor %}
-    <td>{{ user['score'][0] }}</td>
-    <td>{{ user['score'][1] }}</td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
+<div style="float: right;">
+{{ _('common.lastupdated') }}: {{ updated|naturaltime }}
+</div>
+{{ scoreboard|safe }}
 {% endblock %}

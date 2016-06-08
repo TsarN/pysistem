@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db, redirect_url
+from pysistem import app, babel, db, redirect_url, cache
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
 from flask_babel import gettext
 from pysistem.contests.model import Contest
@@ -103,31 +103,37 @@ def format_time(mins):
 @mod.route('/<int:id>/scoreboard')
 @yield_contest()
 def scoreboard(id, contest):
-    problems = contest.problems
-    users = []
-    for user in User.query.all():
-        score = contest.rate_user(user)
-        solved_map = {}
-        for problem in problems:
-            succeed, submitted = problem.user_succeed(user, freeze=contest.get_freeze_time())
-            time = None
-            if submitted is not None:
-                time = int(max(0, (submitted - contest.start).total_seconds() // 60))
-            solved_map[problem.id] = {
-                "succeed": succeed,
-                "time": format_time(time),
-                "failed": problem.get_user_failed_attempts(user, freeze=contest.get_freeze_time())
-            }
-        users.append({
-            "id": user.id,
-            "score": score,
-            "username": user.username,
-            "is_solved": solved_map
-        })
-    users.sort(key=lambda x:(-x['score'][0], x['score'][1]))
+    cache_name = '/contests/scoreboard/%d/%s' % (contest.id, g.user.role or 'guest')
+    score = cache.get(cache_name)
+    if score is None:
+        problems = contest.problems
+        users = []
+        for user in User.query.all():
+            score = contest.rate_user(user)
+            solved_map = {}
+            for problem in problems:
+                succeed, submitted = problem.user_succeed(user, freeze=contest.get_freeze_time())
+                time = None
+                if submitted is not None:
+                    time = int(max(0, (submitted - contest.start).total_seconds() // 60))
+                solved_map[problem.id] = {
+                    "succeed": succeed,
+                    "time": format_time(time),
+                    "failed": problem.get_user_failed_attempts(user, freeze=contest.get_freeze_time())
+                }
+            users.append({
+                "id": user.id,
+                "score": score,
+                "username": user.username,
+                "is_solved": solved_map
+            })
+        users.sort(key=lambda x:(-x['score'][0], x['score'][1]))
 
+        score = (render_template('contests/raw_scoreboard.html',
+            contest=contest, problems=problems, users=users), g.now)
+        cache.set(cache_name, score, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
     return render_template('contests/scoreboard.html',
-        contest=contest, problems=problems, users=users)
+        scoreboard=score[0], contest=contest, updated=score[1])
 
 @mod.route('/list')
 def list():

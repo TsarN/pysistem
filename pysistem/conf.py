@@ -15,7 +15,8 @@ SETTINGS = {
     "allow_signup": True,
     "allow_guest_view": True,
     "allow_raw_content": False,
-    "username_pattern": "^[A-Za-z0-9_]{3,15}$"
+    "username_pattern": "^[A-Za-z0-9_]{3,15}$",
+    "scoreboard_cache_timeout": 60
 }
 
 CREATE_DIRS = (
