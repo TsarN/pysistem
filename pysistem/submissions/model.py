@@ -50,7 +50,10 @@ class Submission(db.Model):
         return DIR + '/storage/submissions_bin/' + str(self.id)
 
     def get_source_path(self):
-        return tempfile.gettempdir() + '/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
+        if os.path.exists('/SANDBOX'):
+            return '/SANDBOX/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
+        else:
+            return tempfile.gettempdir() + '/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
 
     def compile(self):
         self.status = STATUS_COMPILING

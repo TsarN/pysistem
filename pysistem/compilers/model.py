@@ -43,7 +43,10 @@ class Compiler(db.Model):
         cmd = shlex.split(self.cmd_run.replace('%exe%', exe).replace('%src%', src_path))
         cmd = ['runsbox', str(time_limit), str(memory_limit), input_path, output_path] + cmd
 
-        p = subprocess.Popen(cmd)
+        if os.path.exists('/SANDBOX'):
+            p = subprocess.Popen(cmd, cwd='/SANDBOX')
+        else:
+            p = subprocess.Popen(cmd)
         p.wait()
         stdout = b''
         with open(output_path, "rb") as output_file:

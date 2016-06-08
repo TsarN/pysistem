@@ -108,3 +108,8 @@ In your virtualhost terminal type
     $ gunicorn pysistem:app
     
 Then, navigate to your application in browser and create admin account.
+
+## Running interpretable submissions
+ - Make sure that you are using the most recent SISTEM-Backend
+ - Create /SANDBOX directory with 1777 rights
+ - Add an interpretable language
