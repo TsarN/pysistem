@@ -16,7 +16,7 @@
 </thead>
 <tbody>
 {% for user in users %}
-<tr>
+<tr id="scoreboard_row_u{{ user.id }}">
     <td>{{ loop.index }}</td>
     <td>{{ user['username'] }}</td>
     {% for problem in problems %}

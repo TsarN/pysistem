@@ -5,4 +5,11 @@
 {{ _('common.lastupdated') }}: {{ updated|naturaltime }}
 </div>
 {{ scoreboard|safe }}
+{% if g.user.id %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#scoreboard_row_u{{ g.user.id }}").addClass("active")
+    })
+</script>
+{% endif %}
 {% endblock %}
