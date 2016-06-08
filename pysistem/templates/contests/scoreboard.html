@@ -26,13 +26,12 @@
     <td><b>
     {% if not user['is_solved'][problem.id]['succeed'] %}
     {% if user['is_solved'][problem.id]['failed'] > 0 %}
-    -
+    -{{ user['is_solved'][problem.id]['failed'] or '' }}
     {% endif %}
     {% else %}
-    +
-    {% endif %}
-    {% if user['is_solved'][problem.id]['failed'] > 0 %}
-    {{ user['is_solved'][problem.id]['failed'] }}
+    <span class="text-success">
+    +{{ user['is_solved'][problem.id]['failed'] or '' }}
+    </span>
     {% endif %}
     </b><br />
     {{ user['is_solved'][problem.id]['time'] }}

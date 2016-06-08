@@ -61,8 +61,10 @@ class Problem(db.Model):
         for sub in subs:
             if freeze and sub.submitted > freeze:
                 break
-            last_sub = sub.submitted
             if sub.status in [STATUS_DONE, STATUS_ACT]:
+                if sub.tests_passed > 0:
+                    if sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
+                        last_sub = sub.submitted
                 if sub.result in [RESULT_OK]:
                     return True, sub.submitted
         return False, last_sub
@@ -81,7 +83,8 @@ class Problem(db.Model):
                 if sub.result in [RESULT_OK]:
                     return sub.get_str_result(color=color, failed_test=failed_test, only_color=only_color)
                 elif sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
-                    attempted = sub
+                    if sub.tests_passed > 0:
+                        attempted = sub
             elif sub.status in [STATUS_CHECKING]:
                 attempted = sub
         if attempted:

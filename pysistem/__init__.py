@@ -42,4 +42,12 @@ try:
         print('---- SIGN UP CONFIRMATION CODE ----')
         print(app.config['CONFIRM_CODE'])
         print('---- SIGN UP CONFIRMATION CODE ----')
+
+    from pysistem.submissions.model import Submission
+    from pysistem.submissions.const import *
+    for sub in Submission.query.filter( \
+        Submission.status.in_([STATUS_CWAIT, STATUS_COMPILING, \
+            STATUS_WAIT, STATUS_CHECKING])).all():
+        sub.async_check()
+        print("Restarting check for", sub)
 except: pass
