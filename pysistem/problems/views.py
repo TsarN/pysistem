@@ -5,11 +5,9 @@ from pysistem.problems.model import Problem
 from pysistem.problems.decorators import yield_problem
 from pysistem.test_pairs.decorators import yield_test_pair
 from pysistem.checkers.decorators import yield_checker
-from pysistem.submissions.decorators import yield_submission
 from pysistem.test_pairs.model import TestPair
 from pysistem.checkers.model import Checker
 from pysistem.submissions.model import Submission
-from pysistem.submissions.const import *
 from pysistem.compilers.model import Compiler
 from pysistem.users.model import User
 from pysistem.users.decorators import requires_login, requires_admin
@@ -243,29 +241,3 @@ def submissions(id, problem, username=None):
 
     return render_template('problems/submissions.html', \
         problem=problem, submissions=submissions, compilers=compilers)
-
-@mod.route('/submission/<int:id>/recheck')
-@requires_admin
-@yield_submission()
-def rechecksub(id, submission):
-    submission.status = STATUS_CWAIT
-    db.session.commit()
-    submission.async_check()
-    return redirect(redirect_url())
-
-@mod.route('/submission/<int:id>/reject')
-@requires_admin
-@yield_submission()
-def rejectsub(id, submission):
-    submission.result = RESULT_RJ
-    submission.status = STATUS_DONE
-    db.session.commit()
-    return redirect(redirect_url())
-
-@mod.route('/submission/<int:id>/delete')
-@requires_admin
-@yield_submission()
-def delsub(id, submission):
-    db.session.delete(submission)
-    db.session.commit()
-    return redirect(redirect_url())

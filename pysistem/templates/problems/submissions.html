@@ -79,15 +79,15 @@
         <a target="_blank" href="{{ url_for('submissions.checklog', id=submission.id) }}">
             {{ _('problems.submissions.viewchecklog') }}
         </a><br />
-        <a href="{{ url_for('problems.rechecksub', id=submission.id) }}">
+        <a href="{{ url_for('submissions.recheck', id=submission.id) }}">
             {{ _('problems.submissions.recheck') }}
         </a><br />
         {% if submission.result != 8 %}
-        <a href="{{ url_for('problems.rejectsub', id=submission.id) }}">
+        <a href="{{ url_for('submissions.reject', id=submission.id) }}">
             {{ _('problems.submissions.reject') }}
         </a><br />
         {% endif %}
-        <a href="{{ url_for('problems.delsub', id=submission.id) }}">
+        <a href="{{ url_for('submissions.delete', id=submission.id) }}">
             {{ _('problems.submissions.delete') }}
         </a>
         {% endif %}
