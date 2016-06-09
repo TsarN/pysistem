@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pysistem import db, app
-from flask import session
+from flask import session, g
 import hashlib
 from flask_babel import gettext
 
@@ -68,3 +68,14 @@ class User(db.Model):
     def exists(username):
         q = User.query.filter(db.func.lower(User.username) == db.func.lower(username)).all()
         return len(q) > 0
+
+    def get_email(self):
+        if (g.user.role == 'admin') or \
+            (g.user.id == self.id):
+            return self.email
+        else:
+            return '<i>%s</i>' % gettext('common.hidden')
+
+    def check_permissions(self):
+        return (g.user.role == 'admin') or \
+                (g.user.id == self.id)

@@ -84,7 +84,7 @@ def edit(id=-1):
         return render_template('errors/404.html'), 404
     return render_template('contests/edit.html', contest=contest, error=error)
 
-@mod.route('<int:id>/delete')
+@mod.route('/<int:id>/delete')
 @requires_admin
 @yield_contest()
 def delete(id, contest):
@@ -103,35 +103,41 @@ def format_time(mins):
 @mod.route('/<int:id>/scoreboard')
 @yield_contest()
 def scoreboard(id, contest):
-    cache_name = '/contests/scoreboard/%d/%s/%s' % (contest.id, g.user.role or 'guest', session.get('language'))
+    cache_name = '/contests/scoreboard/%d/%s' % (contest.id, g.user.role or 'user')
     score = cache.get(cache_name)
     if score is None:
         problems = contest.problems
         users = []
-        for user in User.query.all():
+        for user in User.query:
             score = contest.rate_user(user)
             solved_map = {}
+            add_user = False
             for problem in problems:
                 succeed, submitted = problem.user_succeed(user, freeze=contest.get_freeze_time())
                 time = None
                 if submitted is not None:
                     time = int(max(0, (submitted - contest.start).total_seconds() // 60))
+                    add_user = True
                 solved_map[problem.id] = {
                     "succeed": succeed,
                     "time": format_time(time),
                     "failed": problem.get_user_failed_attempts(user, freeze=contest.get_freeze_time())
                 }
-            users.append({
-                "id": user.id,
-                "score": score,
-                "username": user.username,
-                "is_solved": solved_map
-            })
+            if add_user:
+                users.append({
+                    "id": user.id,
+                    "score": score,
+                    "username": user.username,
+                    "is_solved": solved_map
+                })
         users.sort(key=lambda x:(-x['score'][0], x['score'][1]))
 
         score = (render_template('contests/raw_scoreboard.html',
             contest=contest, problems=problems, users=users), g.now)
         cache.set(cache_name, score, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
+    if request.args.get('printing'):
+        return render_template('contests/printing_scoreboard.html',
+            scoreboard=score[0])
     return render_template('contests/scoreboard.html',
         scoreboard=score[0], contest=contest, updated=score[1])
 

@@ -2,24 +2,6 @@
 {% block problem_navbar_link_submissions %}active{% endblock %}
 {% block problem_content %}
 
-<script type="text/javascript">
-    function load_submission(id) {
-        sub = $('#submission' + id + '_source');
-        if (sub.html() != '') {
-            sub.toggle();
-            if (sub.is(':visible'))
-                return "{{ _('common.hide') }}"
-            else
-                return "{{ _('common.show') }}"
-        }
-        sub.load(
-            '/submission/' + id + '/source', function() {
-                sub.show()
-        })
-        return "{{ _('common.hide') }}";
-    }
-</script>
-
 <h3>{{ _('problems.submissions.new') }}</h3>
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.submissions', id=problem.id) }}">
@@ -36,64 +18,54 @@
 
 <hr />
 
-<table class="table">
-<thead>
-<tr>
-    <th>ID</th>
-    <th>{{ _('submissions.submitted') }}</th>
-    <th>{{ _('common.source') }}</th>
-    <th>{{ _('common.language') }}</th>
-    <th>{{ _('submissions.status') }}</th>
-</tr>
-</thead>
+{% if g.user.role == 'admin' %}
+<table class="table" id="table-users">
+<caption>
+{{ _('problems.submissions.attemptedusers') }}
+</caption>
 <tbody>
-{% for submission in submissions[::-1] %}
-<tr>
-    <td>{{ submission.id }}</td>
+{% for nuser in attempted_users %}
+<tr class="{{ problem.user_status(nuser, only_color=True) }}">
     <td>
-        <span name="st{{ submission.id }}">
-            {{ submission.submitted|naturaltime }}
-        </span>
-        <span style="display: none" name="st{{ submission.id }}">
-            {{ submission.submitted|dtp }}
-        </span>&nbsp;
-        <a href="#" onclick="$('[name=st{{ submission.id }}]').toggle(); return false;">
-            <span class="glyphicon glyphicon-time"></span>
+        <a href="{{ url_for('users.profile', username=nuser.username) }}">
+            {% if nuser.id == user.id %}
+            <b>{{ nuser.username }}</b>
+            {% else %}
+            {{ nuser.username }}
+            {% endif %}
         </a>
     </td>
-    <td><pre id="submission{{ submission.id }}_source" style="display: none;"></pre>
-        <a href="/submission/{{ submission.id }}/source"
-        onclick="$(this).html(load_submission({{ submission.id }})); return false;">{{ _('common.show') }}</a>
-    </td>
-    <td>{{ submission.compiler.name }}</td>
     <td>
-        {{ submission.get_str_result(color=True)|safe }}
-        {% if (g.user.role == 'admin') or submission.is_compile_failed() %}
-        <br />
-        <a target="_blank" href="{{ url_for('submissions.compilelog', id=submission.id) }}">
-            {{ _('problems.submissions.viewcompilelog') }}
+        {{ problem.user_status(nuser, color=False)|safe }}
+    </td>
+    <td>
+        <a href="{{ url_for('problems.submissions', username=nuser.username, id=problem.id) }}">
+            {{ _('title.problem.submissions') }} »
         </a>
-        {% endif %}
-        {% if g.user.role == 'admin' %}
-        <br />
-        <a target="_blank" href="{{ url_for('submissions.checklog', id=submission.id) }}">
-            {{ _('problems.submissions.viewchecklog') }}
-        </a><br />
-        <a href="{{ url_for('submissions.recheck', id=submission.id) }}">
-            {{ _('problems.submissions.recheck') }}
-        </a><br />
-        {% if submission.result != 8 %}
-        <a href="{{ url_for('submissions.reject', id=submission.id) }}">
-            {{ _('problems.submissions.reject') }}
-        </a><br />
-        {% endif %}
-        <a href="{{ url_for('submissions.delete', id=submission.id) }}">
-            {{ _('problems.submissions.delete') }}
-        </a>
-        {% endif %}
     </td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
+{% endif %}
+
+<table class="table" id="table-submissions">
+<caption>
+{{ _('problems.submissions.belonging', username=user.username) }}
+</caption>
+{{ rendered_subs|safe }}
+</table>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#table-submissions").DataTable({
+            "paging": false,
+            "info": false,
+            "searching": false,
+            "language": {
+                "emptyTable": "{{ _('datatables.emptytable') }}",
+                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+            }
+        })
+    })
+</script>
 {% endblock %}

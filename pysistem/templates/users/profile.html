@@ -1,42 +1,47 @@
 {% extends "base.html" %}
 {% block title %}{{ _('title.profile') }}{% endblock %}
 {% block content %}
-<div class="container">
-<div class="col-md-8 col-md-offset-2">
-{% if error %}
-<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<span class="glyphicon glyphicon-user"></span>
+{{ user.username }}
+</div>
+<div class="panel-body">
+<p>
+{{ _('common.firstname') }}: {{ user.first_name or '' }}
+</p>
+<p>
+{{ _('common.lastname') }}: {{ user.last_name or '' }}
+</p>
+<p>
+{{ _('common.email') }}: {{ (user.get_email() or '')|safe }}
+</p>
+{% if user.check_permissions() %}
+<div class="pull-right">
+<a href="#" class="btn btn-default btn-lg">
+    {{ _('common.changepasswd') }}
+</a>
+<a href="{{ url_for('users.edit_profile', username=user.username) }}" class="btn btn-primary btn-lg">
+    {{ _('common.edit') }}
+</a>
+</div>
+<table class="table" id="table-submissions">
+{{ rendered_subs|safe }}
+</table>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#table-submissions").DataTable({
+            "paging": false,
+            "info": false,
+            "searching": false,
+            "language": {
+                "emptyTable": "{{ _('datatables.emptytable') }}",
+                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+            }
+        })
+    })
+</script>
 {% endif %}
-<div class="page-header text-center">
-    <h2>{{ g.user.username }}</h2>
-</div>
-<form method="POST" action="{{ url_for('users.profile') }}" role="form" class="form-horizontal">
-<div class="form-group">
-    <label for="first_name" class="col-sm-4 control-label">{{ _('common.firstname') }}</label>
-    <div class="col-sm-8">
-    <input type="text" class="form-control" id="first_name" name="first_name"
-    placeholder="{{ _('common.firstname') }}" value="{{ g.user.first_name or '' }}" />
-    </div>
-</div>
-<div class="form-group">
-    <label for="last_name" class="col-sm-4 control-label">{{ _('common.lastname') }}</label>
-    <div class="col-sm-8">
-    <input type="text" class="form-control" id="last_name" name="last_name"
-    placeholder="{{ _('common.lastname') }}" value="{{ g.user.last_name or '' }}" />
-    </div>
-</div>
-<div class="form-group">
-    <label for="email" class="col-sm-4 control-label">{{ _('common.email') }}</label>
-    <div class="col-sm-8">
-    <input type="email" class="form-control" id="email" name="email"
-    placeholder="{{ _('common.email') }}" value="{{ g.user.email or '' }}" />
-    </div>
-</div>
-<div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
-<button type="submit" name="update_info" class="btn btn-lg btn-primary btn-block">
-    {{ _('common.update') }}
-</button>
-</div>
-</form>
 </div>
 </div>
 {% endblock %}

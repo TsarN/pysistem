@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-08 15:25+0300\n"
+"POT-Creation-Date: 2016-06-09 14:09+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,55 +18,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:105
+#: views.py:108
 msgid "naturaltime.justnow"
 msgstr "just now"
 
-#: views.py:107
+#: views.py:110
 msgid "naturaltime.secondsago"
 msgstr "seconds ago"
 
-#: views.py:109
+#: views.py:112
 msgid "naturaltime.minuteago"
 msgstr "a minute ago"
 
-#: views.py:111
+#: views.py:114
 msgid "naturaltime.minutesago"
 msgstr "minutes ago"
 
-#: views.py:113
+#: views.py:116
 msgid "naturaltime.hourago"
 msgstr "an hour ago"
 
-#: views.py:115
+#: views.py:118
 msgid "naturaltime.hoursago"
 msgstr "hours ago"
 
-#: views.py:117
+#: views.py:120
 msgid "naturaltime.yesterday"
 msgstr "yesterday"
 
-#: views.py:119
+#: views.py:122
 msgid "naturaltime.daysago"
 msgstr "days ago"
 
-#: views.py:121
+#: views.py:124
 msgid "naturaltime.weekago"
 msgstr "a week ago"
 
-#: views.py:123
+#: views.py:126
 msgid "naturaltime.weeksago"
 msgstr "weeks ago"
 
-#: views.py:125
+#: views.py:128
 msgid "naturaltime.monthago"
 msgstr "a month ago"
 
-#: views.py:127
+#: views.py:130
 msgid "naturaltime.monthsago"
 msgstr "months ago"
 
-#: views.py:128
+#: views.py:131
 msgid "naturaltime.yearsago"
 msgstr "years ago"
 
@@ -134,49 +134,50 @@ msgstr "Checker was deleted"
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:235 problems/views.py:240
+#: problems/views.py:237 problems/views.py:242
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:249
+#: problems/views.py:251
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:255
+#: problems/views.py:257
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: templates/base.html:54 templates/index.html:2
+#: templates/base.html:73 templates/index.html:2
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:57 templates/contests/list.html:2
+#: templates/base.html:76 templates/contests/list.html:2
 msgid "title.contestlist"
 msgstr "Contests"
 
-#: templates/base.html:66 templates/problems/checkers.html:10
-#: templates/problems/submissions.html:45
+#: templates/base.html:85 templates/problems/checkers.html:10
+#: templates/submissions/list.html:36
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:85
+#: templates/base.html:104
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:90 templates/users/profile.html:2
+#: templates/base.html:109 templates/users/edit_profile.html:2
+#: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:92
+#: templates/base.html:111
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:94 templates/guest_view_denied.html:13
+#: templates/base.html:113 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:96 templates/guest_view_denied.html:18
+#: templates/base.html:115 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
@@ -197,13 +198,13 @@ msgstr "Hello, world!"
 msgid "contests.delete.confirm"
 msgstr "Confirm contest deletion"
 
-#: templates/contests/base.html:79 templates/problems/base.html:25
+#: templates/contests/base.html:79 templates/problems/base.html:22
 msgid "common.cancel"
 msgstr "Cancel"
 
 #: templates/contests/base.html:83 templates/contests/base.html:105
-#: templates/contests/problems.html:78 templates/problems/base.html:29
-#: templates/problems/base.html:68 templates/problems/checkers.html:38
+#: templates/contests/problems.html:78 templates/problems/base.html:26
+#: templates/problems/base.html:65 templates/problems/checkers.html:38
 #: templates/problems/tests.html:34
 msgid "common.delete"
 msgstr "Delete"
@@ -256,7 +257,7 @@ msgid "contests.new"
 msgstr "New contest"
 
 #: templates/contests/edit.html:37 templates/problems/edit.html:31
-#: templates/users/login.html:6 templates/users/profile.html:7
+#: templates/users/edit_profile.html:7 templates/users/login.html:6
 #: templates/users/signup.html:6
 msgid "common.error"
 msgstr "Error"
@@ -277,7 +278,7 @@ msgid "contests.unfreezeafterend"
 msgstr "Unfreeze after finish"
 
 #: templates/contests/edit.html:87 templates/problems/edit.html:107
-#: templates/users/profile.html:36
+#: templates/users/edit_profile.html:39
 msgid "common.update"
 msgstr "Update"
 
@@ -290,10 +291,12 @@ msgid "datatables.search"
 msgstr "Search"
 
 #: templates/contests/list.html:12 templates/contests/problems.html:15
+#: templates/problems/submissions.html:61 templates/users/profile.html:38
 msgid "datatables.emptytable"
 msgstr "No records here"
 
 #: templates/contests/list.html:13 templates/contests/problems.html:16
+#: templates/problems/submissions.html:62 templates/users/profile.html:39
 msgid "datatables.zerorecords"
 msgstr "No records found"
 
@@ -323,13 +326,17 @@ msgstr "Add problem to contest"
 msgid "common.description"
 msgstr "Description"
 
-#: templates/contests/raw_scoreboard.html:5
+#: templates/contests/raw_scoreboard.html:4
 msgid "common.user"
 msgstr "User"
 
-#: templates/contests/scoreboard.html:5
+#: templates/contests/scoreboard.html:20
 msgid "common.lastupdated"
 msgstr "Updated"
+
+#: templates/contests/scoreboard.html:27
+msgid "contests.scoreboard.printing"
+msgstr "Print version"
 
 #: templates/errors/403.html:2 templates/problems/not_yet_started.html:2
 msgid "title.error.403"
@@ -352,41 +359,42 @@ msgstr "404 - Page not found"
 msgid "error.404.text"
 msgstr "Sorry, but we couldn't find page that you've requested"
 
-#: templates/problems/base.html:19
+#: templates/problems/base.html:16
 msgid "problems.delete.confirm"
 msgstr "Confirm problem deletion"
 
-#: templates/problems/base.html:39 templates/problems/edit.html:94
+#: templates/problems/base.html:36 templates/problems/edit.html:94
 #: templates/problems/edit.html:96
 msgid "common.statement"
 msgstr "Statement"
 
-#: templates/problems/base.html:43
+#: templates/problems/base.html:40 templates/problems/submissions.html:39
+#: templates/submissions/list.html:20
 msgid "title.problem.submissions"
 msgstr "Submissions"
 
-#: templates/problems/base.html:47
+#: templates/problems/base.html:44
 msgid "title.problem.edit"
 msgstr "Edit problem"
 
-#: templates/problems/base.html:50
+#: templates/problems/base.html:47
 msgid "title.problem.testpairs"
 msgstr "Test pairs"
 
-#: templates/problems/base.html:53
+#: templates/problems/base.html:50
 msgid "title.problem.checkers"
 msgstr "Checkers"
 
-#: templates/problems/base.html:57
+#: templates/problems/base.html:54
 msgid "common.more"
 msgstr "More"
 
-#: templates/problems/base.html:63
+#: templates/problems/base.html:60
 msgid "problems.export"
 msgstr "Export"
 
-#: templates/problems/checkers.html:9 templates/problems/submissions.html:32
-#: templates/problems/submissions.html:44
+#: templates/problems/checkers.html:9 templates/problems/submissions.html:14
+#: templates/submissions/list.html:35
 msgid "common.source"
 msgstr "Source"
 
@@ -416,55 +424,25 @@ msgstr "Memory limit"
 msgid "problems.error.notyetstarted"
 msgstr "Contest hasn't started yet"
 
-#: templates/problems/submissions.html:11
-#: templates/problems/submissions.html:19
-msgid "common.hide"
-msgstr "Hide"
-
-#: templates/problems/submissions.html:13
-#: templates/problems/submissions.html:66
-msgid "common.show"
-msgstr "Show"
-
-#: templates/problems/submissions.html:23
+#: templates/problems/submissions.html:5
 msgid "problems.submissions.new"
 msgstr "Submit solution"
 
-#: templates/problems/submissions.html:26
+#: templates/problems/submissions.html:8
 msgid "common.compiler"
 msgstr "Compiler"
 
-#: templates/problems/submissions.html:34
+#: templates/problems/submissions.html:16
 msgid "common.submit"
 msgstr "Submit"
 
-#: templates/problems/submissions.html:43
-msgid "submissions.submitted"
-msgstr "Submitted"
+#: templates/problems/submissions.html:24
+msgid "problems.submissions.attemptedusers"
+msgstr "Participants"
 
-#: templates/problems/submissions.html:46
-msgid "submissions.status"
-msgstr "Status"
-
-#: templates/problems/submissions.html:74
-msgid "problems.submissions.viewcompilelog"
-msgstr "View compilation log"
-
-#: templates/problems/submissions.html:80
-msgid "problems.submissions.viewchecklog"
-msgstr "View checking log"
-
-#: templates/problems/submissions.html:83
-msgid "problems.submissions.recheck"
-msgstr "Recheck"
-
-#: templates/problems/submissions.html:87
-msgid "problems.submissions.reject"
-msgstr "Reject"
-
-#: templates/problems/submissions.html:91
-msgid "problems.submissions.delete"
-msgstr "Delete"
+#: templates/problems/submissions.html:50
+msgid "problems.submissions.belonging"
+msgstr "Submissions of user %(username)s"
 
 #: templates/problems/tests.html:9
 msgid "problems.tests.input"
@@ -482,6 +460,73 @@ msgstr "ms"
 msgid "common.units.kilobytes"
 msgstr "KiB"
 
+#: templates/submissions/list.html:7 templates/submissions/list.html:15
+msgid "common.hide"
+msgstr "Hide"
+
+#: templates/submissions/list.html:9 templates/submissions/list.html:64
+msgid "common.show"
+msgstr "Show"
+
+#: templates/submissions/list.html:23
+msgid "problems.submissions.recheck.all"
+msgstr "Recheck all"
+
+#: templates/submissions/list.html:24
+msgid "problems.submissions.reject.all"
+msgstr "Reject all"
+
+#: templates/submissions/list.html:25
+msgid "problems.submissions.delete.all"
+msgstr "Delete all"
+
+#: templates/submissions/list.html:31
+msgid "submissions.submitted"
+msgstr "Submitted"
+
+#: templates/submissions/list.html:33
+msgid "common.problem"
+msgstr "Problem"
+
+#: templates/submissions/list.html:37
+msgid "submissions.status"
+msgstr "Status"
+
+#: templates/submissions/list.html:75
+msgid "problems.submissions.viewcompilelog"
+msgstr "View compilation log"
+
+#: templates/submissions/list.html:81
+msgid "problems.submissions.viewchecklog"
+msgstr "View checking log"
+
+#: templates/submissions/list.html:84
+msgid "problems.submissions.recheck"
+msgstr "Recheck"
+
+#: templates/submissions/list.html:88
+msgid "problems.submissions.reject"
+msgstr "Reject"
+
+#: templates/submissions/list.html:92
+msgid "problems.submissions.delete"
+msgstr "Delete"
+
+#: templates/users/edit_profile.html:17 templates/users/edit_profile.html:20
+#: templates/users/profile.html:11
+msgid "common.firstname"
+msgstr "First name"
+
+#: templates/users/edit_profile.html:24 templates/users/edit_profile.html:27
+#: templates/users/profile.html:14
+msgid "common.lastname"
+msgstr "Last name"
+
+#: templates/users/edit_profile.html:31 templates/users/edit_profile.html:34
+#: templates/users/profile.html:17
+msgid "common.email"
+msgstr "E-Mail address"
+
 #: templates/users/login.html:9 templates/users/login.html:19
 msgid "common.login"
 msgstr "Log In"
@@ -494,17 +539,13 @@ msgstr "Username"
 msgid "common.password"
 msgstr "Password"
 
-#: templates/users/profile.html:14 templates/users/profile.html:17
-msgid "common.firstname"
-msgstr "First name"
+#: templates/users/profile.html:22
+msgid "common.changepasswd"
+msgstr "Change password"
 
-#: templates/users/profile.html:21 templates/users/profile.html:24
-msgid "common.lastname"
-msgstr "Last name"
-
-#: templates/users/profile.html:28 templates/users/profile.html:31
-msgid "common.email"
-msgstr "E-Mail address"
+#: templates/users/profile.html:25
+msgid "common.edit"
+msgstr "Edit"
 
 #: templates/users/signup.html:11
 msgid "common.signup.admin"
@@ -534,43 +575,47 @@ msgstr "Please log in to view this page"
 msgid "auth.login.invalidcredentials"
 msgstr "Invalid credentials"
 
-#: users/views.py:20
+#: users/model.py:77
+msgid "common.hidden"
+msgstr "Hidden"
+
+#: users/views.py:21
 msgid "auth.login.success"
 msgstr "You were authorized"
 
-#: users/views.py:30
+#: users/views.py:31
 msgid "auth.signup.forbidden"
 msgstr "Registration is forbidden on this server"
 
-#: users/views.py:39
+#: users/views.py:40
 msgid "auth.signup.admin.invalidcode"
 msgstr "Invalid access code"
 
-#: users/views.py:51
+#: users/views.py:52
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:54
+#: users/views.py:55
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:56
+#: users/views.py:57
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:58
+#: users/views.py:59
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:60
+#: users/views.py:61
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:66
+#: users/views.py:67
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:80
+#: users/views.py:102
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
 

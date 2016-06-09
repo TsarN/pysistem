@@ -227,6 +227,8 @@ def submissions(id, problem, username=None):
                 db.func.lower(User.username) == db.func.lower(username)).first()
         if user is None:
             return render_template('errors/404.html'), 404
+        if (g.user.role != 'admin') and (user.id != g.user.id):
+            return render_template('errors/403.html'), 403
 
     if request.method == 'POST':
         source = ''
@@ -259,5 +261,13 @@ def submissions(id, problem, username=None):
         Submission.problem_id == problem.id, Submission.user_id == user.id)).all()
     compilers = Compiler.query.all()
 
+    rendered_subs = render_template('submissions/list.html', submissions=submissions)
+
+    attempted_users = None
+    if g.user.role == 'admin':
+        attempted_users = User.query.filter(User.submissions.any(
+            Submission.problem_id == problem.id)).all()
+
     return render_template('problems/submissions.html', \
-        problem=problem, submissions=submissions, compilers=compilers)
+        problem=problem, compilers=compilers, rendered_subs=rendered_subs,
+        attempted_users=attempted_users, user=user)

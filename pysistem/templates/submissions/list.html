@@ -1,0 +1,110 @@
+<script type="text/javascript">
+    function load_submission(id) {
+        sub = $('#submission' + id + '_source');
+        if (sub.html() != '') {
+            sub.toggle();
+            if (sub.is(':visible'))
+                return "{{ _('common.hide') }}"
+            else
+                return "{{ _('common.show') }}"
+        }
+        sub.load(
+            '/submission/' + id + '/source', function() {
+                sub.show()
+        })
+        return "{{ _('common.hide') }}";
+    }
+</script>
+<thead>
+<caption>
+    <h4>{{ _('title.problem.submissions') }}</h4>
+    {% if g.user.role == 'admin' %}
+    <span class="pull-right">
+        <a href="#">{{ _('problems.submissions.recheck.all') }}</a> /
+        <a href="#">{{ _('problems.submissions.reject.all') }}</a> /
+        <a href="#">{{ _('problems.submissions.delete.all') }}</a>
+    </span>
+    {% endif %}
+</caption>
+<tr>
+    <th>ID</th>
+    <th>{{ _('submissions.submitted') }}</th>
+    {% if show_problem %}
+    <th>{{ _('common.problem') }}</th>
+    {% endif %}
+    <th>{{ _('common.source') }}</th>
+    <th>{{ _('common.language') }}</th>
+    <th>{{ _('submissions.status') }}</th>
+</tr>
+</thead>
+<tbody>
+{% for submission in submissions[::-1] %}
+<tr>
+    <td>{{ submission.id }}</td>
+    <td>
+        <span name="st{{ submission.id }}">
+            {{ submission.submitted|naturaltime }}
+        </span>
+        <span style="display: none" name="st{{ submission.id }}">
+            {{ submission.submitted|dtp }}
+        </span>&nbsp;
+        <a href="#" onclick="$('[name=st{{ submission.id }}]').toggle(); return false;">
+            <span class="glyphicon glyphicon-time"></span>
+        </a>
+    </td>
+    {% if show_problem %}
+    <td>
+        <a target="_blank" href="{{ url_for('problems.view', id=submission.problem.id) }}">
+            {{ submission.problem.name }}
+        </a>
+    </td>
+    {% endif %}
+    <td><pre id="submission{{ submission.id }}_source" style="display: none;"></pre>
+        <a href="/submission/{{ submission.id }}/source"
+        onclick="$(this).html(load_submission({{ submission.id }})); return false;">{{ _('common.show') }}</a>
+    </td>
+    <td>{{ submission.compiler.name }}</td>
+    <td>
+        {{ submission.get_str_result(color=True)|safe }}
+        {% if (g.user.role == 'admin') or submission.is_compile_failed() %}
+        <a href="#" onclick="$('#subactions-{{ submission.id }}').toggle(); $(this).toggleClass('dropup'); return false;">
+            <span class="caret caret-big pull-right"></span>
+        </a>
+        <p id="subactions-{{ submission.id }}" style="display: none">
+        <a target="_blank" href="{{ url_for('submissions.compilelog', id=submission.id) }}">
+            {{ _('problems.submissions.viewcompilelog') }}
+        </a>
+        {% endif %}
+        {% if g.user.role == 'admin' %}
+        <br />
+        <a target="_blank" href="{{ url_for('submissions.checklog', id=submission.id) }}">
+            {{ _('problems.submissions.viewchecklog') }}
+        </a><br />
+        <a href="{{ url_for('submissions.recheck', id=submission.id) }}">
+            {{ _('problems.submissions.recheck') }}
+        </a><br />
+        {% if submission.result != 8 %}
+        <a href="{{ url_for('submissions.reject', id=submission.id) }}">
+            {{ _('problems.submissions.reject') }}
+        </a><br />
+        {% endif %}
+        <a href="{{ url_for('submissions.delete', id=submission.id) }}">
+            {{ _('problems.submissions.delete') }}
+        </a>
+        </p>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+<style type="text/css">
+    .caret-big {
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid;
+    }
+
+    .dropup .caret-big {
+        border-bottom: 6px solid;
+    }
+</style>

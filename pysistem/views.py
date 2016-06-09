@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from werkzeug.routing import BaseConverter
 from pysistem import app, babel, db
 from flask import render_template, session, g, flash, redirect, url_for, request
 import re
@@ -20,6 +21,7 @@ def get_locale():
 
 @app.before_request
 def before_request():
+    session['language'] = get_locale()
     g.is_first_time = (User.query.count() == 0)
     g.user = User()
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -137,6 +139,29 @@ def index():
 def err_notfound(e):
     return render_template('errors/404.html'), 404
 
+class StrListConverter(BaseConverter):
+    regex = r'[^,]+(?:,[^,]+)*,?'
+
+    def to_python(self, value):
+        return value.split(',')
+
+    def to_url(self, value):
+        return ','.join(value)
+
+app.url_map.converters['str_list'] = StrListConverter
+
+class IntListConverter(BaseConverter):
+    regex = r'\d+(?:,\d+)*,?'
+
+    def to_python(self, value):
+        return [int(x) for x in value.split(',')]
+
+    def to_url(self, value):
+        return ','.join([str(x) for x in value])
+
+app.url_map.converters['int_list'] = IntListConverter
+
+
 # Register modules
 from pysistem.users.views import mod as users_module
 app.register_blueprint(users_module)
@@ -152,3 +177,5 @@ app.register_blueprint(contests_module)
 
 from pysistem.submissions.views import mod as submissions_module
 app.register_blueprint(submissions_module)
+
+from pysistem.api import _api_loaded

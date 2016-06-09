@@ -69,7 +69,7 @@
 </div>
 {% endif %}
 
-<table class="table table-striped">
+<table class="table table-hover">
 <tbody>
 {% for problem in contest.problems %}
 <tr class="{{ problem.user_status(g.user, only_color=True) }}">

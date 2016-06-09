@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ _('title.profile') }}{% endblock %}
+{% block content %}
+<div class="container">
+<div class="col-md-8 col-md-offset-2">
+{% if error %}
+<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
+{% endif %}
+<h2 class="page-header text-center">
+    <a href="{{ url_for('users.profile', username=user.username) }}" style="float: left; color: gray">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    {{ user.username }}
+</h2>
+<form method="POST" action="{{ url_for('users.edit_profile', username=user.username) }}" role="form" class="form-horizontal">
+<div class="form-group">
+    <label for="first_name" class="col-sm-4 control-label">{{ _('common.firstname') }}</label>
+    <div class="col-sm-8">
+    <input type="text" class="form-control" id="first_name" name="first_name"
+    placeholder="{{ _('common.firstname') }}" value="{{ user.first_name or '' }}" />
+    </div>
+</div>
+<div class="form-group">
+    <label for="last_name" class="col-sm-4 control-label">{{ _('common.lastname') }}</label>
+    <div class="col-sm-8">
+    <input type="text" class="form-control" id="last_name" name="last_name"
+    placeholder="{{ _('common.lastname') }}" value="{{ user.last_name or '' }}" />
+    </div>
+</div>
+<div class="form-group">
+    <label for="email" class="col-sm-4 control-label">{{ _('common.email') }}</label>
+    <div class="col-sm-8">
+    <input type="email" class="form-control" id="email" name="email"
+    placeholder="{{ _('common.email') }}" value="{{ user.email or '' }}" />
+    </div>
+</div>
+<div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
+<button type="submit" name="update_info" class="btn btn-lg btn-primary btn-block">
+    {{ _('common.update') }}
+</button>
+</div>
+</form>
+</div>
+</div>
+{% endblock %}

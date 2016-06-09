@@ -1,13 +1,17 @@
-<table class="table table-hover">
 <thead>
 <tr>
     <th>#</th>
     <th>{{ _('common.user') }}</th>
     {% for problem in problems %}
     <th>
-        <a href="{{ url_for('problems.view', id=problem.id) }}">
-        {{ loop.index }}. {{ problem.name }}
-        </a>
+        <div class="text-center">
+            <a class="problem-link" title="{{ problem.name }}" href="{{ url_for('problems.view', id=problem.id) }}">
+            {{ loop.index }}. {{ problem.name }}
+            </a>
+            <span class="problem-name">
+            {{ loop.index }}. {{ problem.name }}
+            </span>
+        </div>
     </th>
     {% endfor %}
     <th>+</th>
@@ -20,7 +24,8 @@
     <td>{{ loop.index }}</td>
     <td>{{ user['username'] }}</td>
     {% for problem in problems %}
-    <td><b>
+    <td><div class="text-center">
+    <b>
     {% if not user['is_solved'][problem.id]['succeed'] %}
     {% if user['is_solved'][problem.id]['failed'] > 0 %}
     -{{ user['is_solved'][problem.id]['failed'] or '' }}
@@ -32,6 +37,7 @@
     {% endif %}
     </b><br />
     {{ user['is_solved'][problem.id]['time'] }}
+    </div>
     </td>
     {% endfor %}
     <td>{{ user['score'][0] }}</td>
@@ -39,4 +45,3 @@
 </tr>
 {% endfor %}
 </tbody>
-</table>

@@ -1,14 +1,43 @@
 {% extends "contests/base.html" %}
 {% block contest_nav_link_scoreboard %}active{% endblock %}
 {% block contest_content %}
+<style type="text/css">
+    .problem-name {
+        display: none;
+    }
+
+    #scoreboard {
+        table-layout:fixed;
+    }
+
+    #scoreboard th {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+</style>
 <div style="float: right;">
 {{ _('common.lastupdated') }}: {{ updated|naturaltime }}
 </div>
+<table class="table table-hover" id="scoreboard">
 {{ scoreboard|safe }}
+</table>
+<div style="float: right">
+<a href="{{ url_for('contests.scoreboard', id=contest.id, printing=1) }}">
+{{ _('contests.scoreboard.printing') }}
+</a>
+</div>
 {% if g.user.id %}
 <script type="text/javascript">
     $(document).ready(function(){
         $("#scoreboard_row_u{{ g.user.id }}").addClass("active")
+        $("#scoreboard th").bind('mouseenter', function(){
+            var $this = $(this);
+
+            if(this.offsetWidth < this.scrollWidth && !$this.attr('title')){
+                $this.attr('title', $this.text());
+            }
+        });
     })
 </script>
 {% endif %}

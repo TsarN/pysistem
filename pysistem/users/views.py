@@ -3,6 +3,7 @@ from pysistem import app, babel, db
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
 import re
 from pysistem.users.model import User
+from pysistem.submissions.model import Submission
 from pysistem.users.decorators import requires_guest, requires_login
 from flask_babel import gettext
 
@@ -66,17 +67,38 @@ def logout():
     flash(gettext('auth.logout.success'))
     return redirect(url_for('index'))
 
-@mod.route('/profile', methods=['GET', 'POST'])
-@requires_login
-def profile():
-    error = None
+@mod.route('/<username>')
+@mod.route('/')
+def profile(username=None):
+    user = g.user
+    if username is not None:
+        user = User.query.filter( \
+                db.func.lower(User.username) == db.func.lower(username)).first()
+        if user is None:
+            return render_template('errors/404.html'), 404
+    submissions = Submission.query.filter(
+        Submission.user_id == user.id).all()
+    rendered_subs = render_template('submissions/list.html',
+        submissions=submissions, show_problem=True)
+    return render_template('users/profile.html', user=user, rendered_subs=rendered_subs)
+
+@mod.route('/<username>/edit', methods=['GET', 'POST'])
+@mod.route('/edit', methods=['GET', 'POST'])
+def edit_profile(username):
+    user = g.user
+    if username is not None:
+        user = User.query.filter( \
+                db.func.lower(User.username) == db.func.lower(username)).first()
+        if user is None:
+            return render_template('errors/404.html'), 404
+    if not user.check_permissions():
+        return render_template(url_for('errors/403.html')), 403
     if request.method == 'POST':
         if request.form.get('update_info', None) is not None:
-            g.user.first_name = request.form.get('first_name', g.user.first_name)
-            g.user.last_name = request.form.get('last_name', g.user.last_name)
-            g.user.email = request.form.get('email', g.user.email)
-            db.session.merge(g.user)
+            user.first_name = request.form.get('first_name', user.first_name)
+            user.last_name = request.form.get('last_name', user.last_name)
+            user.email = request.form.get('email', user.email)
             db.session.commit()
             flash(gettext('profile.update.success'))
-            return redirect(url_for('users.profile'))
-    return render_template('users/profile.html', error=error)
+            return redirect(url_for('users.profile', id=user.id))
+    return render_template('users/edit_profile.html', user=user)
