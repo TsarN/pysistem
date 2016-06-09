@@ -77,6 +77,8 @@ def naturaldate_filter(date):
         import humanize
         if session.get('language') != "en":
             humanize.i18n.activate(session.get('language'))
+        else:
+            humanize.i18n.deactivate()
         return humanize.naturaldate(date)
     except: pass
     return dtp_filter(date)
@@ -92,6 +94,8 @@ def naturaltime_filter(time=False):
         import humanize
         if session.get('language') != "en":
             humanize.i18n.activate(session.get('language'))
+        else:
+            humanize.i18n.deactivate()
         return humanize.naturaltime(time)
     except: pass
     # http://stackoverflow.com/a/1551394
