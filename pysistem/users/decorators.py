@@ -23,11 +23,18 @@ def requires_guest(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def requires_admin(f):
+def requires_admin(*args_, **kwargs_):
     # Deny unprivileged
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if g.user.role != 'admin':
-            return render_template('errors/403.html'), 403
-        return f(*args, **kwargs)
-    return decorated_function
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            for kw in kwargs_:
+                if type(kwargs_[kw]) is str:
+                    kwargs_[kw] = kwargs[kw]
+            if not g.user.is_admin(**kwargs_):
+                return render_template('errors/403.html'), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    if (len(args_) > 0) and callable(args_[0]):
+        return decorator(args_[0])
+    return decorator

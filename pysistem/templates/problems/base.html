@@ -5,7 +5,7 @@
 <h2 class="text-center page-header">
     {{ problem.name }}
 </h2>
-{% if g.user.role == 'admin' %}
+{% if g.user.is_admin(problem=problem) %}
 <div id="modal-confirm-delete" class="modal fade" tabindex="-1" role="dialog">
 <div class="modal-dialog" role="document">
 <div class="modal-content">
@@ -39,7 +39,7 @@
     <li role="presentation" class="{% block problem_navbar_link_submissions %}{% endblock %}">
         <a href="{{ url_for('problems.submissions', id=problem.id) }}">{{ _('title.problem.submissions') }}</a>
     </li>
-    {% if g.user.role == 'admin' %}
+    {% if g.user.is_admin(problem=problem) %}
     <li role="presentation" class="{% block problem_navbar_link_edit %}{% endblock %}">
         <a href="{{ url_for('problems.edit', id=problem.id) }}">{{ _('title.problem.edit') }}</a>
     </li>

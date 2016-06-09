@@ -13,8 +13,8 @@ from datetime import datetime
 mod = Blueprint('contests', __name__, url_prefix='/contest')
 
 @mod.route('/<int:id>/linkwith/<int:problem_id>')
-@requires_admin
 @yield_contest()
+@requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def linkwith(id, problem_id, contest, problem):
     contest.problems.append(problem)
@@ -22,8 +22,8 @@ def linkwith(id, problem_id, contest, problem):
     return redirect(redirect_url())
 
 @mod.route('/<int:id>/unlinkwith/<int:problem_id>')
-@requires_admin
 @yield_contest()
+@requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def unlinkwith(id, problem_id, contest, problem):
     contest.problems.remove(problem)
@@ -34,7 +34,7 @@ def unlinkwith(id, problem_id, contest, problem):
 @yield_contest()
 def problems(id, contest):
     addable_problems = Problem.query.all()
-    if (g.user.role == 'admin') and (len(contest.problems) > 0):
+    if g.user.is_admin(contest=contest) and (len(contest.problems) > 0):
         addable_problems = \
         Problem.query.filter(~Problem.id.in_([x.id for x in contest.problems])).all()
     return render_template('contests/problems.html', contest=contest, addable_problems=addable_problems)
@@ -85,8 +85,8 @@ def edit(id=-1):
     return render_template('contests/edit.html', contest=contest, error=error)
 
 @mod.route('/<int:id>/delete')
-@requires_admin
 @yield_contest()
+@requires_admin(contest="contest")
 def delete(id, contest):
     db.session.delete(contest)
     db.session.commit()

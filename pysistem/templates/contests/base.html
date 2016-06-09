@@ -62,7 +62,7 @@
     </a>
     {{ contest.name }}
 </h2>
-{% if g.user.role == 'admin' %}
+{% if g.user.is_admin(contest=contest) %}
 <div id="modal-confirm-delete" class="modal fade" tabindex="-1" role="dialog">
 <div class="modal-dialog" role="document">
 <div class="modal-content">
@@ -97,7 +97,7 @@
         <li role="presentation" class="{% block contest_nav_link_scoreboard %}{% endblock %}">
             <a href="{{ url_for('contests.scoreboard', id=contest.id) }}">{{ _('contests.scoreboard') }}</a>
         </li>
-        {% if g.user.role == 'admin' %}
+        {% if g.user.is_admin(contest=contest) %}
         <li role="presentation" class="{% block contest_nav_link_edit %}{% endblock %}">
             <a href="{{ url_for('contests.edit', id=contest.id) }}">{{ _('contests.edit') }}</a>
         </li>

@@ -18,7 +18,7 @@
         })
     })
 </script>
-{% if g.user.role == 'admin' %}
+{% if g.user.is_admin(contest=contest) %}
 <div style="float: right; margin-bottom: 16px">
 <a href="{{ url_for('problems.new', contest_id=contest.id) }}" class="btn btn-success" id="btn-newproblem">
     {{ _('title.problem.new') }}
@@ -74,7 +74,7 @@
 {% for problem in contest.problems %}
 <tr class="{{ problem.user_status(g.user, only_color=True) }}">
     <td>
-        {% if g.user.role == 'admin' %}
+        {% if g.user.is_admin(contest=contest) %}
         <a href="{{ url_for('contests.unlinkwith', id=contest.id, problem_id=problem.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>
         {% endif %}
         <a href="{{ url_for('problems.view', id=problem.id) }}">

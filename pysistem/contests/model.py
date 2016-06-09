@@ -35,12 +35,12 @@ class Contest(db.Model):
     def get_freeze_time(self, admin=True):
         freeze = self.freeze
         if (self.unfreeze_after_end and (datetime.now() > self.end)) \
-            or (admin and (g.user.role == 'admin')):
+            or (admin and g.user.is_admin(contest=self)):
             freeze = self.end
         return freeze
 
     def is_frozen(self):
-        return (g.user.role != 'admin') and self.is_admin_frozen()
+        return g.user.is_admin(contest=self) and self.is_admin_frozen()
 
     def is_admin_frozen(self):
         if self.unfreeze_after_end and (datetime.now() > self.end):

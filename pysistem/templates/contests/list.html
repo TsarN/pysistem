@@ -15,7 +15,7 @@
         })
     })
 </script>
-{% if g.user.role == 'admin' %}
+{% if g.user.is_admin() %}
 <div style="float: right; margin-bottom: 16px">
 <a href="{{ url_for('contests.new') }}" class="btn btn-success" id="btn-newcontest">
     {{ _('contests.new') }}

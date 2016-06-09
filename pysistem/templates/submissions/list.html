@@ -15,17 +15,22 @@
         return "{{ _('common.hide') }}";
     }
 </script>
-<thead>
 <caption>
-    <h4>{{ _('title.problem.submissions') }}</h4>
-    {% if g.user.role == 'admin' %}
+    {% if g.user.is_admin(submission=submissions) %}
     <span class="pull-right">
-        <a href="#">{{ _('problems.submissions.recheck.all') }}</a> /
-        <a href="#">{{ _('problems.submissions.reject.all') }}</a> /
-        <a href="#">{{ _('problems.submissions.delete.all') }}</a>
+        <a href="{{ url_for('submissions.recheck_all', ids=submissions|ids) }}">
+            {{ _('problems.submissions.recheck.all') }}
+        </a> /
+        <a href="{{ url_for('submissions.reject_all', ids=submissions|ids) }}">
+            {{ _('problems.submissions.reject.all') }}
+        </a> /
+        <a href="{{ url_for('submissions.delete_all', ids=submissions|ids) }}">
+            {{ _('problems.submissions.delete.all') }}
+        </a>
     </span>
     {% endif %}
 </caption>
+<thead>
 <tr>
     <th>ID</th>
     <th>{{ _('submissions.submitted') }}</th>
@@ -66,7 +71,7 @@
     <td>{{ submission.compiler.name }}</td>
     <td>
         {{ submission.get_str_result(color=True)|safe }}
-        {% if (g.user.role == 'admin') or submission.is_compile_failed() %}
+        {% if g.user.is_admin(submission=submission) or submission.is_compile_failed() %}
         <a href="#" onclick="$('#subactions-{{ submission.id }}').toggle(); $(this).toggleClass('dropup'); return false;">
             <span class="caret caret-big pull-right"></span>
         </a>
@@ -75,7 +80,7 @@
             {{ _('problems.submissions.viewcompilelog') }}
         </a>
         {% endif %}
-        {% if g.user.role == 'admin' %}
+        {% if g.user.is_admin(submission=submission) %}
         <br />
         <a target="_blank" href="{{ url_for('submissions.checklog', id=submission.id) }}">
             {{ _('problems.submissions.viewchecklog') }}

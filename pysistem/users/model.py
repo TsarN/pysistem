@@ -2,6 +2,8 @@
 from pysistem import db, app
 from flask import session, g
 import hashlib
+import base64
+import time
 from flask_babel import gettext
 
 class User(db.Model):
@@ -70,12 +72,15 @@ class User(db.Model):
         return len(q) > 0
 
     def get_email(self):
-        if (g.user.role == 'admin') or \
+        if g.user.is_admin(user=self) or \
             (g.user.id == self.id):
             return self.email
         else:
             return '<i>%s</i>' % gettext('common.hidden')
 
     def check_permissions(self):
-        return (g.user.role == 'admin') or \
-                (g.user.id == self.id)
+        return g.user and (g.user.is_admin(user=self) or \
+                (g.user.id == self.id))
+
+    def is_admin(self, **kwargs):
+        return self.role == 'admin'

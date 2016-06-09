@@ -18,7 +18,7 @@
 
 <hr />
 
-{% if g.user.role == 'admin' %}
+{% if g.user.is_admin(problem=problem) %}
 <table class="table" id="table-users">
 <caption>
 {{ _('problems.submissions.attemptedusers') }}
@@ -48,11 +48,11 @@
 </tbody>
 </table>
 {% endif %}
-
-<table class="table" id="table-submissions">
-<caption>
+<h4>
 {{ _('problems.submissions.belonging', username=user.username) }}
-</caption>
+</h4>
+<table class="table" id="table-submissions">
+
 {{ rendered_subs|safe }}
 </table>
 <script type="text/javascript">

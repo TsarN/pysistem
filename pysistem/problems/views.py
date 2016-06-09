@@ -75,8 +75,8 @@ def edit(id=-1):
     return render_template('problems/edit.html', problem=problem, error=error)
 
 @mod.route('/<int:id>/export')
-@requires_admin
 @yield_problem()
+@requires_admin(problem="problem")
 def export(id, problem):
     content = problem.export_gzip()
     response = Response(content, mimetype='application/gzip')
@@ -113,23 +113,23 @@ def import_():
     return redirect(url_for('problems.new'))
 
 @mod.route('/<int:id>/delete')
-@requires_admin
 @yield_problem()
+@requires_admin(problem="problem")
 def delete(id, problem):
     db.session.delete(problem)
     db.session.commit()
     return redirect(url_for('index'))
 
 @mod.route('/<int:id>/tests', methods=['GET', 'POST'])
-@requires_admin
 @yield_problem()
+@requires_admin(problem="problem")
 def tests(id, problem):
     tests = TestPair.query.filter(TestPair.problem_id == problem.id).all()
     return render_template('problems/tests.html', problem=problem, tests=tests)
 
 @mod.route('/deltest/<int:id>', methods=['GET', 'POST'])
-@requires_admin
 @yield_test_pair()
+@requires_admin(problem="problem")
 def deltest(id, test):
     db.session.delete(test)
     db.session.commit()
@@ -137,8 +137,8 @@ def deltest(id, test):
     return redirect(redirect_url())
 
 @mod.route('/addtest/<int:id>', methods=['POST'])
-@requires_admin
 @yield_problem()
+@requires_admin(problem="problem")
 def addtest(id, problem):
     input_str = ''
     pattern_str = ''
@@ -165,15 +165,15 @@ def addtest(id, problem):
     return redirect(url_for('problems.tests', id=id))
 
 @mod.route('/<int:id>/checkers')
-@requires_admin
 @yield_problem()
+@requires_admin(problem="problem")
 def checkers(id, problem):
     checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
     return render_template('problems/checkers.html', problem=problem, checkers=checkers)
 
 @mod.route('/<int:id>/addchecker', methods=['POST'])
-@requires_admin
 @yield_problem()
+@requires_admin(problem="problem")
 def addchecker(id, problem):
     source = ''
 
@@ -199,8 +199,8 @@ def addchecker(id, problem):
     return redirect(url_for('problems.checkers', id=id))
 
 @mod.route('/delchecker/<int:id>', methods=['GET', 'POST'])
-@requires_admin
 @yield_checker()
+@requires_admin(problem="problem")
 def delchecker(id, checker):
     db.session.delete(checker)
     db.session.commit()
@@ -208,8 +208,8 @@ def delchecker(id, checker):
     return redirect(redirect_url())
 
 @mod.route('/actchecker/<int:id>', methods=['GET', 'POST'])
-@requires_admin
 @yield_checker()
+@requires_admin(problem="problem")
 def actchecker(id, checker):
     checker.set_act()
     flash(gettext('problems.actchecker.success'))
@@ -227,7 +227,7 @@ def submissions(id, problem, username=None):
                 db.func.lower(User.username) == db.func.lower(username)).first()
         if user is None:
             return render_template('errors/404.html'), 404
-        if (g.user.role != 'admin') and (user.id != g.user.id):
+        if g.is_admin(problem=problem) and (user.id != g.user.id):
             return render_template('errors/403.html'), 403
 
     if request.method == 'POST':

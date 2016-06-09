@@ -21,11 +21,11 @@ def get_locale():
 
 @app.before_request
 def before_request():
-    session['language'] = get_locale()
     g.is_first_time = (User.query.count() == 0)
+    g.now = datetime.now()
+    session['language'] = get_locale()
     g.user = User()
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
-    g.now = datetime.now()
     g.raw_content = False
     g.SETTINGS = SETTINGS
     if SETTINGS.get('allow_raw_content', False):
@@ -80,6 +80,10 @@ def naturaldate_filter(date):
         return humanize.naturaldate(date)
     except: pass
     return dtp_filter(date)
+
+@app.template_filter('ids')
+def ids_filter(obj):
+    return [x.id for x in obj]
 
 @app.template_filter('naturaltime')
 def naturaltime_filter(time=False):
@@ -177,5 +181,3 @@ app.register_blueprint(contests_module)
 
 from pysistem.submissions.views import mod as submissions_module
 app.register_blueprint(submissions_module)
-
-from pysistem.api import _api_loaded
