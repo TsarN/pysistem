@@ -23,3 +23,5 @@ CREATE_DIRS = (
     '/storage/checkers_bin',
     '/storage/submissions_bin'
 )
+
+PATH_EXTRA = []
