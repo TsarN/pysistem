@@ -35,8 +35,22 @@
         ><span class="glyphicon glyphicon-trash text-danger"></span></a>
         {{ loop.index }}
     </td>
-    <td><pre>{{ test.input }}</pre></td>
-    <td><pre>{{ test.pattern }}</pre></td>
+    <td>
+        {% if test.input|limittext %}
+            <pre>{{ test.input }}</pre>
+        {% else %}
+            <i>{{ _('common.filetoolarge') }}</i><br />
+            <a target="_blank" href="{{ url_for('test_pairs.view_input', id=test.id) }}">{{ _('common.viewfile') }}</a>
+        {% endif %}
+    </td>
+    <td>
+        {% if test.pattern|limittext %}
+            <pre>{{ test.pattern }}</pre>
+        {% else %}
+            <i>{{ _('common.filetoolarge') }}</i><br />
+            <a target="_blank" href="{{ url_for('test_pairs.view_pattern', id=test.id) }}">{{ _('common.viewfile') }}</a>
+        {% endif %}
+    </td>
 </tr>
 {% endfor %}
 </tbody>

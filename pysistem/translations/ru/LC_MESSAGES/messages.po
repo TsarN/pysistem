@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-09 14:09+0300\n"
+"POT-Creation-Date: 2016-06-11 17:25+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,71 +19,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:108
+#: views.py:127
 msgid "naturaltime.justnow"
 msgstr "только что"
 
-#: views.py:110
+#: views.py:129
 msgid "naturaltime.secondsago"
 msgstr "секунд назад"
 
-#: views.py:112
+#: views.py:131
 msgid "naturaltime.minuteago"
 msgstr "минуту назад"
 
-#: views.py:114
+#: views.py:133
 msgid "naturaltime.minutesago"
 msgstr "минут назад"
 
-#: views.py:116
+#: views.py:135
 msgid "naturaltime.hourago"
 msgstr "час назад"
 
-#: views.py:118
+#: views.py:137
 msgid "naturaltime.hoursago"
 msgstr "часов назад"
 
-#: views.py:120
+#: views.py:139
 msgid "naturaltime.yesterday"
 msgstr "вчера"
 
-#: views.py:122
+#: views.py:141
 msgid "naturaltime.daysago"
 msgstr "дней назад"
 
-#: views.py:124
+#: views.py:143
 msgid "naturaltime.weekago"
 msgstr "неделю назад"
 
-#: views.py:126
+#: views.py:145
 msgid "naturaltime.weeksago"
 msgstr "недель назад"
 
-#: views.py:128
+#: views.py:147
 msgid "naturaltime.monthago"
 msgstr "месяц назад"
 
-#: views.py:130
+#: views.py:149
 msgid "naturaltime.monthsago"
 msgstr "месяцев назад"
 
-#: views.py:131
+#: views.py:150
 msgid "naturaltime.yearsago"
 msgstr "лет назад"
 
-#: contests/views.py:63
+#: contests/views.py:84
 msgid "contests.edit.invaliddates"
 msgstr "Время указано неверно: Начало &le; Заморозка &le; Окончание"
 
-#: contests/views.py:75
+#: contests/views.py:96
 msgid "contests.new.success"
 msgstr "Турнир создан"
 
-#: contests/views.py:78
+#: contests/views.py:99
 msgid "contests.edit.success"
 msgstr "Турнир обновлён"
 
-#: contests/views.py:81
+#: contests/views.py:102
 msgid "contests.edit.emptyname"
 msgstr "Пустое название турнира"
 
@@ -95,55 +95,55 @@ msgstr "Язык сменён на %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "Язык %(lang)s не найден"
 
-#: problems/views.py:63
+#: problems/views.py:66
 msgid "problems.new.success"
 msgstr "Задача создана"
 
-#: problems/views.py:68
+#: problems/views.py:71
 msgid "problems.edit.success"
 msgstr "Задача обновлена"
 
-#: problems/views.py:71
+#: problems/views.py:74
 msgid "problems.edit.emptyname"
 msgstr "Пустое название задачи"
 
-#: problems/views.py:91 problems/views.py:96
+#: problems/views.py:94 problems/views.py:99
 msgid "problems.import.filemissing"
 msgstr "Укажите файл с задачей"
 
-#: problems/views.py:112
+#: problems/views.py:118
 msgid "problems.import.error"
 msgstr "Ошибка импорта"
 
-#: problems/views.py:136
+#: problems/views.py:142
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:147 problems/views.py:152
+#: problems/views.py:153 problems/views.py:158
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:181 problems/views.py:186
+#: problems/views.py:187 problems/views.py:192
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:207
+#: problems/views.py:213
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:215
+#: problems/views.py:221
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:237 problems/views.py:242
+#: problems/views.py:243 problems/views.py:248
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:251
+#: problems/views.py:257
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:257
+#: problems/views.py:263
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
@@ -156,7 +156,7 @@ msgid "title.contestlist"
 msgstr "Турниры"
 
 #: templates/base.html:85 templates/problems/checkers.html:10
-#: templates/submissions/list.html:36
+#: templates/submissions/list.html:41
 msgid "common.language"
 msgstr "Язык"
 
@@ -204,17 +204,17 @@ msgid "common.cancel"
 msgstr "Отмена"
 
 #: templates/contests/base.html:83 templates/contests/base.html:105
-#: templates/contests/problems.html:78 templates/problems/base.html:26
+#: templates/contests/problems.html:88 templates/problems/base.html:26
 #: templates/problems/base.html:65 templates/problems/checkers.html:38
 #: templates/problems/tests.html:34
 msgid "common.delete"
 msgstr "Удалить"
 
-#: templates/contests/base.html:95 templates/contests/list.html:28
+#: templates/contests/base.html:95 templates/contests/list.html:30
 msgid "contests.problems"
 msgstr "Задачи"
 
-#: templates/contests/base.html:98 templates/contests/list.html:74
+#: templates/contests/base.html:98 templates/contests/list.html:76
 msgid "contests.scoreboard"
 msgstr "Турнирная таблица"
 
@@ -232,15 +232,15 @@ msgstr "Начало"
 msgid "contests.end"
 msgstr "Конец"
 
-#: templates/contests/base.html:119 templates/contests/list.html:55
+#: templates/contests/base.html:119 templates/contests/list.html:57
 msgid "contests.remaining"
 msgstr "Осталось"
 
-#: templates/contests/base.html:121 templates/contests/list.html:57
+#: templates/contests/base.html:121 templates/contests/list.html:59
 msgid "contests.beforestart"
 msgstr "До начала"
 
-#: templates/contests/base.html:128 templates/contests/list.html:65
+#: templates/contests/base.html:128 templates/contests/list.html:67
 msgid "contests.finished"
 msgstr "Турнир окончен"
 
@@ -253,7 +253,7 @@ msgid "contest.adminfrozen"
 msgstr "Турнирная таблица заморожена для непривилегированных пользователей"
 
 #: templates/contests/edit.html:7 templates/contests/edit.html:33
-#: templates/contests/list.html:21
+#: templates/contests/list.html:22
 msgid "contests.new"
 msgstr "Новый турнир"
 
@@ -264,7 +264,7 @@ msgid "common.error"
 msgstr "Ошибка"
 
 #: templates/contests/edit.html:48 templates/contests/edit.html:51
-#: templates/contests/list.html:27 templates/contests/problems.html:45
+#: templates/contests/list.html:29 templates/contests/problems.html:55
 #: templates/problems/checkers.html:8 templates/problems/checkers.html:19
 #: templates/problems/edit.html:67 templates/problems/edit.html:70
 msgid "common.name"
@@ -279,7 +279,7 @@ msgid "contests.unfreezeafterend"
 msgstr "Разморозить после окончания"
 
 #: templates/contests/edit.html:87 templates/problems/edit.html:107
-#: templates/users/edit_profile.html:39
+#: templates/users/edit_profile.html:48
 msgid "common.update"
 msgstr "Обновить"
 
@@ -287,42 +287,42 @@ msgstr "Обновить"
 msgid "common.create"
 msgstr "Создать"
 
-#: templates/contests/list.html:11 templates/contests/problems.html:14
+#: templates/contests/list.html:11 templates/contests/problems.html:16
 msgid "datatables.search"
 msgstr "Поиск"
 
-#: templates/contests/list.html:12 templates/contests/problems.html:15
-#: templates/problems/submissions.html:61 templates/users/profile.html:38
+#: templates/contests/list.html:12 templates/contests/problems.html:17
+#: templates/problems/submissions.html:65 templates/users/profile.html:38
 msgid "datatables.emptytable"
 msgstr "Нет записей"
 
-#: templates/contests/list.html:13 templates/contests/problems.html:16
-#: templates/problems/submissions.html:62 templates/users/profile.html:39
+#: templates/contests/list.html:13 templates/contests/problems.html:18
+#: templates/problems/submissions.html:66 templates/users/profile.html:39
 msgid "datatables.zerorecords"
 msgstr "Записи не найдены"
 
-#: templates/contests/list.html:29
+#: templates/contests/list.html:31
 msgid "common.time"
 msgstr "Время"
 
-#: templates/contests/list.html:47
+#: templates/contests/list.html:49
 msgid "common.outof"
 msgstr "из"
 
-#: templates/contests/problems.html:24 templates/problems/edit.html:9
+#: templates/contests/problems.html:34 templates/problems/edit.html:9
 #: templates/problems/edit.html:55
 msgid "title.problem.new"
 msgstr "Новая задача"
 
-#: templates/contests/problems.html:27
+#: templates/contests/problems.html:37
 msgid "contests.addproblem"
 msgstr "Добавить задачу"
 
-#: templates/contests/problems.html:38
+#: templates/contests/problems.html:48
 msgid "contests.addproblem.title"
 msgstr "Добавить задачу в турнир"
 
-#: templates/contests/problems.html:46 templates/problems/edit.html:88
+#: templates/contests/problems.html:56 templates/problems/edit.html:88
 #: templates/problems/edit.html:90
 msgid "common.description"
 msgstr "Описание"
@@ -369,8 +369,7 @@ msgstr "Подтвердите удаление задачи"
 msgid "common.statement"
 msgstr "Условие"
 
-#: templates/problems/base.html:40 templates/problems/submissions.html:39
-#: templates/submissions/list.html:20
+#: templates/problems/base.html:40 templates/problems/submissions.html:43
 msgid "title.problem.submissions"
 msgstr "Решения"
 
@@ -395,7 +394,7 @@ msgid "problems.export"
 msgstr "Экспортировать"
 
 #: templates/problems/checkers.html:9 templates/problems/submissions.html:14
-#: templates/submissions/list.html:35
+#: templates/submissions/list.html:40
 msgid "common.source"
 msgstr "Исходный код"
 
@@ -441,7 +440,7 @@ msgstr "Отправить"
 msgid "problems.submissions.attemptedusers"
 msgstr "Пытавшиеся участники"
 
-#: templates/problems/submissions.html:50
+#: templates/problems/submissions.html:52
 msgid "problems.submissions.belonging"
 msgstr "Попытки пользователя %(username)s"
 
@@ -452,6 +451,14 @@ msgstr "Ввод"
 #: templates/problems/tests.html:10
 msgid "problems.tests.pattern"
 msgstr "Шаблон"
+
+#: templates/problems/tests.html:42 templates/problems/tests.html:50
+msgid "common.filetoolarge"
+msgstr "Файл слишком большой"
+
+#: templates/problems/tests.html:43 templates/problems/tests.html:51
+msgid "common.viewfile"
+msgstr "Смотреть в новом окне"
 
 #: templates/problems/view.html:4
 msgid "common.units.milliseconds"
@@ -465,65 +472,70 @@ msgstr "КБ"
 msgid "common.hide"
 msgstr "Скрыть"
 
-#: templates/submissions/list.html:9 templates/submissions/list.html:64
+#: templates/submissions/list.html:9 templates/submissions/list.html:69
 msgid "common.show"
 msgstr "Показать"
 
-#: templates/submissions/list.html:23
+#: templates/submissions/list.html:22
 msgid "problems.submissions.recheck.all"
 msgstr "Перепроверить всё"
 
-#: templates/submissions/list.html:24
+#: templates/submissions/list.html:25
 msgid "problems.submissions.reject.all"
 msgstr "Отклонить всё"
 
-#: templates/submissions/list.html:25
+#: templates/submissions/list.html:28
 msgid "problems.submissions.delete.all"
 msgstr "Удалить всё"
 
-#: templates/submissions/list.html:31
+#: templates/submissions/list.html:36
 msgid "submissions.submitted"
 msgstr "Отправлено"
 
-#: templates/submissions/list.html:33
+#: templates/submissions/list.html:38
 msgid "common.problem"
 msgstr "Задача"
 
-#: templates/submissions/list.html:37
+#: templates/submissions/list.html:42
 msgid "submissions.status"
 msgstr "Статус"
 
-#: templates/submissions/list.html:75
+#: templates/submissions/list.html:80
 msgid "problems.submissions.viewcompilelog"
 msgstr "Посмотреть лог компиляции"
 
-#: templates/submissions/list.html:81
+#: templates/submissions/list.html:86
 msgid "problems.submissions.viewchecklog"
 msgstr "Посмотреть лог проверки"
 
-#: templates/submissions/list.html:84
+#: templates/submissions/list.html:89
 msgid "problems.submissions.recheck"
 msgstr "Перепроверить"
 
-#: templates/submissions/list.html:88
+#: templates/submissions/list.html:93
 msgid "problems.submissions.reject"
 msgstr "Отклонить"
 
-#: templates/submissions/list.html:92
+#: templates/submissions/list.html:97
 msgid "problems.submissions.delete"
 msgstr "Удалить"
 
-#: templates/users/edit_profile.html:17 templates/users/edit_profile.html:20
+#: templates/users/edit_profile.html:18 templates/users/edit_profile.html:21
+#: templates/users/login.html:14 templates/users/signup.html:20
+msgid "common.username"
+msgstr "Имя пользователя"
+
+#: templates/users/edit_profile.html:26 templates/users/edit_profile.html:29
 #: templates/users/profile.html:11
 msgid "common.firstname"
 msgstr "Имя"
 
-#: templates/users/edit_profile.html:24 templates/users/edit_profile.html:27
+#: templates/users/edit_profile.html:33 templates/users/edit_profile.html:36
 #: templates/users/profile.html:14
 msgid "common.lastname"
 msgstr "Фамилия"
 
-#: templates/users/edit_profile.html:31 templates/users/edit_profile.html:34
+#: templates/users/edit_profile.html:40 templates/users/edit_profile.html:43
 #: templates/users/profile.html:17
 msgid "common.email"
 msgstr "E-Mail"
@@ -531,10 +543,6 @@ msgstr "E-Mail"
 #: templates/users/login.html:9 templates/users/login.html:19
 msgid "common.login"
 msgstr "Войти"
-
-#: templates/users/login.html:14 templates/users/signup.html:20
-msgid "common.username"
-msgstr "Имя пользователя"
 
 #: templates/users/login.html:17 templates/users/signup.html:23
 msgid "common.password"
@@ -572,11 +580,11 @@ msgstr "Код доступа"
 msgid "error.permission.authrequired"
 msgstr "Для просмотра страницы необходимо авторизироваться"
 
-#: users/model.py:55
+#: users/model.py:57
 msgid "auth.login.invalidcredentials"
 msgstr "Неправильный логин или пароль"
 
-#: users/model.py:77
+#: users/model.py:79
 msgid "common.hidden"
 msgstr "Скрыто"
 
@@ -616,7 +624,7 @@ msgstr "Такое имя нельзя использовать"
 msgid "auth.logout.success"
 msgstr "Вы вышли из системы"
 
-#: users/views.py:102
+#: users/views.py:107
 msgid "profile.update.success"
 msgstr "Профиль пользователя был обновлён"
 

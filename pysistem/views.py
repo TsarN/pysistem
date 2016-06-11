@@ -87,6 +87,16 @@ def naturaldate_filter(date):
 def ids_filter(obj):
     return [x.id for x in obj]
 
+@app.template_filter('limittext')
+def limittext_filter(text, x=10, y=10, compacted=None):
+    splitted = text.split('\n')
+    cols = max(map(lambda x: len(x), splitted))
+    rows = len(splitted)
+    if (cols > x) or (rows > y):
+        return compacted
+    else:
+        return text
+
 @app.template_filter('naturaltime')
 def naturaltime_filter(time=False):
     now = datetime.now()
@@ -185,3 +195,6 @@ app.register_blueprint(contests_module)
 
 from pysistem.submissions.views import mod as submissions_module
 app.register_blueprint(submissions_module)
+
+from pysistem.test_pairs.views import mod as test_pairs_module
+app.register_blueprint(test_pairs_module)

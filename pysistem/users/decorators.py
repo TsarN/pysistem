@@ -30,7 +30,7 @@ def requires_admin(*args_, **kwargs_):
         def decorated_function(*args, **kwargs):
             for kw in kwargs_:
                 if type(kwargs_[kw]) is str:
-                    kwargs_[kw] = kwargs[kw]
+                    kwargs_[kw] = kwargs[kwargs_[kw]]
             if not g.user.is_admin(**kwargs_):
                 return render_template('errors/403.html'), 403
             return f(*args, **kwargs)
