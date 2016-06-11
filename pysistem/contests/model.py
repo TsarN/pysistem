@@ -2,6 +2,7 @@
 from pysistem import db
 from datetime import datetime
 from flask import g
+from flask_babel import gettext
 
 class ContestProblemAssociation(db.Model):
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'), primary_key=True)
@@ -40,7 +41,7 @@ class Contest(db.Model):
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
         self.name = name
-        self.rules = rules
+        self.rules = rules if rules in contest_rulesets.keys() else 'acm'
         self.start = start
         self.end = end
         self.freeze = freeze
@@ -67,15 +68,26 @@ class Contest(db.Model):
         return True
 
     def rate_user(self, user, do_freeze=True):
-        solved, penalty = 0, 0
         if do_freeze:   
             freeze = self.get_freeze_time()
         else:
             freeze = None
-        for problem in self.problems:
-            s = problem.user_succeed(user, freeze=freeze)
-            if s[0]:
-                solved += 1
-                penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
-                penalty += max(0, (s[1] - self.start).total_seconds() // 60)
-        return solved, int(penalty)
+        if self.rules == 'roi':
+            score = 0
+            for problem in self.problems:
+                score += problem.user_succeed(user, freeze=freeze)[0]
+            return (score,)
+        else:
+            solved, penalty = 0, 0
+            for problem in self.problems:
+                s = problem.user_succeed(user, freeze=freeze)
+                if s[0]:
+                    solved += 1
+                    penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
+                    penalty += max(0, (s[1] - self.start).total_seconds() // 60)
+            return solved, int(penalty)
+
+contest_rulesets = {
+    "acm": "ACM/ICPC",
+    "roi": "ROI"
+}

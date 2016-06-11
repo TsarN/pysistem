@@ -73,6 +73,18 @@ src="{{ url_for('static', filename='dtp/dtp.min.js') }}">
     </div>
 </div>
 <div class="form-group">
+    <label for="rules" class="col-sm-2 control-label">{{ _('contests.ruleset') }}</label>
+    <div class="col-sm-10">
+        <select name="ruleset" class="form-control">
+        {% for ruleset in contest_rulesets %}
+        <option value="{{ ruleset }}" autocomplete="off" {{ 'selected="selected"' if contest.rules == ruleset else ''}}>
+            {{ contest_rulesets[ruleset] }}
+        </option>
+        {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
             <label>

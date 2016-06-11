@@ -7,7 +7,7 @@ import gzip
 import io
 import hashlib
 
-EXPORTVER = 1
+EXPORTVER = 2
 
 class Problem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,7 +18,7 @@ class Problem(db.Model):
     memory_limit = db.Column(db.Integer)
 
     submissions = db.relationship('Submission', cascade = "all,delete", backref='problem')
-    test_pairs = db.relationship('TestPair', cascade = "all,delete", backref='problem')
+    test_groups = db.relationship('TestGroup', cascade = "all,delete", backref='problem')
     checkers = db.relationship('Checker', cascade = "all,delete", backref='problem')
 
     contests = db.relationship('ContestProblemAssociation',
@@ -47,9 +47,8 @@ class Problem(db.Model):
             if sub.status in [STATUS_DONE, STATUS_ACT]:
                 if sub.result in [RESULT_OK]:
                     break
-                if sub.tests_passed > 0:
-                    if sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
-                        ans += 1
+                if sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
+                    ans += 1
         return ans
 
     def user_succeed(self, user, freeze=None):
@@ -60,19 +59,18 @@ class Problem(db.Model):
         )).all()
 
         last_sub = None
+        max_score = 0
 
         for sub in subs:
             if freeze and sub.submitted > freeze:
                 break
             if sub.status in [STATUS_DONE, STATUS_ACT]:
-                if sub.tests_passed > 0:
-                    if sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
-                        last_sub = sub.submitted
-                if sub.result in [RESULT_OK]:
-                    return True, sub.submitted
-        return False, last_sub
+                if sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
+                    last_sub = sub.submitted
+                    max_score = max(max_score, sub.score)
+        return max_score, last_sub
 
-    def user_status(self, user, color=True, failed_test=False, only_color=False):
+    def user_status(self, user, color=True, score=False, only_color=False):
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
@@ -84,14 +82,14 @@ class Problem(db.Model):
         for sub in subs:
             if sub.status in [STATUS_DONE, STATUS_ACT]:
                 if sub.result in [RESULT_OK]:
-                    return sub.get_str_result(color=color, failed_test=failed_test, only_color=only_color)
+                    return sub.get_str_result(color=color, score=score, only_color=only_color)
                 elif sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
-                    if sub.tests_passed > 0:
+                    if sub.score > 0:
                         attempted = sub
             elif sub.status in [STATUS_CHECKING]:
                 attempted = sub
         if attempted:
-            return attempted.get_str_result(color=color, failed_test=failed_test, only_color=only_color)
+            return attempted.get_str_result(color=color, score=score, only_color=only_color)
         else:
             return ""
         
@@ -108,10 +106,16 @@ class Problem(db.Model):
                 'lang': checker.lang,
                 'source': checker.source
             } for checker in self.checkers if checker.status in [STATUS_DONE, STATUS_ACT]],
-            'test_pairs': [{
-                'input': test.input,
-                'pattern': test.pattern
-            } for test in self.test_pairs],
+            'test_groups': [{
+                "test_pairs": [{
+                    'input': test.input,
+                    'pattern': test.pattern
+                } for test in test_group.test_pairs],
+                "score": test_group.score,
+                "score_per_test": test_group.score_per_test,
+                "check_all": test_group.check_all
+            }
+            for test_group in self.test_groups],
             'version': EXPORTVER
         })
 
@@ -122,13 +126,14 @@ class Problem(db.Model):
 
     def import_gzip(self, data):
         from pysistem.checkers.model import Checker
-        from pysistem.test_pairs.model import TestPair
+        from pysistem.test_pairs.model import TestPair, TestGroup
         f = io.BytesIO()
         f.write(data)
         f.seek(0)
         input_f = gzip.GzipFile(fileobj=f, mode='rb')
         data = pickle.load(input_f)
-        if data.get('version', 0) != EXPORTVER:
+        version = data.get('version', 0)
+        if version not in [1, 2]:
             return False
         self.name = data.get('name', self.name)
         self.time_limit = data.get('time_limit', self.time_limit)
@@ -145,12 +150,28 @@ class Problem(db.Model):
             db.session.add(c)
             db.session.commit()
             c.compile()
-        for test in data.get('test_pairs', ()):
-            db.session.add(TestPair(
-                test['input'],
-                test['pattern'],
-                self
-            ))
+        if version == 1:
+            test_group = TestGroup(self)
+            for test in data.get('test_pairs', ()):
+                test_pair = TestPair(
+                    test['input'],
+                    test['pattern']
+                )
+                test_group.test_pairs.append(test_pair)
+            db.session.add(test_group)
+        if version == 2:
+            for tg in data.get('test_groups', ()):
+                test_group = TestGroup(self)
+                test_group.score = tg['score']
+                test_group.score_per_test = tg['score_per_test']
+                test_group.check_all = tg['check_all']
+                for test in tg['test_pairs']:
+                    test_pair = TestPair(
+                        test['input'],
+                        test['pattern']
+                    )
+                    test_group.test_pairs.append(test_pair)
+                db.session.add(test_group)
         db.session.commit()
         return True
 
@@ -171,3 +192,10 @@ class Problem(db.Model):
                           .decode('ascii')
         slug = re.sub('[^\w\s-]', '', slug).strip().lower()
         return re.sub('[-\s]+', '-', slug) or fallback
+
+    def get_max_score(self):
+        score = 0
+        for test_group in self.test_groups:
+            score += test_group.score
+            score += len(test_group.test_pairs) * test_group.score_per_test
+        return score

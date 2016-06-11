@@ -100,7 +100,11 @@
     </td>
     <td>
         {% if g.user.id %}
+        {% if contest.rules == 'acm' %}
         {{ problem.user_status(g.user, color=False)|safe }}
+        {% else %}
+        {{ problem.user_status(g.user, color=False, score=True)|safe }}
+        {% endif %}
         {% endif %}
     </td>
 </tr>

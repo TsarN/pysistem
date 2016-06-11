@@ -156,7 +156,6 @@ def detect_compilers():
                 ver = ""
 
             name = compiler['name'] % ver
-            detected.append(compilerid)
             c = Compiler.query.filter(Compiler.autodetect == compilerid).first() or Compiler()
             c.name = name
             c.lang = compiler.get('lang')

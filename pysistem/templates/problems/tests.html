@@ -2,6 +2,55 @@
 {% block problem_navbar_link_tests %}active{% endblock %}
 {% block problem_content %}
 
+{% for test_group in [None] + test_groups %}
+<div class="panel panel-default">
+<div class="panel-heading">
+{% if test_group %}
+{{ _('problems.testgroup') }} #{{ loop.index0 }}
+<a href="{{ url_for('problems.delete_test_group', id=test_group.id) }}" class="pull-right"
+    data-toggle="tooltip" data-placement="right" title="{{ _('common.delete') }}">
+    <span class="glyphicon glyphicon-trash text-danger"></span>
+</a>
+{% else %}
+{{ _('problems.testgroup.new') }}
+{% endif %}
+</div>
+<div class="panel-body">
+<form method="POST" class="form-horizontal"
+{% if test_group %}
+    action="{{ url_for('problems.update_test_group', id=problem.id, group_id=test_group.id) }}"
+{% else %}
+    action="{{ url_for('problems.update_test_group', id=problem.id) }}"
+{% endif %}>
+<div class="form-group">
+    <label for="group-score" class="col-sm-6 control-label">{{ _('problems.testgroups.score') }}</label>
+    <div class="col-sm-6">
+        <input type="number" name="score" id="group-score" value="{{ test_group.score if test_group else 0 }}" />
+    </div>
+</div>
+<div class="form-group">
+    <label for="group-score-per-test" class="col-sm-6 control-label">{{ _('problems.testgroups.scorepertest') }}</label>
+    <div class="col-sm-6">
+        <input type="number" name="score_per_test" id="group-score-per-test" value="{{ test_group.score_per_test if test_group else 1 }}" />
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-offset-4 col-sm-4">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="check_all" {% if test_group and test_group.check_all %}checked="checked"{% endif %} />
+                {{ _('problems.testgroups.checkall') }}
+            </label>
+        </div>
+    </div>
+</div>
+<div class="col-sm-offset-4 col-sm-4">
+    <button type="submit" role="submit" class="btn btn-primary btn-block" style="margin-top: 16px">
+        {{ _('common.update') if test_group else _('common.create') }}
+    </button>
+</div>
+</form>
+{% if test_group %}
 <table class="table">
 <thead>
 <tr>
@@ -11,7 +60,7 @@
 </tr>
 </thead>
 <tbody>
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtest', id=problem.id) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtest', id=test_group.id) }}">
 <tr>
     <td>
         <span class="glyphicon glyphicon-plus text-success"></span>
@@ -27,7 +76,7 @@
     </td>
 </tr>
 </form>
-{% for test in tests %}
+{% for test in test_group.test_pairs %}
 <tr>
     <td>
         <a href="{{ url_for('problems.deltest', id=test.id) }}"
@@ -55,6 +104,10 @@
 {% endfor %}
 </tbody>
 </table>
+{% endif %}
+</div>
+</div>
+{% endfor %}
 
 <script type="text/javascript">
 $(function () {

@@ -44,10 +44,6 @@
         </a>
     </td>
     <td style="white-space: nowrap;">
-        {% if g.user.id %}
-        {{ contest.rate_user(g.user, do_freeze=False)[0] }}
-        {{ _('common.outof') }}
-        {% endif %}
         {{ contest.problems|length }}
     </td>
     <td>

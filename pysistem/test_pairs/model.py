@@ -7,16 +7,29 @@ class TestPair(db.Model):
     input = db.Column(db.Text)
     pattern = db.Column(db.Text)
 
-    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    test_group_id = db.Column(db.Integer, db.ForeignKey('test_group.id'))
 
-    def __init__(self, input='', pattern='', problem=None):
+    def __init__(self, input='', pattern=''):
         self.input = input
         self.pattern = pattern
 
-        if type(problem) is int:
-            problem = Problem.query.get(problem)
+    def __repr__(self):
+        return '<TestPair of %r>' % self.test_group.problem.name
 
+class TestGroup(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    score = db.Column(db.Integer)
+    score_per_test = db.Column(db.Integer)
+    check_all = db.Column(db.Boolean)
+
+    test_pairs = db.relationship('TestPair', cascade = "all,delete", backref='test_group')
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+
+    def __init__(self, problem=None):
         self.problem = problem
+        self.score = 0
+        self.score_per_test = 1
+        self.check_all = False
 
     def __repr__(self):
-        return '<TestPair of %r>' % self.problem.name
+        return '<TestGroup of %r>' % self.problem.name

@@ -2,7 +2,7 @@
 from pysistem import app, babel, db, redirect_url, cache
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
 from flask_babel import gettext
-from pysistem.contests.model import Contest, ContestProblemAssociation
+from pysistem.contests.model import Contest, ContestProblemAssociation, contest_rulesets
 from pysistem.users.model import User
 from pysistem.problems.model import Problem
 from pysistem.users.decorators import requires_login, requires_admin
@@ -62,7 +62,7 @@ def problems(id, contest):
 
 @mod.route('/new')
 def new():
-    return render_template('contests/edit.html', contest=Contest())
+    return render_template('contests/edit.html', contest=Contest(), contest_rulesets=contest_rulesets)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/new/post', methods=['POST'])
@@ -78,6 +78,7 @@ def edit(id=-1):
         end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
         freeze = datetime.strptime(request.form.get('freeze', g.now_formatted), "%Y-%m-%d %H:%M")
         unfreeze_after_end = bool(request.form.get('unfreeze_after_end', False))
+        rules = request.form.get('ruleset', 'acm')
 
         if (start > freeze) or (freeze > end) or (start > end) or not \
             (start and end and freeze):
@@ -89,6 +90,7 @@ def edit(id=-1):
                 contest.end = end
                 contest.freeze = freeze
                 contest.unfreeze_after_end = unfreeze_after_end
+                contest.rules = rules if rules in contest_rulesets.keys() else 'acm'
                 if is_new:
                     db.session.add(contest)
                 db.session.commit()
@@ -103,12 +105,15 @@ def edit(id=-1):
 
     if contest is None:
         return render_template('errors/404.html'), 404
-    return render_template('contests/edit.html', contest=contest, error=error)
+    return render_template('contests/edit.html', contest=contest, error=error, contest_rulesets=contest_rulesets)
 
 @mod.route('/<int:id>/delete')
 @yield_contest()
 @requires_admin(contest="contest")
 def delete(id, contest):
+    for x in ContestProblemAssociation.query.filter( \
+        ContestProblemAssociation.contest_id == contest.id):
+        db.session.delete(x)
     db.session.delete(contest)
     db.session.commit()
     return redirect(url_for('index'))
@@ -125,8 +130,8 @@ def format_time(mins):
 @yield_contest()
 def scoreboard(id, contest):
     cache_name = '/contests/scoreboard/%d/%s' % (contest.id, g.user.role or 'user')
-    score = cache.get(cache_name)
-    if score is None:
+    rawscore = cache.get(cache_name)
+    if rawscore is None:
         problems = contest.problems
         users = []
         for user in User.query:
@@ -151,16 +156,19 @@ def scoreboard(id, contest):
                     "username": user.username,
                     "is_solved": solved_map
                 })
-        users.sort(key=lambda x:(-x['score'][0], x['score'][1]))
+        if contest.rules == 'acm':
+            users.sort(key=lambda x:(-x['score'][0], x['score'][1]))
+        else:
+            users.sort(key=lambda x:(-x['score'][0]))
 
-        score = (render_template('contests/raw_scoreboard.html',
+        rawscore = (render_template('contests/raw_scoreboard.html',
             contest=contest, problems=problems, users=users), g.now)
-        cache.set(cache_name, score, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
+        cache.set(cache_name, rawscore, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
     if request.args.get('printing'):
         return render_template('contests/printing_scoreboard.html',
-            scoreboard=score[0])
+            scoreboard=rawscore[0])
     return render_template('contests/scoreboard.html',
-        scoreboard=score[0], contest=contest, updated=score[1])
+        scoreboard=rawscore[0], contest=contest, updated=rawscore[1])
 
 @mod.route('/list')
 def list():

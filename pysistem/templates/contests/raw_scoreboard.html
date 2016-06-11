@@ -15,7 +15,9 @@
     </th>
     {% endfor %}
     <th>+</th>
+    {% if contest.rules == 'acm' %}
     <th>T</th>
+    {% endif %}
 </tr>
 </thead>
 <tbody>
@@ -24,7 +26,9 @@
     <td>{{ loop.index }}</td>
     <td>{{ user['username'] }}</td>
     {% for problem in problems %}
-    <td><div class="text-center">
+    <td>
+    {% if contest.rules == 'acm' %}
+    <div class="text-center">
     <b>
     {% if not user['is_solved'][problem.id]['succeed'] %}
     {% if user['is_solved'][problem.id]['failed'] > 0 %}
@@ -38,10 +42,17 @@
     </b><br />
     {{ user['is_solved'][problem.id]['time'] }}
     </div>
+    {% elif contest.rules == 'roi' %}
+    <div class="text-center">
+    <b>{{ user['is_solved'][problem.id]['succeed'] }}</b>
+    </div>
+    {% endif %}
     </td>
     {% endfor %}
     <td>{{ user['score'][0] }}</td>
+    {% if contest.rules == 'acm' %}
     <td>{{ user['score'][1] }}</td>
+    {% endif %}
 </tr>
 {% endfor %}
 </tbody>

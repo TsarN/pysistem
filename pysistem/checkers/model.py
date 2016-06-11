@@ -80,75 +80,66 @@ class Checker(db.Model):
         else:
             return False
 
-    def check(self, submission):
-        submission.result = RESULT_OK
-        submission.tests_passed = 0
-        submission.check_log = ''
-        result, stdout, stderr = (-1, b'', b'')
+    def check_test(self, submission, test, ntest=0):
         cstdout, cstderr = (b'', b'')
-        for test in self.problem.test_pairs:
-            cstdout, cstderr = (b'', b'')
-            db.session.commit()
-            result, stdout, stderr = submission.run(test.input,
-                submission.problem.time_limit, submission.problem.memory_limit,
-                commit_waiting=False)
-            # DETERMINING RESULT
+        db.session.commit()
+        result, stdout, stderr = submission.run(test.input,
+            submission.problem.time_limit, submission.problem.memory_limit,
+            commit_waiting=False)
+        # DETERMINING RESULT
 
 
-            subres = RESULT_OK
+        subres = RESULT_OK
 
-            if result & 8:
+        if result & 8:
+            subres = RESULT_IE
+        elif result & 16:
+            subres = RESULT_SV
+        elif result & 4:
+            subres = RESULT_ML
+        elif result & 1:
+            subres = RESULT_TL
+        elif result & 2:
+            subres = RESULT_RE
+
+        if subres == RESULT_OK:
+
+            # NOTHING WRONG: CHECK FOR OK/WA/PE
+            input_path = tempfile.gettempdir() + '/pysistem_checker_input_' + \
+                         str(submission.id) + '_' + str(test.id)
+            output_path = tempfile.gettempdir() + '/pysistem_checker_output_' + \
+                         str(submission.id) + '_' + str(test.id)
+            pattern_path = tempfile.gettempdir() + '/pysistem_checker_pattern_' + \
+                         str(submission.id) + '_' + str(test.id)
+
+            with open(input_path, 'w') as input_file, \
+                 open(output_path, 'w') as output_file, \
+                 open(pattern_path, 'w') as pattern_file:
+                 print(test.input, file=input_file)
+                 print(test.pattern, file=pattern_file)
+                 print(stdout.decode(), file=output_file)
+
+            cmd = [self.get_exe_path(), input_path, output_path, pattern_path]
+            p = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            cstdout, cstderr = p.communicate()
+            r = p.returncode
+
+            os.remove(input_path)
+            os.remove(output_path)
+            os.remove(pattern_path)
+
+            if r == 1:
+                subres = RESULT_PE
+            elif r == 2:
+                subres = RESULT_WA
+            elif r == 3:
                 subres = RESULT_IE
-            elif result & 16:
-                subres = RESULT_SV
-            elif result & 4:
-                subres = RESULT_ML
-            elif result & 1:
-                subres = RESULT_TL
-            elif result & 2:
-                subres = RESULT_RE
-
-            if subres == RESULT_OK:
-
-                # NOTHING WRONG: CHECK FOR OK/WA/PE
-                input_path = tempfile.gettempdir() + '/pysistem_checker_input_' + \
-                             str(submission.id) + '_' + str(test.id)
-                output_path = tempfile.gettempdir() + '/pysistem_checker_output_' + \
-                             str(submission.id) + '_' + str(test.id)
-                pattern_path = tempfile.gettempdir() + '/pysistem_checker_pattern_' + \
-                             str(submission.id) + '_' + str(test.id)
-
-                with open(input_path, 'w') as input_file, \
-                     open(output_path, 'w') as output_file, \
-                     open(pattern_path, 'w') as pattern_file:
-                     print(test.input, file=input_file)
-                     print(test.pattern, file=pattern_file)
-                     print(stdout.decode(), file=output_file)
-
-                cmd = [self.get_exe_path(), input_path, output_path, pattern_path]
-                p = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                cstdout, cstderr = p.communicate()
-                r = p.returncode
-
-                os.remove(input_path)
-                os.remove(output_path)
-                os.remove(pattern_path)
-
-                if r == 1:
-                    subres = RESULT_PE
-                elif r == 2:
-                    subres = RESULT_WA
-                elif r == 3:
-                    subres = RESULT_IE
 
 
-            submission.result = subres
-            if submission.result == RESULT_OK:
-                submission.tests_passed += 1
-            else:
-                break
-        submission.done()
-        submission.check_log = '''
+        submission.result = subres
+        if submission.result == RESULT_OK:
+            submission.score += test.test_group.score_per_test
+        return '''
 ---------- checker ----------
 %s
 ---------- input ----------
@@ -163,6 +154,7 @@ class Checker(db.Model):
 Verdict = %s
 Test = %d
 TestID = %d
+TestGroupID = %d
 ProblemID = %d
 ProblemTimeLimit = %d
 ProblemMemoryLimit = %d
@@ -177,9 +169,10 @@ Compiler = %s
     stdout.decode(),
     test.pattern,
     submission.compile_log,
-    submission.get_str_result(failed_test=False),
-    submission.tests_passed + 1,
+    submission.get_str_result(score=False),
+    ntest + 1,
     test.id,
+    test.test_group.id,
     submission.problem.id,
     submission.problem.time_limit,
     submission.problem.memory_limit,
@@ -188,5 +181,32 @@ Compiler = %s
     submission.user.username,
     submission.compiler.id,
     submission.compiler.name)
+
+    def check(self, submission):
+        submission.result = RESULT_OK
+        submission.status = STATUS_CHECKING
+        submission.score = 0
+        submission.check_log = ''
+        ntest = 0
+        last_result = RESULT_OK
+        for test_group in self.problem.test_groups:
+            all_passed = True
+            for test in test_group.test_pairs:
+                log = self.check_test(submission, test, ntest)
+                ntest += 1
+                if log:
+                    submission.check_log = log
+                if submission.result != RESULT_OK:
+                    all_passed = False
+                    if last_result == RESULT_OK:
+                        last_result = submission.result
+                    if not test_group.check_all:
+                        break
+            if all_passed:
+                submission.score += test_group.score
+            else:
+                break
+        submission.result = last_result
+        submission.done()
         db.session.commit()
         return submission.result

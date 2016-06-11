@@ -44,6 +44,7 @@ def recheck(id, submission):
 def reject(id, submission):
     submission.result = RESULT_RJ
     submission.status = STATUS_DONE
+    submission.score = 0
     db.session.commit()
     return redirect(redirect_url())
 
@@ -72,6 +73,7 @@ def reject_all(ids):
     for submission in subs:
         submission.result = RESULT_RJ
         submission.status = STATUS_DONE
+        submission.score = 0
     db.session.commit()
     return redirect(redirect_url())
 

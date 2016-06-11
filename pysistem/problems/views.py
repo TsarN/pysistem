@@ -3,14 +3,14 @@ from pysistem import app, babel, db, redirect_url
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from pysistem.problems.model import Problem
 from pysistem.problems.decorators import yield_problem, guard_problem
-from pysistem.test_pairs.decorators import yield_test_pair
+from pysistem.test_pairs.decorators import yield_test_pair, yield_test_group
 from pysistem.checkers.decorators import yield_checker
-from pysistem.test_pairs.model import TestPair
+from pysistem.test_pairs.model import TestPair, TestGroup
 from pysistem.checkers.model import Checker
 from pysistem.submissions.model import Submission
 from pysistem.compilers.model import Compiler
 from pysistem.users.model import User
-from pysistem.contests.model import Contest
+from pysistem.contests.model import Contest, ContestProblemAssociation
 from pysistem.users.decorators import requires_login, requires_admin
 from flask_babel import gettext
 from werkzeug.utils import secure_filename
@@ -122,20 +122,51 @@ def import_():
 @yield_problem()
 @requires_admin(problem="problem")
 def delete(id, problem):
+    for x in ContestProblemAssociation.query.filter( \
+        ContestProblemAssociation.problem_id == problem.id):
+        db.session.delete(x)
     db.session.delete(problem)
     db.session.commit()
     return redirect(url_for('index'))
 
-@mod.route('/<int:id>/tests', methods=['GET', 'POST'])
+@mod.route('/<int:id>/tests')
 @yield_problem()
 @requires_admin(problem="problem")
 def tests(id, problem):
-    tests = TestPair.query.filter(TestPair.problem_id == problem.id).all()
-    return render_template('problems/tests.html', problem=problem, tests=tests)
+    test_groups = TestGroup.query.filter(TestGroup.problem_id == problem.id).all()
+    return render_template('problems/tests.html', problem=problem, test_groups=test_groups)
+
+@mod.route('/<int:id>/testgroup/new', methods=['POST'])
+@mod.route('/<int:id>/testgroup/<int:group_id>', methods=['POST'])
+@yield_problem()
+@requires_admin(problem="problem")
+def update_test_group(id, problem, group_id=None):
+    test_group = (TestGroup.query.get(group_id) if group_id else None) or TestGroup()
+    is_new = test_group.id is None
+    test_group.score = int(request.form.get('score', test_group.score))
+    test_group.score_per_test = int(request.form.get('score_per_test', test_group.score_per_test))
+    test_group.check_all = bool(request.form.get('check_all'))
+    if is_new:
+        problem.test_groups.append(test_group)
+        flash(gettext('problems.addtestgroup.success'))
+    else:
+        flash(gettext('problems.modtestgroup.success'))
+    db.session.add(test_group)
+    db.session.commit()
+    return redirect(redirect_url())
+
+@mod.route('/deltestgroup/<int:id>', methods=['GET', 'POST'])
+@yield_test_group()
+@requires_admin(test_group="test_group")
+def delete_test_group(id, test_group):
+    db.session.delete(test_group)
+    db.session.commit()
+    flash(gettext('problems.deltestgroup.success'))
+    return redirect(redirect_url())
 
 @mod.route('/deltest/<int:id>', methods=['GET', 'POST'])
 @yield_test_pair()
-@requires_admin(problem="problem")
+@requires_admin(test_pair="test")
 def deltest(id, test):
     db.session.delete(test)
     db.session.commit()
@@ -143,9 +174,9 @@ def deltest(id, test):
     return redirect(redirect_url())
 
 @mod.route('/addtest/<int:id>', methods=['POST'])
-@yield_problem()
-@requires_admin(problem="problem")
-def addtest(id, problem):
+@yield_test_group()
+@requires_admin(test_group="test_group")
+def addtest(id, test_group):
     input_str = ''
     pattern_str = ''
 
@@ -166,7 +197,8 @@ def addtest(id, problem):
         if pattern_file and pattern_file.filename != '':
             pattern_str = pattern_file.stream.read().decode()
 
-    db.session.add(TestPair(input_str, pattern_str, problem))
+    test_pair = TestPair(input_str, pattern_str)
+    test_group.test_pairs.append(test_pair)
     db.session.commit()
     return redirect(url_for('problems.tests', id=id))
 

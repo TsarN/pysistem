@@ -9,6 +9,7 @@ import tempfile
 import os
 from pysistem.conf import DIR
 from datetime import datetime
+from flask_babel import gettext
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +18,7 @@ class Submission(db.Model):
     result = db.Column(db.Integer)
     compile_log = db.Column(db.Text)
     check_log = db.Column(db.Text)
-    tests_passed = db.Column(db.Integer)
+    score = db.Column(db.Integer)
     submitted = db.Column(db.DateTime, default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -41,7 +42,7 @@ class Submission(db.Model):
         self.user = user
         self.compiler = compiler
         self.problem = problem
-        self.tests_passed = 0
+        self.score = 0
 
     def __repr__(self):
         return '<Submission #%s>' % str(self.id)
@@ -100,12 +101,11 @@ class Submission(db.Model):
     def done(self):
         self.status = STATUS_DONE
 
-    def get_str_result(self, color=False, failed_test=True, only_color=False):
+    def get_str_result(self, color=False, score=True, only_color=False):
         if self.status in [STATUS_DONE, STATUS_ACT]:
             res = STR_RESULT[self.result]
-            if failed_test:
-                if self.result not in [RESULT_OK, RESULT_RJ]:
-                    res += ' (' + str(self.tests_passed + 1) + ')'
+            if score:
+                res += ' (%d %s %d)' % (self.score, gettext('common.outof'), self.problem.get_max_score())
             if color or only_color:
                 if self.result in [RESULT_OK] :
                     if only_color:
@@ -118,8 +118,8 @@ class Submission(db.Model):
             return res
         else:
             res = STR_STATUS[self.status]
-            if (self.status == STATUS_CHECKING) and failed_test:
-                res += ' (' + str(self.tests_passed + 1) + ')'
+            if (self.status == STATUS_CHECKING) and score:
+                res += ' (%d %s %d)' % (self.score, gettext('common.outof'), self.problem.get_max_score())
             if color or only_color:
                 if only_color:
                     return 'warning'

@@ -88,7 +88,7 @@ def ids_filter(obj):
     return [x.id for x in obj]
 
 @app.template_filter('limittext')
-def limittext_filter(text, x=10, y=10, compacted=None):
+def limittext_filter(text, x=25, y=10, compacted=None):
     splitted = text.split('\n')
     cols = max(map(lambda x: len(x), splitted))
     rows = len(splitted)
