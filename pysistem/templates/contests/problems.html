@@ -1,12 +1,14 @@
 {% extends "contests/base.html" %}
 {% block contest_nav_link_problems %}active{% endblock %}
 {% block contest_content %}
+{% if g.user.is_admin(contest=contest) %}
 <script type="text/javascript">
     $(document).ready(function() {
         $("#btn-addproblem").click(function() {
             $("#modal-addproblem").modal()
             
         })
+
         $("#modal-addproblem-problemlist").DataTable({
             "paging": false,
             "info": false,
@@ -16,9 +18,17 @@
                 "zeroRecords": "{{ _('datatables.zerorecords') }}"
             }
         })
+
+        $(".edit-problem-prefix").change(function() {
+            var problem_id = $(this).attr('data-id');
+            $.post('/contest/{{ contest.id }}/problemprefix/' + problem_id, {
+                prefix: $(this).val()
+            }).done(function() {
+                window.location.reload();
+            })
+        })
     })
 </script>
-{% if g.user.is_admin(contest=contest) %}
 <div style="float: right; margin-bottom: 16px">
 <a href="{{ url_for('problems.new', contest_id=contest.id) }}" class="btn btn-success" id="btn-newproblem">
     {{ _('title.problem.new') }}
@@ -69,16 +79,23 @@
 </div>
 {% endif %}
 
-<table class="table table-hover">
+<table class="table table-hover" id="table-problems">
 <tbody>
 {% for problem in contest.problems %}
-<tr class="{{ problem.user_status(g.user, only_color=True) }}">
+<tr class="{{ problem.user_status(g.user, only_color=True) }}" data-id="{{ problem.id }}">
     <td>
         {% if g.user.is_admin(contest=contest) %}
         <a href="{{ url_for('contests.unlinkwith', id=contest.id, problem_id=problem.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>
         {% endif %}
+        <b>
+            {% if g.user.is_admin(contest=contest) %}
+                <input class="edit-problem-prefix" data-id="{{ problem.id }}" value="{{ problem.prefix }}" size="1" autocomplete="off" />
+            {% else %}
+                {{ problem.prefix }}.
+            {% endif %}
+        </b>
         <a href="{{ url_for('problems.view', id=problem.id) }}">
-            {{ loop.index }}. {{ problem.name }}
+            {{ problem.name }}
         </a>
     </td>
     <td>

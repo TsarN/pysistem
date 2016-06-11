@@ -15,6 +15,7 @@
         })
     })
 </script>
+
 {% if g.user.is_admin() %}
 <div style="float: right; margin-bottom: 16px">
 <a href="{{ url_for('contests.new') }}" class="btn btn-success" id="btn-newcontest">
@@ -22,6 +23,7 @@
 </a>
 </div>
 {% endif %}
+<div class="table-responsive" style="display: inline-block; width: 100%">
 <table class="table table-stripped" id="table-contests">
 <thead>
 <th>{{ _('common.name') }}</th>
@@ -41,7 +43,7 @@
         {% endif %}
         </a>
     </td>
-    <td>
+    <td style="white-space: nowrap;">
         {% if g.user.id %}
         {{ contest.rate_user(g.user, do_freeze=False)[0] }}
         {{ _('common.outof') }}
@@ -71,11 +73,12 @@
     </td>
     <td>
         <a href="{{ url_for('contests.scoreboard', id=contest.id) }}">
-        {{ _('contests.scoreboard') }} »
+        {{ _('contests.scoreboard') }}&nbsp;»
         </a>
     </td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
+</div>
 {% endblock %}

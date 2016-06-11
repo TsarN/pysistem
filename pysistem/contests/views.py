@@ -2,7 +2,7 @@
 from pysistem import app, babel, db, redirect_url, cache
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
 from flask_babel import gettext
-from pysistem.contests.model import Contest
+from pysistem.contests.model import Contest, ContestProblemAssociation
 from pysistem.users.model import User
 from pysistem.problems.model import Problem
 from pysistem.users.decorators import requires_login, requires_admin
@@ -17,7 +17,10 @@ mod = Blueprint('contests', __name__, url_prefix='/contest')
 @requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def linkwith(id, problem_id, contest, problem):
-    contest.problems.append(problem)
+    assoc = ContestProblemAssociation()
+    assoc.contest = contest
+    assoc.problem = problem
+    contest.problems.append(assoc)
     db.session.commit()
     return redirect(redirect_url())
 
@@ -26,9 +29,27 @@ def linkwith(id, problem_id, contest, problem):
 @requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def unlinkwith(id, problem_id, contest, problem):
-    contest.problems.remove(problem)
+    assoc = ContestProblemAssociation.query.filter(db.and_(
+        ContestProblemAssociation.contest_id == contest.id,
+        ContestProblemAssociation.problem_id == problem.id)).first()
+    db.session.delete(assoc)
     db.session.commit()
     return redirect(redirect_url())
+
+@mod.route('/<int:id>/problemprefix/<int:problem_id>', methods=['GET', 'POST'])
+@yield_contest()
+@requires_admin(contest="contest")
+@yield_problem(field="problem_id")
+def problemprefix(id, problem_id, contest, problem):
+    assoc = ContestProblemAssociation.query.filter(db.and_(
+        ContestProblemAssociation.contest_id == contest.id,
+        ContestProblemAssociation.problem_id == problem.id)).first()
+    assoc.prefix = request.values.get('prefix', assoc.prefix)
+    db.session.commit();
+    if request.method == 'POST':
+        return 'success'
+    else:
+        return redirect(redirect_url())
 
 @mod.route('/<int:id>')
 @yield_contest()

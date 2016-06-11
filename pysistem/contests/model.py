@@ -3,10 +3,28 @@ from pysistem import db
 from datetime import datetime
 from flask import g
 
-contest_problem_reltable = db.Table('contest_problem_reltable',
-    db.Column('contest_id', db.Integer, db.ForeignKey('contest.id'), nullable=False),
-    db.Column('problem_id', db.Integer, db.ForeignKey('problem.id'), nullable=False),
-    db.PrimaryKeyConstraint('contest_id', 'problem_id'))
+class ContestProblemAssociation(db.Model):
+    contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'), primary_key=True)
+    problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'), primary_key=True)
+    prefix = db.Column(db.String(8))
+    contest = db.relationship('Contest',
+        back_populates='problems')
+    problem = db.relationship('Problem',
+        back_populates='contests')
+
+    def __init__(self, prefix=None):
+        self.prefix = prefix or ''
+
+    def __repr__(self):
+        if self.contest and self.problem:
+            return '<Contest=%r, Problem=%r>' % (self.contest.name, self.name)
+        else:
+            return '<ContestProblemAssociation>'
+
+    def __getattr__(self, attr):
+        if attr[0] != '_':
+            return self.problem.__getattribute__(attr)
+        raise AttributeError
 
 class Contest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,9 +35,8 @@ class Contest(db.Model):
     freeze = db.Column(db.DateTime, default=datetime.now)
     unfreeze_after_end = db.Column(db.Boolean)
 
-    problems = db.relationship('Problem',
-        secondary=contest_problem_reltable, 
-        backref=db.backref('contests'))
+    problems = db.relationship('ContestProblemAssociation',
+        back_populates='contest', order_by='ContestProblemAssociation.prefix')
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
         self.name = name

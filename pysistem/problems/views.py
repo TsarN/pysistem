@@ -56,7 +56,10 @@ def edit(id=-1):
                 if request.args.get('contest_id'):
                     contest = Contest.query.get(int(request.args.get('contest_id')))
                     if contest is not None:
-                        problem.contests.append(contest)
+                        assoc = ContestProblemAssociation()
+                        assoc.contest = contest
+                        assoc.problem = problem
+                        contest.problems.append(assoc)
                         redirect_to_contest = contest.id
             db.session.commit()
             if is_new:
@@ -103,7 +106,10 @@ def import_():
             if request.args.get('contest_id'):
                 contest = Contest.query.get(int(request.args.get('contest_id')))
                 if contest is not None:
-                    problem.contests.append(contest)
+                    assoc = ContestProblemAssociation()
+                    assoc.contest = contest
+                    assoc.problem = problem
+                    contest.problems.append(assoc)
                     redirect_to_contest = contest.id
             db.session.commit()
             if redirect_to_contest:

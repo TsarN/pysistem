@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pysistem import db
-from pysistem.contests.model import contest_problem_reltable
+#from pysistem.contests.model import contest_problem_reltable
 from pysistem.submissions.const import *
 import pickle
 import gzip
@@ -20,6 +20,9 @@ class Problem(db.Model):
     submissions = db.relationship('Submission', cascade = "all,delete", backref='problem')
     test_pairs = db.relationship('TestPair', cascade = "all,delete", backref='problem')
     checkers = db.relationship('Checker', cascade = "all,delete", backref='problem')
+
+    contests = db.relationship('ContestProblemAssociation',
+        back_populates='problem')
 
     def __init__(self, name=None, description=None, statement=None, time_limit=1000, memory_limit=65536):
         self.name = name

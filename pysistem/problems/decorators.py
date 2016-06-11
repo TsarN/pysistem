@@ -27,8 +27,8 @@ def guard_problem(field='problem'):
             if problem is None:
                 return render_template('errors/404.html'), 404
             if (len(problem.contests) > 0) and g.user.is_admin(problem=problem):
-                for contest in problem.contests:
-                    if g.now >= contest.start:
+                for assoc in problem.contests:
+                    if g.now >= assoc.contest.start:
                         return f(*args, **kwargs)
                 return render_template('problems/not_yet_started.html'), 403
             else:
