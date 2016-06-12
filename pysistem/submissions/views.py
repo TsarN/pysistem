@@ -92,8 +92,8 @@ def compilelog(id, submission):
 def recheck(id, submission):
     submission.status = STATUS_CWAIT
     submission.current_test_id = 0
+    db.session.add(submission)
     db.session.commit()
-    submission.async_check(force=True)
     return redirect(redirect_url())
 
 @mod.route('/<int:id>/reject')
@@ -121,7 +121,6 @@ def recheck_all(ids):
     for submission in subs:
         submission.status = STATUS_CWAIT
         db.session.commit()
-        submission.async_check(force=True)
     return redirect(redirect_url())
 
 @mod.route('/reject/<int_list:ids>')

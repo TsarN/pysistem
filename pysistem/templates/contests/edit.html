@@ -13,6 +13,11 @@
 <script type="text/javascript"
 src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}">
 </script>
+{% if session['language'] == 'ru' %}
+<script type="text/javascript"
+src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.ru.js') }}">
+</script>
+{% endif %}
 {% endblock %}
 
 {% block contest_nav %}
@@ -105,7 +110,10 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
-        $(".form-datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+        $(".form-datetime").datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            language: '{{ session['language'] }}'
+        });
     })
 </script>
 </form>

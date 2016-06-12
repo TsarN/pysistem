@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pysistem import db, app, pool
+from pysistem import db, app, cache
 from pysistem.submissions.const import *
 from pysistem.users.model import User
 from pysistem.compilers.model import Compiler
@@ -10,6 +10,7 @@ import os
 from pysistem.conf import DIR
 from datetime import datetime
 from flask_babel import gettext
+from time import sleep
 
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -127,8 +128,6 @@ class Submission(db.Model):
             return res
         else:
             res = STR_STATUS[status]
-            if (status == STATUS_CHECKING) and score:
-                res += ' (%d %s %d)' % (self.score, gettext('common.outof'), self.problem.get_max_score())
             if color or only_color:
                 if only_color:
                     return 'warning'
@@ -138,26 +137,19 @@ class Submission(db.Model):
     def is_compile_failed(self):
         return self.status == STATUS_COMPILEFAIL
 
-    def check(self):
+    def check(self, session=None):
+        session = session or db.session
+        try:
+            cache.delete("/submission/view/%d/%r" % (self.id, True))
+            cache.delete("/submission/view/%d/%r" % (self.id, False))
+        except: pass
         checker = Checker.query \
             .filter(db.and_(Checker.problem_id == self.problem_id, Checker.status == STATUS_ACT)).first()
 
         if checker is None:
             return -1
         self.current_test_id = 0
-        return checker.check(self)
-
-    def async_check(self, force=False):
-        pool.submit(submission_check, self.id)
-        try:
-            from pysistem import cache
-            cache.delete('/submission/view/%d/True' % self.id)
-            cache.delete('/submission/view/%d/False' % self.id)
-        except: pass
-
-def submission_check(id):
-    if Submission.query.get(id).compile()[0]:
-        Submission.query.get(id).check()
+        return checker.check(self, session)
 
 class SubmissionLog(db.Model):
     result = db.Column(db.Integer)

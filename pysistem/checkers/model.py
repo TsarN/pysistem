@@ -83,7 +83,6 @@ class Checker(db.Model):
     def check_test(self, submission, test, ntest=0):
         submission.current_test_id = test.id
         cstdout, cstderr = (b'', b'')
-        db.session.commit()
         result, stdout, stderr = submission.run(test.input,
             submission.problem.time_limit, submission.problem.memory_limit,
             commit_waiting=False)
@@ -140,7 +139,8 @@ class Checker(db.Model):
             submission.score += test.test_group.score_per_test
         return cstdout.decode(), stdout.decode()
 
-    def check(self, submission):
+    def check(self, submission, session=None):
+        session = session or db.session
         from pysistem.submissions.model import SubmissionLog
         submission.result = RESULT_OK
         submission.status = STATUS_CHECKING
@@ -153,21 +153,26 @@ class Checker(db.Model):
                 SubmissionLog.submission_id == submission.id, \
                 SubmissionLog.test_pair_id.in_([y.id for y in test_group.test_pairs]) \
                 )):
-                db.session.delete(x)
-        db.session.commit()
-        for test_group in self.problem.test_groups:
+                try:
+                    session.delete(x)
+                except: pass
+        session.commit()
+        from pysistem.test_pairs.model import TestPair, TestGroup
+        for test_group in session.query(TestGroup) \
+            .filter(self.problem_id == TestGroup.problem_id):
             all_passed = True
-            for test in test_group.test_pairs:
+            for test in session.query(TestPair) \
+                .filter(test_group.id == TestPair.test_group_id):
                 cstdout, stdout = self.check_test(submission, test, ntest)
                 ntest += 1
-                submission_log = SubmissionLog.query.filter(db.and_(\
+                submission_log = session.query(SubmissionLog).filter(db.and_(\
                     SubmissionLog.submission_id == submission.id, \
                     SubmissionLog.test_pair_id == test.id \
                     )).first() or SubmissionLog(submission=submission, test_pair=test)
+                session.add(submission_log)
                 submission_log.result = submission.result
                 submission_log.log = cstdout
                 submission_log.stdout = stdout
-                db.session.add(submission_log)
                 if submission.result != RESULT_OK:
                     all_passed = False
                     if last_result == RESULT_OK:
@@ -181,5 +186,5 @@ class Checker(db.Model):
         submission.current_test_id = 0
         submission.result = last_result
         submission.done()
-        db.session.commit()
+        session.commit()
         return submission.result

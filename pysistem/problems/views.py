@@ -15,6 +15,7 @@ from pysistem.users.decorators import requires_login, requires_admin
 from flask_babel import gettext
 from werkzeug.utils import secure_filename
 from zipfile import ZipFile
+from pysistem.submissions.const import *
 
 mod = Blueprint('problems', __name__, url_prefix='/problem')
 
@@ -324,8 +325,10 @@ def submissions(id, problem, username=None):
             return redirect(url_for('problems.submissions', id=id))
 
         sub = Submission(source, g.user.id, compiler.id, problem.id)
+        sub.status = STATUS_CWAIT
+        sub.current_test_id = 0
+        db.session.add(sub)
         db.session.commit()
-        sub.async_check()
         flash(gettext('problems.submit.success'))
         return redirect(url_for('problems.submissions', id=id))
 
