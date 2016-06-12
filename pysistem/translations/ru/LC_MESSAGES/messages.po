@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-12 13:45+0300\n"
+"POT-Creation-Date: 2016-06-12 15:14+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -95,67 +95,79 @@ msgstr "Язык сменён на %(lang)s"
 msgid "locale.set.langnotfound"
 msgstr "Язык %(lang)s не найден"
 
-#: problems/views.py:66
+#: problems/views.py:67
 msgid "problems.new.success"
 msgstr "Задача создана"
 
-#: problems/views.py:71
+#: problems/views.py:72
 msgid "problems.edit.success"
 msgstr "Задача обновлена"
 
-#: problems/views.py:74
+#: problems/views.py:75
 msgid "problems.edit.emptyname"
 msgstr "Пустое название задачи"
 
-#: problems/views.py:94 problems/views.py:99
+#: problems/views.py:95 problems/views.py:100
 msgid "problems.import.filemissing"
 msgstr "Укажите файл с задачей"
 
-#: problems/views.py:118
+#: problems/views.py:119
 msgid "problems.import.error"
 msgstr "Ошибка импорта"
 
-#: problems/views.py:151
+#: problems/views.py:152
 msgid "problems.addtestgroup.success"
 msgstr "Группа тестов создана"
 
-#: problems/views.py:153
+#: problems/views.py:154
 msgid "problems.modtestgroup.success"
 msgstr "Группа тестов обновлена"
 
-#: problems/views.py:164
+#: problems/views.py:165
 msgid "problems.deltestgroup.success"
 msgstr "Группа тестов удалена"
 
-#: problems/views.py:173
+#: problems/views.py:174
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:184 problems/views.py:189
+#: problems/views.py:185 problems/views.py:190
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:219 problems/views.py:224
+#: problems/views.py:211 problems/views.py:216
+msgid "problems.addtestzip.inputmissing"
+msgstr "Не указан ZIP файл"
+
+#: problems/views.py:233
+msgid "problems.addtestzip.success"
+msgstr "Тесты загружены из ZIP файла"
+
+#: problems/views.py:236
+msgid "problems.addtestzip.invalid"
+msgstr "ZIP файл повреждён"
+
+#: problems/views.py:253 problems/views.py:258
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:245
+#: problems/views.py:279
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:253
+#: problems/views.py:287
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:275 problems/views.py:280
+#: problems/views.py:309 problems/views.py:314
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:289
+#: problems/views.py:323
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:295
+#: problems/views.py:329
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
@@ -222,7 +234,7 @@ msgstr "Отмена"
 #: templates/contests/base.html:83 templates/contests/base.html:105
 #: templates/contests/problems.html:88 templates/problems/base.html:26
 #: templates/problems/base.html:65 templates/problems/checkers.html:38
-#: templates/problems/tests.html:11 templates/problems/tests.html:83
+#: templates/problems/tests.html:11 templates/problems/tests.html:101
 msgid "common.delete"
 msgstr "Удалить"
 
@@ -480,19 +492,23 @@ msgstr "Баллы за каждый тест"
 msgid "problems.testgroups.checkall"
 msgstr "Проверять каждый тест несмотря на вердикты"
 
-#: templates/problems/tests.html:58 templates/submissions/rawview.html:94
+#: templates/problems/tests.html:63
+msgid "problems.testpairs.addfromzip"
+msgstr "Добавить сразу несколько из ZIP файла"
+
+#: templates/problems/tests.html:76 templates/submissions/rawview.html:94
 msgid "problems.tests.input"
 msgstr "Ввод"
 
-#: templates/problems/tests.html:59
+#: templates/problems/tests.html:77
 msgid "problems.tests.pattern"
 msgstr "Шаблон"
 
-#: templates/problems/tests.html:91 templates/problems/tests.html:99
+#: templates/problems/tests.html:109 templates/problems/tests.html:117
 msgid "common.filetoolarge"
 msgstr "Файл слишком большой"
 
-#: templates/problems/tests.html:92 templates/problems/tests.html:100
+#: templates/problems/tests.html:110 templates/problems/tests.html:118
 msgid "common.viewfile"
 msgstr "Смотреть в новом окне"
 

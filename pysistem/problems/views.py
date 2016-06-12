@@ -14,6 +14,7 @@ from pysistem.contests.model import Contest, ContestProblemAssociation
 from pysistem.users.decorators import requires_login, requires_admin
 from flask_babel import gettext
 from werkzeug.utils import secure_filename
+from zipfile import ZipFile
 
 mod = Blueprint('problems', __name__, url_prefix='/problem')
 
@@ -182,12 +183,12 @@ def addtest(id, test_group):
 
     if 'input_file' not in request.files:
         flash('::warning ' + gettext('problems.addtest.inputmissing'))
-        return redirect(url_for('problems.tests', id=id))
+        return redirect(url_for('problems.tests', id=test_group.problem_id))
 
     input_file = request.files['input_file']
     if input_file.filename == '':
         flash('::warning ' + gettext('problems.addtest.inputmissing'))
-        return redirect(url_for('problems.tests', id=id))
+        return redirect(url_for('problems.tests', id=test_group.problem_id))
 
     if input_file:
         input_str = input_file.stream.read().decode()
@@ -201,6 +202,39 @@ def addtest(id, test_group):
     test_group.test_pairs.append(test_pair)
     db.session.commit()
     return redirect(url_for('problems.tests', id=test_group.problem_id))
+
+@mod.route('/addtestzip/<int:id>', methods=['POST'])
+@yield_test_group()
+@requires_admin(test_group="test_group")
+def addtestzip(id, test_group):
+    if 'zip_file' not in request.files:
+        flash('::warning ' + gettext('problems.addtestzip.inputmissing'))
+        return redirect(url_for('problems.tests', id=test_group.problem_id))
+
+    zip_file = request.files['zip_file']
+    if zip_file.filename == '':
+        flash('::warning ' + gettext('problems.addtestzip.inputmissing'))
+        return redirect(url_for('problems.tests', id=test_group.problem_id))
+    try:
+        assert(zip_file)
+        zf = ZipFile(zip_file.stream, mode="r")
+        input_names = sorted(list(filter(lambda x: x.find('input') != -1, zf.namelist())))
+        pattern_names = sorted(list(filter(lambda x: x.find('pattern') != -1, zf.namelist())))
+
+        for i in range(len(input_names)):
+            inp = zf.read(input_names[i]).decode()
+            if len(pattern_names) <= i:
+                pat = ""
+            else:
+                pat = zf.read(pattern_names[i]).decode()
+
+            test_group.test_pairs.append(TestPair(inp, pat))
+        db.session.commit()
+        flash(gettext('problems.addtestzip.success'))
+        return redirect(url_for('problems.tests'), id=test_group.problem_id)
+    except: 
+        flash('::danger ' + gettext('problems.addtestzip.invalid'))
+        return redirect(url_for('problems.tests', id=test_group.problem_id))
 
 @mod.route('/<int:id>/checkers')
 @yield_problem()
