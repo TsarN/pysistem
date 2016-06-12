@@ -67,6 +67,10 @@ class Submission(db.Model):
         source_file.write(self.source)
         source_file.close()
 
+        try:
+            os.remove(self.get_exe_path())
+        except: pass
+
         result, output = self.compiler.compile(source_path, self.get_exe_path())
         if result:
             self.status = STATUS_WAIT

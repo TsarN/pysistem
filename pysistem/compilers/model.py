@@ -78,7 +78,7 @@ detectable_compilers = {
         "lang": "pas",
         "find_version": "%s -iV",
         "build": "mkdir __src___WORK && __compiler__ __src__ -FE__src___WORK \
-        && cp __src___WORK/`basename __src__ .pas` __exe__; rm -r __src___WORK"
+        && cp __src___WORK/`basename __src__ .pas` __exe__; X=$?; rm -r __src___WORK; exit $X"
     },
     "python2.6": {
         "name": "Python %s",
