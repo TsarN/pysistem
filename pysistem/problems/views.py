@@ -200,7 +200,7 @@ def addtest(id, test_group):
     test_pair = TestPair(input_str, pattern_str)
     test_group.test_pairs.append(test_pair)
     db.session.commit()
-    return redirect(url_for('problems.tests', id=id))
+    return redirect(url_for('problems.tests', id=test_group.problem_id))
 
 @mod.route('/<int:id>/checkers')
 @yield_problem()
