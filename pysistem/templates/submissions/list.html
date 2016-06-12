@@ -1,3 +1,4 @@
+{% if not hide_source %}
 <script type="text/javascript">
     function load_submission(id) {
         sub = $('#submission' + id + '_source');
@@ -10,13 +11,15 @@
         }
         sub.load(
             '/submission/' + id + '/source', function() {
-                sub.show()
+                sub.show();
+                hljs.highlightBlock(sub[0]);
         })
         return "{{ _('common.hide') }}";
     }
 </script>
+{% endif %}
+{% if g.user.is_admin(submission=submissions) and not disable_all_actions %}
 <caption>
-    {% if g.user.is_admin(submission=submissions) %}
     <span class="pull-right">
         <a href="{{ url_for('submissions.recheck_all', ids=submissions|ids) }}">
             {{ _('problems.submissions.recheck.all') }}
@@ -28,16 +31,21 @@
             {{ _('problems.submissions.delete.all') }}
         </a>
     </span>
-    {% endif %}
 </caption>
+{% endif %}
 <thead>
 <tr>
     <th>ID</th>
+    {% if show_user %}
+    <th>{{ _('common.user') }}</th>
+    {% endif %}
     <th>{{ _('submissions.submitted') }}</th>
     {% if show_problem %}
     <th>{{ _('common.problem') }}</th>
     {% endif %}
+    {% if not hide_source %}
     <th>{{ _('common.source') }}</th>
+    {% endif %}
     <th>{{ _('common.language') }}</th>
     <th>{{ _('submissions.status') }}</th>
 </tr>
@@ -46,6 +54,13 @@
 {% for submission in submissions[::-1] %}
 <tr>
     <td>{{ submission.id }}</td>
+    {% if show_user %}
+    <td>
+        <a href="{{ url_for('users.profile', username=submission.user.username) }}">
+            {{ submission.user.username }}
+        </a> 
+    </td>
+    {% endif %}
     <td>
         <span name="st{{ submission.id }}">
             {{ submission.submitted|naturaltime }}
@@ -64,27 +79,29 @@
         </a>
     </td>
     {% endif %}
+    {% if not hide_source %}
     <td><pre id="submission{{ submission.id }}_source" style="display: none;"></pre>
         <a href="/submission/{{ submission.id }}/source"
         onclick="$(this).html(load_submission({{ submission.id }})); return false;">{{ _('common.show') }}</a>
     </td>
+    {% endif %}
     <td>{{ submission.compiler.name }}</td>
     <td>
         {{ submission.get_str_result(color=True)|safe }}
-        {% if g.user.is_admin(submission=submission) or submission.is_compile_failed() %}
         <a href="#" onclick="$('#subactions-{{ submission.id }}').toggle(); $(this).toggleClass('dropup'); return false;">
             <span class="caret caret-big pull-right"></span>
         </a>
         <p id="subactions-{{ submission.id }}" style="display: none">
+        <a target="_blank" href="{{ url_for('submissions.view', id=submission.id) }}">
+            {{ _('problems.submissions.view') }}
+        </a><br />
+        {% if g.user.is_admin(submission=submission) or submission.is_compile_failed() %}
         <a target="_blank" href="{{ url_for('submissions.compilelog', id=submission.id) }}">
             {{ _('problems.submissions.viewcompilelog') }}
         </a>
         {% endif %}
         {% if g.user.is_admin(submission=submission) %}
         <br />
-        <a target="_blank" href="{{ url_for('submissions.checklog', id=submission.id) }}">
-            {{ _('problems.submissions.viewchecklog') }}
-        </a><br />
         <a href="{{ url_for('submissions.recheck', id=submission.id) }}">
             {{ _('problems.submissions.recheck') }}
         </a><br />

@@ -37,5 +37,7 @@ STR_RESULT = (
     "Security Violation",
     "Wrong Answer",
     "Presentation Error",
-    "Rejected"
+    "Rejected",
+    # Insert other results here
+    "Not tested"
 )

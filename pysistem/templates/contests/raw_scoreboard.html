@@ -6,10 +6,12 @@
     <th>
         <div class="text-center">
             <a class="problem-link" title="{{ problem.name }}" href="{{ url_for('problems.view', id=problem.id) }}">
-            {{ problem.prefix }}
+            {{ problem.prefix }}<br />
+            {{ problem.name }}
             </a>
             <span class="problem-name">
-            {{ problem.prefix }}
+            {{ problem.prefix }}<br />
+            {{ problem.name }}
             </span>
         </div>
     </th>

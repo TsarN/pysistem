@@ -81,14 +81,13 @@ class Checker(db.Model):
             return False
 
     def check_test(self, submission, test, ntest=0):
+        submission.current_test_id = test.id
         cstdout, cstderr = (b'', b'')
         db.session.commit()
         result, stdout, stderr = submission.run(test.input,
             submission.problem.time_limit, submission.problem.memory_limit,
             commit_waiting=False)
-        # DETERMINING RESULT
-
-
+        
         subres = RESULT_OK
 
         if result & 8:
@@ -139,50 +138,10 @@ class Checker(db.Model):
         submission.result = subres
         if submission.result == RESULT_OK:
             submission.score += test.test_group.score_per_test
-        return '''
----------- checker ----------
-%s
----------- input ----------
-%s
----------- output ----------
-%s
----------- pattern ----------
-%s
----------- compiler ----------
-%s
-------------------------------
-Verdict = %s
-Test = %d
-TestID = %d
-TestGroupID = %d
-ProblemID = %d
-ProblemTimeLimit = %d
-ProblemMemoryLimit = %d
-SubmissionID = %d
-UserID = %d
-Username = %s
-CompilerID = %d
-Compiler = %s
-''' % (
-    cstdout.decode(),
-    test.input,
-    stdout.decode(),
-    test.pattern,
-    submission.compile_log,
-    submission.get_str_result(score=False),
-    ntest + 1,
-    test.id,
-    test.test_group.id,
-    submission.problem.id,
-    submission.problem.time_limit,
-    submission.problem.memory_limit,
-    submission.id,
-    submission.user.id,
-    submission.user.username,
-    submission.compiler.id,
-    submission.compiler.name)
+        return cstdout.decode(), stdout.decode()
 
     def check(self, submission):
+        from pysistem.submissions.model import SubmissionLog
         submission.result = RESULT_OK
         submission.status = STATUS_CHECKING
         submission.score = 0
@@ -190,12 +149,25 @@ Compiler = %s
         ntest = 0
         last_result = RESULT_OK
         for test_group in self.problem.test_groups:
+            for x in SubmissionLog.query.filter(db.and_( \
+                SubmissionLog.submission_id == submission.id, \
+                SubmissionLog.test_pair_id.in_([y.id for y in test_group.test_pairs]) \
+                )):
+                db.session.delete(x)
+        db.session.commit()
+        for test_group in self.problem.test_groups:
             all_passed = True
             for test in test_group.test_pairs:
-                log = self.check_test(submission, test, ntest)
+                cstdout, stdout = self.check_test(submission, test, ntest)
                 ntest += 1
-                if log:
-                    submission.check_log = log
+                submission_log = SubmissionLog.query.filter(db.and_(\
+                    SubmissionLog.submission_id == submission.id, \
+                    SubmissionLog.test_pair_id == test.id \
+                    )).first() or SubmissionLog(submission=submission, test_pair=test)
+                submission_log.result = submission.result
+                submission_log.log = cstdout
+                submission_log.stdout = stdout
+                db.session.add(submission_log)
                 if submission.result != RESULT_OK:
                     all_passed = False
                     if last_result == RESULT_OK:
@@ -206,6 +178,7 @@ Compiler = %s
                 submission.score += test_group.score
             else:
                 break
+        submission.current_test_id = 0
         submission.result = last_result
         submission.done()
         db.session.commit()

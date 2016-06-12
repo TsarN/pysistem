@@ -20,7 +20,7 @@ class ContestProblemAssociation(db.Model):
         if self.contest and self.problem:
             return '<Contest=%r, Problem=%r>' % (self.contest.name, self.name)
         else:
-            return '<ContestProblemAssociation>'
+            return '<ContestProblemAssociation Unknown>'
 
     def __getattr__(self, attr):
         if attr[0] != '_':

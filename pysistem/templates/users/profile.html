@@ -28,19 +28,6 @@
 <table class="table" id="table-submissions">
 {{ rendered_subs|safe }}
 </table>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#table-submissions").DataTable({
-            "paging": false,
-            "info": false,
-            "searching": false,
-            "language": {
-                "emptyTable": "{{ _('datatables.emptytable') }}",
-                "zeroRecords": "{{ _('datatables.zerorecords') }}"
-            }
-        })
-    })
-</script>
 {% endif %}
 </div>
 </div>

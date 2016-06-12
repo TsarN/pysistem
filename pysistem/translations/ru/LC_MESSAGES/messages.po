@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-11 21:05+0300\n"
+"POT-Creation-Date: 2016-06-12 13:45+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -159,42 +159,42 @@ msgstr "Выберите компилятор"
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: submissions/model.py:108 submissions/model.py:122
+#: submissions/model.py:114 submissions/model.py:128
 msgid "common.outof"
 msgstr "из"
 
-#: templates/base.html:73 templates/index.html:2
+#: templates/base.html:79 templates/index.html:2
 msgid "title.home"
 msgstr "Главная"
 
-#: templates/base.html:76 templates/contests/list.html:2
+#: templates/base.html:82 templates/contests/list.html:2
 msgid "title.contestlist"
 msgstr "Турниры"
 
-#: templates/base.html:85 templates/problems/checkers.html:10
-#: templates/submissions/list.html:41
+#: templates/base.html:91 templates/problems/checkers.html:10
+#: templates/submissions/list.html:49
 msgid "common.language"
 msgstr "Язык"
 
-#: templates/base.html:104
+#: templates/base.html:110
 msgid "common.anonymous"
 msgstr "Гость"
 
-#: templates/base.html:109 templates/users/edit_profile.html:2
+#: templates/base.html:115 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Профиль"
 
-#: templates/base.html:111
+#: templates/base.html:117
 msgid "title.logout"
 msgstr "Выйти"
 
-#: templates/base.html:113 templates/guest_view_denied.html:13
+#: templates/base.html:119 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Войти"
 
-#: templates/base.html:115 templates/guest_view_denied.html:18
+#: templates/base.html:121 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Зарегистрироваться"
@@ -313,12 +313,10 @@ msgid "datatables.search"
 msgstr "Поиск"
 
 #: templates/contests/list.html:12 templates/contests/problems.html:17
-#: templates/problems/submissions.html:65 templates/users/profile.html:38
 msgid "datatables.emptytable"
 msgstr "Нет записей"
 
 #: templates/contests/list.html:13 templates/contests/problems.html:18
-#: templates/problems/submissions.html:66 templates/users/profile.html:39
 msgid "datatables.zerorecords"
 msgstr "Записи не найдены"
 
@@ -344,7 +342,7 @@ msgstr "Добавить задачу в турнир"
 msgid "common.description"
 msgstr "Описание"
 
-#: templates/contests/raw_scoreboard.html:4
+#: templates/contests/raw_scoreboard.html:4 templates/submissions/list.html:40
 msgid "common.user"
 msgstr "Пользователь"
 
@@ -411,7 +409,7 @@ msgid "problems.export"
 msgstr "Экспортировать"
 
 #: templates/problems/checkers.html:9 templates/problems/submissions.html:14
-#: templates/submissions/list.html:40
+#: templates/submissions/list.html:47 templates/submissions/rawview.html:12
 msgid "common.source"
 msgstr "Исходный код"
 
@@ -461,7 +459,8 @@ msgstr "Пытавшиеся участники"
 msgid "problems.submissions.belonging"
 msgstr "Попытки пользователя %(username)s"
 
-#: templates/problems/tests.html:9
+#: templates/problems/tests.html:9 templates/submissions/rawview.html:24
+#: templates/submissions/rawview.html:73
 msgid "problems.testgroup"
 msgstr "Группа тестов"
 
@@ -469,7 +468,7 @@ msgstr "Группа тестов"
 msgid "problems.testgroup.new"
 msgstr "Новая группа тестов"
 
-#: templates/problems/tests.html:26
+#: templates/problems/tests.html:26 templates/submissions/rawview.html:57
 msgid "problems.testgroups.score"
 msgstr "Баллы за полное прохождение"
 
@@ -481,7 +480,7 @@ msgstr "Баллы за каждый тест"
 msgid "problems.testgroups.checkall"
 msgstr "Проверять каждый тест несмотря на вердикты"
 
-#: templates/problems/tests.html:58
+#: templates/problems/tests.html:58 templates/submissions/rawview.html:94
 msgid "problems.tests.input"
 msgstr "Ввод"
 
@@ -505,57 +504,81 @@ msgstr "мс"
 msgid "common.units.kilobytes"
 msgstr "КБ"
 
-#: templates/submissions/list.html:7 templates/submissions/list.html:15
+#: templates/submissions/list.html:8 templates/submissions/list.html:17
 msgid "common.hide"
 msgstr "Скрыть"
 
-#: templates/submissions/list.html:9 templates/submissions/list.html:69
+#: templates/submissions/list.html:10 templates/submissions/list.html:85
 msgid "common.show"
 msgstr "Показать"
 
-#: templates/submissions/list.html:22
+#: templates/submissions/list.html:25
 msgid "problems.submissions.recheck.all"
 msgstr "Перепроверить всё"
 
-#: templates/submissions/list.html:25
+#: templates/submissions/list.html:28
 msgid "problems.submissions.reject.all"
 msgstr "Отклонить всё"
 
-#: templates/submissions/list.html:28
+#: templates/submissions/list.html:31
 msgid "problems.submissions.delete.all"
 msgstr "Удалить всё"
 
-#: templates/submissions/list.html:36
+#: templates/submissions/list.html:42
 msgid "submissions.submitted"
 msgstr "Отправлено"
 
-#: templates/submissions/list.html:38
+#: templates/submissions/list.html:44
 msgid "common.problem"
 msgstr "Задача"
 
-#: templates/submissions/list.html:42
+#: templates/submissions/list.html:50
 msgid "submissions.status"
 msgstr "Статус"
 
-#: templates/submissions/list.html:80
+#: templates/submissions/list.html:96
+msgid "problems.submissions.view"
+msgstr "Страница посылки"
+
+#: templates/submissions/list.html:100
 msgid "problems.submissions.viewcompilelog"
 msgstr "Посмотреть лог компиляции"
 
-#: templates/submissions/list.html:86
-msgid "problems.submissions.viewchecklog"
-msgstr "Посмотреть лог проверки"
-
-#: templates/submissions/list.html:89
+#: templates/submissions/list.html:106
 msgid "problems.submissions.recheck"
 msgstr "Перепроверить"
 
-#: templates/submissions/list.html:93
+#: templates/submissions/list.html:110
 msgid "problems.submissions.reject"
 msgstr "Отклонить"
 
-#: templates/submissions/list.html:97
+#: templates/submissions/list.html:114
 msgid "problems.submissions.delete"
 msgstr "Удалить"
+
+#: templates/submissions/rawview.html:3
+msgid "common.general"
+msgstr "Основное"
+
+#: templates/submissions/rawview.html:62
+msgid "common.total"
+msgstr "Итого"
+
+#: templates/submissions/rawview.html:99
+msgid "problems.tests.output.friendly"
+msgstr "Вывод участника"
+
+#: templates/submissions/rawview.html:105
+msgid "problems.tests.pattern.friendly"
+msgstr "Ответ жюри"
+
+#: templates/submissions/rawview.html:111
+msgid "checkers.comment"
+msgstr "Комментарий чекера"
+
+#: templates/submissions/view.html:2
+msgid "title.submission"
+msgstr "Посылка"
 
 #: templates/users/edit_profile.html:18 templates/users/edit_profile.html:21
 #: templates/users/login.html:14 templates/users/signup.html:20
@@ -664,4 +687,7 @@ msgstr "Вы вышли из системы"
 #: users/views.py:107
 msgid "profile.update.success"
 msgstr "Профиль пользователя был обновлён"
+
+#~ msgid "problems.submissions.viewchecklog"
+#~ msgstr "Посмотреть лог проверки"
 

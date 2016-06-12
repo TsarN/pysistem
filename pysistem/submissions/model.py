@@ -17,18 +17,22 @@ class Submission(db.Model):
     status = db.Column(db.Integer)
     result = db.Column(db.Integer)
     compile_log = db.Column(db.Text)
-    check_log = db.Column(db.Text)
+    #check_log = db.Column(db.Text)
     score = db.Column(db.Integer)
     submitted = db.Column(db.DateTime, default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     compiler_id = db.Column(db.Integer, db.ForeignKey('compiler.id'))
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    submission_logs = db.relationship('SubmissionLog', cascade="all,delete", backref="submission")
+
+    current_test_id = db.Column(db.Integer)
 
     def __init__(self, source=None, user=None, compiler=None, problem=None):
         self.source = source
         self.status = STATUS_CWAIT
         self.result = RESULT_UNKNOWN
+        self.current_test_id = 0
 
         if type(user) is int:
             user = User.query.get(user)
@@ -101,13 +105,15 @@ class Submission(db.Model):
     def done(self):
         self.status = STATUS_DONE
 
-    def get_str_result(self, color=False, score=True, only_color=False):
-        if self.status in [STATUS_DONE, STATUS_ACT]:
-            res = STR_RESULT[self.result]
+    def get_str_result(self, color=False, score=True, only_color=False, result=None, status=None):
+        result = result if result is not None else self.result
+        status = status if status is not None else self.status
+        if status in [STATUS_DONE, STATUS_ACT]:
+            res = STR_RESULT[result]
             if score:
                 res += ' (%d %s %d)' % (self.score, gettext('common.outof'), self.problem.get_max_score())
             if color or only_color:
-                if self.result in [RESULT_OK] :
+                if result in [RESULT_OK] :
                     if only_color:
                         return 'success'
                     res = '<span class="text-success">' + res + '</span>'
@@ -117,8 +123,8 @@ class Submission(db.Model):
                     res = '<span class="text-danger">' + res + '</span>'
             return res
         else:
-            res = STR_STATUS[self.status]
-            if (self.status == STATUS_CHECKING) and score:
+            res = STR_STATUS[status]
+            if (status == STATUS_CHECKING) and score:
                 res += ' (%d %s %d)' % (self.score, gettext('common.outof'), self.problem.get_max_score())
             if color or only_color:
                 if only_color:
@@ -135,12 +141,37 @@ class Submission(db.Model):
 
         if checker is None:
             return -1
-        else:
-            return checker.check(self)
+        self.current_test_id = 0
+        return checker.check(self)
 
-    def async_check(self):
+    def async_check(self, force=False):
         pool.submit(submission_check, self.id)
+        try:
+            from pysistem import cache
+            cache.delete('/submission/view/%d/True' % self.id)
+            cache.delete('/submission/view/%d/False' % self.id)
+        except: pass
 
 def submission_check(id):
     if Submission.query.get(id).compile()[0]:
         Submission.query.get(id).check()
+
+class SubmissionLog(db.Model):
+    result = db.Column(db.Integer)
+    log = db.Column(db.Text)
+    stdout = db.Column(db.Text)
+    submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'), primary_key=True)
+    test_pair_id = db.Column(db.Integer, db.ForeignKey('test_pair.id'), primary_key=True)
+
+    def __init__(self, result=None, log=None, stdout=None, submission=None, test_pair=None):
+        self.result = result
+        self.log = log
+        self.stdout = stdout
+        self.submission = submission
+        self.test_pair = test_pair
+
+    def __repr__(self):
+        if self.submission and self.test_pair:
+            return '<SubmissionLog Submission=%s TestPair=%s>' % (self.submission, self.test_pair)
+        else:
+            return '<SubmissionLog Unknown>'

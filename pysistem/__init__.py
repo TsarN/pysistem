@@ -52,6 +52,6 @@ try:
     for sub in Submission.query.filter( \
         Submission.status.in_([STATUS_CWAIT, STATUS_COMPILING, \
             STATUS_WAIT, STATUS_CHECKING])).all():
-        sub.async_check()
+        sub.async_check(force=True)
         print("Restarting check for", sub)
 except: pass

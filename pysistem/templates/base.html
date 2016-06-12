@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" />
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dtp/dtp.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='highlightjs/default.min.css') }}">
 
     <script type="text/javascript"
     src="{{ url_for('static', filename='jquery.min.js') }}">        
@@ -20,6 +21,11 @@
     <script type="text/javascript"
     src="{{ url_for('static', filename='datatables.min.js') }}"> 
     </script>
+
+    <script type="text/javascript"
+    src="{{ url_for('static', filename='highlightjs/highlight.min.js') }}">
+    </script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     <style type="text/css">
         #content {

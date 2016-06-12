@@ -1,0 +1,120 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.general') }}
+    </div>
+    <table class="table">
+    {{ rendered_sub|safe }}
+    </table>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.source') }}
+    </div>
+    <div class="panel-body">
+        <pre><code>{{ submission.source }}</code></pre>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <tbody>
+    {% for test_group in logs %}
+        <tr>
+            <th colspan="3" class="text-center">
+                {{ _('problems.testgroup') }} #{{ loop.index }}
+            </th>
+        </tr>
+        {% for test in test_group['tests'] %}
+        {% if submission.current_test_id != test['id'] %}
+            <tr class="{{ submission.get_str_result(result=test['result'], color=True, status=6, only_color=True)|safe }}">
+        {% else %}
+            <tr class="{{ submission.get_str_result(result=test['result'], color=True, only_color=True)|safe }}">
+        {% endif %}
+            <td>{{ loop.index }}</td>
+            <td>
+                {% if g.user.is_admin(submission=submission) %}
+                <a href="#test-id-{{ test['id'] }}">
+                {% endif %}
+
+                {% if submission.current_test_id != test['id'] %}
+                    {{ submission.get_str_result(result=test['result'], status=6, color=True, score=False)|safe }}
+                {% else %}
+                    {{ submission.get_str_result(result=test['result'], color=True, score=False)|safe }}
+                {% endif %}
+
+
+                {% if g.user.is_admin(submission=submission) %}
+                </a>
+                {% endif %}
+            </td>
+            <td>
+                {{ test['score'] }}
+            </td>
+        </tr>
+        {% endfor %}
+        {% if test_group['groupscore'] %}
+        <tr>
+            <th colspan="2">{{ _('problems.testgroups.score') }}</th>
+            <th>{{ test_group['groupscore'] }}</th>
+        </tr>
+        {% endif %}
+        <tr>
+            <th colspan="2">{{ _('common.total') }}</th>
+            <th>{{ test_group['totalscore'] }}</th>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if g.user.is_admin(submission=submission) %}
+<hr />
+
+{% for test_group in logs %}
+<h3>{{ _('problems.testgroup') }} #{{ loop.index }}</h3>
+{% for test in test_group['tests'] %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a name="test-id-{{ test['id'] }}"></a>
+        {{ loop.index }}
+    </div>
+    <div class="panel-body">
+        <b>
+            {% if submission.current_test_id != test['id'] %}
+                {{ submission.get_str_result(result=test['result'], status=6, color=True, score=False)|safe }}
+            {% else %}
+                {{ submission.get_str_result(result=test['result'], color=True, score=False)|safe }}
+            {% endif %}(
+            {% if test['score'] %}
+            +{{ test['score'] }}
+            {% else %}
+            0
+            {% endif %})
+        </b>
+        <p>
+            <b>{{ _('problems.tests.input') }}</b><br />
+            <pre>{{ test['input'] }}</pre>
+        </p>
+        {% if test['stdout'] %}
+        <p>
+            <b>{{ _('problems.tests.output.friendly') }}</b><br />
+            <pre>{{ test['stdout'] }}</pre>
+        </p>
+        {% endif %}
+        {% if test['pattern'] %}
+        <p>
+            <b>{{ _('problems.tests.pattern.friendly') }}</b><br />
+            <pre>{{ test['pattern'] }}</pre>
+        </p>
+        {% endif %}
+        {% if test['log'] %}
+        <p>
+            <b>{{ _('checkers.comment') }}</b><br />
+            <pre>{{ test['log'] }}</pre>
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% endfor %}
+
+{% endif %}

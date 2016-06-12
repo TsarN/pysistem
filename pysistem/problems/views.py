@@ -265,7 +265,7 @@ def submissions(id, problem, username=None):
                 db.func.lower(User.username) == db.func.lower(username)).first()
         if user is None:
             return render_template('errors/404.html'), 404
-        if g.is_admin(problem=problem) and (user.id != g.user.id):
+        if not g.user.is_admin(problem=problem) and (user.id != g.user.id):
             return render_template('errors/403.html'), 403
 
     if request.method == 'POST':

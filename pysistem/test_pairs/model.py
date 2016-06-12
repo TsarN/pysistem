@@ -8,6 +8,7 @@ class TestPair(db.Model):
     pattern = db.Column(db.Text)
 
     test_group_id = db.Column(db.Integer, db.ForeignKey('test_group.id'))
+    submission_logs = db.relationship('SubmissionLog', cascade="all,delete", backref="test_pair")
 
     def __init__(self, input='', pattern=''):
         self.input = input
