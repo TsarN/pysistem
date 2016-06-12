@@ -15,6 +15,16 @@
         <pre><code>{{ submission.source }}</code></pre>
     </div>
 </div>
+{% if g.user.is_admin(submission=submission) or submission.is_compile_failed() %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.compilelog') }}
+    </div>
+    <div class="panel-body">
+        <pre>{{ submission.compile_log }}</pre>
+    </div>
+</div>
+{% endif %}
 
 <table class="table table-condensed">
     <tbody>

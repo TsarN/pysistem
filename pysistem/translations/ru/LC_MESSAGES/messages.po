@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-12 15:14+0300\n"
+"POT-Creation-Date: 2016-06-12 15:51+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -171,7 +171,7 @@ msgstr "Выберите компилятор"
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: submissions/model.py:114 submissions/model.py:128
+#: submissions/model.py:113 submissions/model.py:127
 msgid "common.outof"
 msgstr "из"
 
@@ -471,8 +471,8 @@ msgstr "Пытавшиеся участники"
 msgid "problems.submissions.belonging"
 msgstr "Попытки пользователя %(username)s"
 
-#: templates/problems/tests.html:9 templates/submissions/rawview.html:24
-#: templates/submissions/rawview.html:73
+#: templates/problems/tests.html:9 templates/submissions/rawview.html:34
+#: templates/submissions/rawview.html:83
 msgid "problems.testgroup"
 msgstr "Группа тестов"
 
@@ -480,7 +480,7 @@ msgstr "Группа тестов"
 msgid "problems.testgroup.new"
 msgstr "Новая группа тестов"
 
-#: templates/problems/tests.html:26 templates/submissions/rawview.html:57
+#: templates/problems/tests.html:26 templates/submissions/rawview.html:67
 msgid "problems.testgroups.score"
 msgstr "Баллы за полное прохождение"
 
@@ -496,7 +496,7 @@ msgstr "Проверять каждый тест несмотря на верд�
 msgid "problems.testpairs.addfromzip"
 msgstr "Добавить сразу несколько из ZIP файла"
 
-#: templates/problems/tests.html:76 templates/submissions/rawview.html:94
+#: templates/problems/tests.html:76 templates/submissions/rawview.html:104
 msgid "problems.tests.input"
 msgstr "Ввод"
 
@@ -576,19 +576,23 @@ msgstr "Удалить"
 msgid "common.general"
 msgstr "Основное"
 
-#: templates/submissions/rawview.html:62
+#: templates/submissions/rawview.html:21
+msgid "common.compilelog"
+msgstr "Лог компиляции"
+
+#: templates/submissions/rawview.html:72
 msgid "common.total"
 msgstr "Итого"
 
-#: templates/submissions/rawview.html:99
+#: templates/submissions/rawview.html:109
 msgid "problems.tests.output.friendly"
 msgstr "Вывод участника"
 
-#: templates/submissions/rawview.html:105
+#: templates/submissions/rawview.html:115
 msgid "problems.tests.pattern.friendly"
 msgstr "Ответ жюри"
 
-#: templates/submissions/rawview.html:111
+#: templates/submissions/rawview.html:121
 msgid "checkers.comment"
 msgstr "Комментарий чекера"
 

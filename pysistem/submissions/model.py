@@ -17,7 +17,6 @@ class Submission(db.Model):
     status = db.Column(db.Integer)
     result = db.Column(db.Integer)
     compile_log = db.Column(db.Text)
-    #check_log = db.Column(db.Text)
     score = db.Column(db.Integer)
     submitted = db.Column(db.DateTime, default=datetime.now)
 

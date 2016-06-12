@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-12 15:14+0300\n"
+"POT-Creation-Date: 2016-06-12 15:51+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -170,7 +170,7 @@ msgstr "Compiler is not selected"
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: submissions/model.py:114 submissions/model.py:128
+#: submissions/model.py:113 submissions/model.py:127
 msgid "common.outof"
 msgstr "out of"
 
@@ -470,8 +470,8 @@ msgstr "Participants"
 msgid "problems.submissions.belonging"
 msgstr "Submissions of user %(username)s"
 
-#: templates/problems/tests.html:9 templates/submissions/rawview.html:24
-#: templates/submissions/rawview.html:73
+#: templates/problems/tests.html:9 templates/submissions/rawview.html:34
+#: templates/submissions/rawview.html:83
 msgid "problems.testgroup"
 msgstr "Test group"
 
@@ -479,7 +479,7 @@ msgstr "Test group"
 msgid "problems.testgroup.new"
 msgstr "Create test group"
 
-#: templates/problems/tests.html:26 templates/submissions/rawview.html:57
+#: templates/problems/tests.html:26 templates/submissions/rawview.html:67
 msgid "problems.testgroups.score"
 msgstr "Score for passing all tests"
 
@@ -495,7 +495,7 @@ msgstr "Check all tests regardless of failures"
 msgid "problems.testpairs.addfromzip"
 msgstr "Add multiple test pairs from ZIP file"
 
-#: templates/problems/tests.html:76 templates/submissions/rawview.html:94
+#: templates/problems/tests.html:76 templates/submissions/rawview.html:104
 msgid "problems.tests.input"
 msgstr "Input"
 
@@ -575,19 +575,23 @@ msgstr "Delete"
 msgid "common.general"
 msgstr "General"
 
-#: templates/submissions/rawview.html:62
+#: templates/submissions/rawview.html:21
+msgid "common.compilelog"
+msgstr "Compilation log"
+
+#: templates/submissions/rawview.html:72
 msgid "common.total"
 msgstr "In total"
 
-#: templates/submissions/rawview.html:99
+#: templates/submissions/rawview.html:109
 msgid "problems.tests.output.friendly"
 msgstr "Participant's output"
 
-#: templates/submissions/rawview.html:105
+#: templates/submissions/rawview.html:115
 msgid "problems.tests.pattern.friendly"
 msgstr "Jury's answer"
 
-#: templates/submissions/rawview.html:111
+#: templates/submissions/rawview.html:121
 msgid "checkers.comment"
 msgstr "Checker comment"
 
