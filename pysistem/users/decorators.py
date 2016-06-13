@@ -5,7 +5,9 @@ from flask import g, flash, redirect, url_for, request, render_template
 from flask_babel import gettext
 
 def requires_login(f):
-    # Deny unauthorized
+    """Decorator
+    Display page if user is authorized, else redirect to Log In page
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if g.user.is_guest():
@@ -15,7 +17,9 @@ def requires_login(f):
     return decorated_function
 
 def requires_guest(f):
-    # Deny authorized
+    """Decorator
+    Display page if user is unauthorized, else return 403 Forbidden error
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not g.user.is_guest():
@@ -24,7 +28,9 @@ def requires_guest(f):
     return decorated_function
 
 def requires_admin(*args_, **kwargs_):
-    # Deny unprivileged
+    """Decorator
+    Display page if user has correct rights, else return 403 Forbidden error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

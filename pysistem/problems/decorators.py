@@ -6,7 +6,11 @@ from flask_babel import gettext
 from pysistem.problems.model import Problem
 
 def yield_problem(field='id', yield_field='problem'):
-    # Yield problem identified by 'field' to 'yield_field'
+    """Decorator
+    Get problem identified by 'field' keyword argument
+    and save it to 'yield_field' keyword argument.
+    If problem does not exist return 404 Not Found error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -19,7 +23,10 @@ def yield_problem(field='id', yield_field='problem'):
     return decorator
 
 def guard_problem(field='problem'):
-    # Guard problem 'problem' from unauthorized access
+    """Decorator
+    Check if active user has access to problem in 'field'
+    If it does not -  return 403 Forbidden error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

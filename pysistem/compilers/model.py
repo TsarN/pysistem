@@ -8,6 +8,20 @@ import shlex
 from time import sleep
 
 class Compiler(db.Model):
+    """A submission runner backend
+
+    Fields:
+    id -- unique compiler identifier
+    name -- compiler name
+    lang -- extension of source files compiled by this compiler
+    cmd_compile -- pattern for compilation command
+    cmd_run -- pattern for execute command
+    autodetect -- if this compiler is autodetected, unique autodetect identifier, else None
+    executable -- executable name of compiler
+
+    Relationships:
+    submissions -- All submissions that were compiled by this compiler
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     lang = db.Column(db.String(80))
@@ -28,11 +42,32 @@ class Compiler(db.Model):
         return '<Compiler %r>' % self.name
 
     def compile(self, src, exe):
+        """Compile source file
+
+        Arguments:
+        src -- path to source file
+        exe -- path to resulting executable
+
+        Returns:
+        Tuple: (Successfully compiled, compiler log)
+        """
         cmd = self.cmd_compile.replace('%exe%', exe).replace('%src%', src)
         result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         return (result.returncode == 0, result.stdout or '')
 
     def run(self, exe, src_path='', time_limit=1000, memory_limit=65536, stdin=''):
+        """Run executable in sandbox
+
+        Arguments:
+        exe -- path to executable to run
+        src_path -- path to source file, required for intepretable languages
+        time_limit -- maximum execution time of program in milliseconds
+        memory_limit -- maximum memory usage of program in KiB
+        stdin -- stdin contents to pass to program
+
+        Returns:
+        Tuple: (Exit code: see runsbox(1), Program's stdout, Program's stderr: currently empty bytestring)
+        """
         hasher = hashlib.new('md5')
         hasher.update(str.encode(exe))
         input_path = tempfile.gettempdir() + '/pysistem_runner_input_' + str(self.id) + hasher.hexdigest()
@@ -59,6 +94,7 @@ class Compiler(db.Model):
         return (p.returncode, stdout, b'')
 
     def is_available(self):
+        """Check if compiler is available on this machine"""
         from distutils.spawn import find_executable
         path = os.environ['PATH']
         if app.config.get('PATH_EXTRA'):
@@ -143,6 +179,7 @@ detectable_compilers = {
 }
 
 def detect_compilers():
+    """Detect and insert to database available compilers"""
     from distutils.spawn import find_executable
     path = os.environ['PATH']
     if app.config.get('PATH_EXTRA'):

@@ -8,6 +8,7 @@ mod = Blueprint('locale', __name__, url_prefix='/locale')
 
 @mod.route('/set/<lang>')
 def set(lang):
+    """Set current user's locale to lang"""
     for i in LANGUAGES.keys():
         if lang == i:
             session['language'] = lang

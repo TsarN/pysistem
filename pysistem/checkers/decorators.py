@@ -6,7 +6,11 @@ from flask_babel import gettext
 from pysistem.checkers.model import Checker
 
 def yield_checker(field='id', yield_field='checker'):
-    # Yield checker identified by 'field' to 'yield_field'
+    """Decorator
+    Get checker identified by 'field' keyword argument
+    and save it to 'yield_field' keyword argument.
+    If checker does not exist return 404 Not Found error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

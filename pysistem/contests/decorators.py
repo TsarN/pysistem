@@ -6,7 +6,11 @@ from flask_babel import gettext
 from pysistem.contests.model import Contest
 
 def yield_contest(field='id', yield_field='contest'):
-    # Yield contest identified by 'field' to 'yield_field'
+    """Decorator
+    Get contest identified by 'field' keyword argument
+    and save it to 'yield_field' keyword argument.
+    If contest does not exist return 404 Not Found error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

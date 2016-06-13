@@ -13,6 +13,23 @@ from flask_babel import gettext
 from time import sleep
 
 class Submission(db.Model):
+    """An attempt to solve a problem
+
+    Fields:
+    id -- unique submission identifier
+    source -- submission's source code
+    status -- submission's status
+    result -- submission's verdict
+    compile_log -- submissions's compilation log
+    score -- submissions's score
+    submitted -- submission datetime
+
+    Relationships:
+    user, user_id -- whose this submission is
+    compiler, compiler_id -- compiler this submission is sent via
+    problem, problem_id -- what problem is this submission attempting to solve
+    submission_logs -- logs linked with tests in problem
+    """
     id = db.Column(db.Integer, primary_key=True)
     source = db.Column(db.Text)
     status = db.Column(db.Integer)
@@ -52,15 +69,22 @@ class Submission(db.Model):
         return '<Submission #%s>' % str(self.id)
 
     def get_exe_path(self):
+        """Get submission's executable path"""
         return DIR + '/storage/submissions_bin/' + str(self.id)
 
     def get_source_path(self):
+        """Get submission's source path"""
         if os.path.exists('/SANDBOX'):
             return '/SANDBOX/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
         else:
             return tempfile.gettempdir() + '/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
 
     def compile(self):
+        """Compile submission
+
+        Returns:
+        Tuple: (Success?, compiler log)
+        """
         self.status = STATUS_COMPILING
         db.session.commit()
         source_path = self.get_source_path()
@@ -87,6 +111,18 @@ class Submission(db.Model):
         return result, output
 
     def run(self, stdin='', time_limit=1000, memory_limit=65536, commit_waiting=True):
+        """Run submission in sandbox
+
+        Arguments:
+        stdin -- string to pass to submission as stdin
+        time_limit -- maximum execution time of program in milliseconds
+        memory_limit -- maximum memory usage of program in KiB
+        commit_waiting -- commit 'Waiting state' to database?
+
+        Returns:
+        Tuple: (Exit code: see runsbox(1), Program's stdout, Program's stderr: currently empty bytestring)
+
+        """
         self.status = STATUS_CHECKING
         db.session.commit()
 
@@ -107,9 +143,19 @@ class Submission(db.Model):
         return result, stdout, stderr
 
     def done(self):
+        """Set status to done"""
         self.status = STATUS_DONE
 
     def get_str_result(self, color=False, score=True, only_color=False, result=None, status=None):
+        """Get formatted verdict string
+
+        Arguments:
+        color -- enable coloring, will produce HTML markup
+        score -- show score
+        only_color -- return only Bootstrap coloring class: 'sucess', 'danger' etc
+        result -- overriding self.result
+        status -- overriding self.status
+        """
         result = result if result is not None else self.result
         status = status if status is not None else self.status
         if status in [STATUS_DONE, STATUS_ACT]:
@@ -135,9 +181,11 @@ class Submission(db.Model):
             return res
 
     def is_compile_failed(self):
+        """Check if compilation error occurred"""
         return self.status == STATUS_COMPILEFAIL
 
     def check(self, session=None):
+        """Start sync checking of submission"""
         session = session or db.session
         try:
             cache.delete("/submission/view/%d/%r" % (self.id, True))
@@ -152,6 +200,17 @@ class Submission(db.Model):
         return checker.check(self, session)
 
 class SubmissionLog(db.Model):
+    """A submission <-> test pair log
+
+    Fields:
+    result -- pysistem.submissions.const result
+    log -- checker's log
+    stdout -- submission's output
+
+    Relationships:
+    submission, submission_id -- submission
+    test_pair, test_pair_id -- test_pair
+    """
     result = db.Column(db.Integer)
     log = db.Column(db.Text)
     stdout = db.Column(db.Text)

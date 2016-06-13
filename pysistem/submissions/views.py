@@ -12,6 +12,7 @@ mod = Blueprint('submissions', __name__, url_prefix='/submission')
 @mod.route('/<int:id>')
 @yield_submission()
 def view(id, submission):
+    """View submission info"""
     if not g.user.is_admin(submission=submission) and (submission.user_id != g.user.id):
         return render_template('errors/403.html'), 403
     cache_name = '/submission/view/%d/%r' % (id, g.user.is_admin(submission=submission))
@@ -74,6 +75,7 @@ def view(id, submission):
 @mod.route('/<int:id>/source')
 @yield_submission()
 def source(id, submission):
+    """Download submission's source"""
     if not g.user.is_admin(submission=submission) and (submission.user_id != g.user.id):
         return render_template('errors/403.html'), 403
     return Response(submission.source, mimetype='text/plain')
@@ -81,6 +83,7 @@ def source(id, submission):
 @mod.route('/<int:id>/compilelog')
 @yield_submission()
 def compilelog(id, submission):
+    """Download submission's compilation log"""
     if not g.user.is_admin(submission=submission) and \
         ((submission.user_id != g.user.id) or not submission.is_compile_failed()):
         return render_template('errors/403.html'), 403
@@ -90,6 +93,7 @@ def compilelog(id, submission):
 @yield_submission()
 @requires_admin(submission="submission")
 def recheck(id, submission):
+    """Recheck a submission"""
     submission.status = STATUS_CWAIT
     submission.current_test_id = 0
     db.session.add(submission)
@@ -100,6 +104,7 @@ def recheck(id, submission):
 @yield_submission()
 @requires_admin(submission="submission")
 def reject(id, submission):
+    """Reject a submission"""
     submission.result = RESULT_RJ
     submission.status = STATUS_DONE
     submission.score = 0
@@ -110,6 +115,7 @@ def reject(id, submission):
 @yield_submission()
 @requires_admin(submission="submission")
 def delete(id, submission):
+    """Delete a submission"""
     db.session.delete(submission)
     db.session.commit()
     return redirect(redirect_url())
@@ -117,6 +123,7 @@ def delete(id, submission):
 @mod.route('/recheck/<int_list:ids>')
 @requires_admin
 def recheck_all(ids):
+    """Recheck list of submissions"""
     subs = Submission.query.filter(Submission.id.in_(ids))
     for submission in subs:
         submission.status = STATUS_CWAIT
@@ -126,6 +133,7 @@ def recheck_all(ids):
 @mod.route('/reject/<int_list:ids>')
 @requires_admin
 def reject_all(ids):
+    """Reject list of submissions"""
     subs = Submission.query.filter(Submission.id.in_(ids))
     for submission in subs:
         submission.result = RESULT_RJ
@@ -138,6 +146,7 @@ def reject_all(ids):
 @mod.route('/delete/<int_list:ids>')
 @requires_admin
 def delete_all(ids):
+    """Delete list of submissions"""
     subs = Submission.query.filter(Submission.id.in_(ids))
     for submission in subs:
         db.session.delete(submission)

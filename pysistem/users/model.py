@@ -7,6 +7,20 @@ import time
 from flask_babel import gettext
 
 class User(db.Model):
+    """Registred user - participant or admin
+
+    Fields:
+    id -- unique user identifier
+    username -- unique username, case insensitive
+    password -- password, hashed with User.signpasswd
+    first_name -- user's first name
+    last_name -- user's last name
+    email -- user's email
+    role -- user's role, currently 'user' or 'admin'
+
+    Relationships:
+    submissions -- all user's submissions
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
     password = db.Column(db.String(64))
@@ -42,21 +56,27 @@ class User(db.Model):
         return '<User %r>' % self.username
 
     def is_guest(self):
+        """Is this user a guest?"""
         return self.id is None
 
     def auth(username, password):
+        """Load user identified by 'username' and 'password'
+        Returns:
+        Tuple(Success, User object/Error message)
+        """
         signed_password = User.signpasswd(username, password)
-        q = User.query.filter(
+        user = User.query.filter(
             db.func.lower(User.username) == db.func.lower(username),
             User.password == signed_password
-        ).all()
-        if len(q) > 0:
-            session['user_id'] = q[0].id
-            return True, q[0]
+        ).first()
+        if user:
+            session['user_id'] = user.id
+            return True, user
         else:
             return False, gettext('auth.login.invalidcredentials')
 
     def signpasswd(username, password):
+        """Generate password hash from username, password and application's secret key"""
         if password is None:
             return 'x'
         if type(username) is not str or type(password) is not str:
@@ -68,10 +88,12 @@ class User(db.Model):
         return hasher.hexdigest()
 
     def exists(username):
-        q = User.query.filter(db.func.lower(User.username) == db.func.lower(username)).all()
-        return len(q) > 0
+        """Check if user by this username exists"""
+        user = User.query.filter(db.func.lower(User.username) == db.func.lower(username)).first()
+        return user is not None
 
     def get_email(self):
+        """Return user's email or 'hidden' message"""
         if g.user.is_admin(user=self) or \
             (g.user.id == self.id):
             return self.email
@@ -79,8 +101,10 @@ class User(db.Model):
             return '<i>%s</i>' % gettext('common.hidden')
 
     def check_permissions(self):
+        """Return True if current user is self or current user is admin"""
         return g.user and (g.user.is_admin(user=self) or \
                 (g.user.id == self.id))
 
     def is_admin(self, **kwargs):
+        """Check if user is admin"""
         return self.role == 'admin'

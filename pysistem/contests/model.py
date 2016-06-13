@@ -5,6 +5,17 @@ from flask import g
 from flask_babel import gettext
 
 class ContestProblemAssociation(db.Model):
+    """Helper class to associate contests and problems between each other
+    In normal circumstances, it acts like Problem
+
+    Fields:
+    prefix -- Problem's prefix in contest
+
+    Relationships:
+    contest, contest_id -- Contest
+    problem, problem_id -- Problem
+
+    """
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'), primary_key=True)
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'), primary_key=True)
     prefix = db.Column(db.String(8))
@@ -28,6 +39,20 @@ class ContestProblemAssociation(db.Model):
         raise AttributeError
 
 class Contest(db.Model):
+    """Collection of problems and participants
+
+    Fields:
+    id -- unique contest identifier
+    name -- contest name
+    rules -- contest ruleset, currently either 'acm' (ACM/ICPC rules) or 'roi' (ROI rules)
+    start -- contest start datetime
+    end -- contest end datetime
+    freeze -- contest 'freeze scoreboard' datetime
+    unfreeze_after_end -- if scoreboard should be automatically unfreezed after finish
+
+    Relationships:
+    problems -- problems in contest (ContestProblemAssociation)
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     rules = db.Column(db.String(8))
@@ -51,6 +76,7 @@ class Contest(db.Model):
         return '<Contest %r>' % self.name
 
     def get_freeze_time(self, admin=True):
+        """Get time after which no submissions alter scoreboard"""
         freeze = self.freeze
         if (self.unfreeze_after_end and (datetime.now() > self.end)) \
             or (admin and g.user.is_admin(contest=self)):
@@ -58,9 +84,11 @@ class Contest(db.Model):
         return freeze
 
     def is_frozen(self):
+        """Is active user an admin of this contest AND if scoreboard is frozen"""
         return g.user.is_admin(contest=self) and self.is_admin_frozen()
 
     def is_admin_frozen(self):
+        """If scoreboard is frozen"""
         if self.unfreeze_after_end and (datetime.now() > self.end):
             return False
         if datetime.now() < self.freeze:
@@ -68,6 +96,7 @@ class Contest(db.Model):
         return True
 
     def rate_user(self, user, do_freeze=True):
+        """Get user's score in contests"""
         if do_freeze:   
             freeze = self.get_freeze_time()
         else:

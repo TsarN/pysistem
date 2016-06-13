@@ -12,6 +12,7 @@ mod = Blueprint('users', __name__, url_prefix='/user')
 @mod.route('/login', methods=['GET', 'POST'])
 @requires_guest
 def login():
+    """Authorize user"""
     error = None
     if request.method == 'POST':
         username = request.form.get('username', '')
@@ -27,6 +28,7 @@ def login():
 @mod.route('/signup', methods=['GET', 'POST'])
 @requires_guest
 def signup():
+    """Register new user"""
     if not g.SETTINGS.get('allow_signup', True) and not g.is_first_time:
         flash('::danger ' + gettext('auth.signup.forbidden'))
         return redirect(url_for('index'))
@@ -63,6 +65,7 @@ def signup():
 
 @mod.route('/logout', methods=['GET', 'POST'])
 def logout():
+    """Log out"""
     session.pop('user_id', None)
     flash(gettext('auth.logout.success'))
     return redirect(url_for('index'))
@@ -70,6 +73,7 @@ def logout():
 @mod.route('/<username>')
 @mod.route('/')
 def profile(username=None):
+    """View user's profile"""
     user = g.user
     if username is not None:
         user = User.query.filter( \
@@ -85,6 +89,7 @@ def profile(username=None):
 @mod.route('/<username>/edit', methods=['GET', 'POST'])
 @mod.route('/edit', methods=['GET', 'POST'])
 def edit_profile(username):
+    """Edit user's profile"""
     user = g.user
     if username is not None:
         user = User.query.filter( \

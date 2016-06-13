@@ -11,10 +11,12 @@ mod = Blueprint('test_pairs', __name__, url_prefix='/testpair')
 @yield_test_pair()
 @requires_admin(test_pair="test")
 def view_input(id, test):
+    """Download test pair input file"""
     return Response(test.input, mimetype='text/plain')
 
 @mod.route('/<int:id>/pattern')
 @yield_test_pair()
 @requires_admin(test_pair="test")
 def view_pattern(id, test):
+    """Download test pair pattern file"""
     return Response(test.pattern, mimetype='text/plain')

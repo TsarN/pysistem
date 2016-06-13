@@ -17,6 +17,7 @@ mod = Blueprint('contests', __name__, url_prefix='/contest')
 @requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def linkwith(id, problem_id, contest, problem):
+    """Add problem to contest"""
     assoc = ContestProblemAssociation()
     assoc.contest = contest
     assoc.problem = problem
@@ -29,6 +30,7 @@ def linkwith(id, problem_id, contest, problem):
 @requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def unlinkwith(id, problem_id, contest, problem):
+    """Remove problem from contest"""
     assoc = ContestProblemAssociation.query.filter(db.and_(
         ContestProblemAssociation.contest_id == contest.id,
         ContestProblemAssociation.problem_id == problem.id)).first()
@@ -41,6 +43,7 @@ def unlinkwith(id, problem_id, contest, problem):
 @requires_admin(contest="contest")
 @yield_problem(field="problem_id")
 def problemprefix(id, problem_id, contest, problem):
+    """Update problem prefix in contest"""
     assoc = ContestProblemAssociation.query.filter(db.and_(
         ContestProblemAssociation.contest_id == contest.id,
         ContestProblemAssociation.problem_id == problem.id)).first()
@@ -54,6 +57,7 @@ def problemprefix(id, problem_id, contest, problem):
 @mod.route('/<int:id>')
 @yield_contest()
 def problems(id, contest):
+    """Show contest's problems"""
     addable_problems = Problem.query.all()
     if g.user.is_admin(contest=contest) and (len(contest.problems) > 0):
         addable_problems = \
@@ -62,12 +66,14 @@ def problems(id, contest):
 
 @mod.route('/new')
 def new():
+    """Create new contest"""
     return render_template('contests/edit.html', contest=Contest(), contest_rulesets=contest_rulesets)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/new/post', methods=['POST'])
 @requires_admin
 def edit(id=-1):
+    """Create/Update contest"""
     contest = Contest.query.get(id)
     error = None
     if request.method == 'POST':
@@ -111,6 +117,7 @@ def edit(id=-1):
 @yield_contest()
 @requires_admin(contest="contest")
 def delete(id, contest):
+    """Delete contest"""
     for x in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.contest_id == contest.id):
         db.session.delete(x)
@@ -119,6 +126,7 @@ def delete(id, contest):
     return redirect(url_for('index'))
 
 def format_time(mins):
+    """Format time in minutes to match regex hh+:mm"""
     if mins is None:
         return ''
     hour = mins // 60
@@ -129,6 +137,7 @@ def format_time(mins):
 @mod.route('/<int:id>/scoreboard')
 @yield_contest()
 def scoreboard(id, contest):
+    """Return scoreboard"""
     cache_name = '/contests/scoreboard/%d/%r' % (contest.id, g.user.is_admin(contest=contest))
     rawscore = cache.get(cache_name)
     if rawscore is None:
@@ -172,5 +181,6 @@ def scoreboard(id, contest):
 
 @mod.route('/list')
 def list():
+    """List active contests"""
     contests = Contest.query.all()
     return render_template('contests/list.html', contests=contests)

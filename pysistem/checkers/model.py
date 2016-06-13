@@ -9,6 +9,20 @@ from subprocess import Popen, PIPE, run, STDOUT
 from pysistem.conf import DIR
 
 class Checker(db.Model):
+    """A submission runner
+
+    Fields:
+    id -- unique checker identifier
+    name -- checker name
+    source -- checker source, currently either C or C++
+    status -- checker status, see pysistem.submissions.const
+    compile_log -- compilation log produced by compiler
+    lang -- language, currently either 'c' or 'c++'
+
+    Relationships:
+    problem, problem_id -- problem, whose checker it is
+
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256))
     source = db.Column(db.Text)
@@ -34,14 +48,17 @@ class Checker(db.Model):
         return '<Checker %r>' % self.name
 
     def get_exe_path(self):
+        """Return the pathname of checker's binary file"""
         return DIR + '/storage/checkers_bin/' + str(self.id)
 
     def get_ext(self):
+        """Get checker source file extension"""
         if self.lang == 'c++':
             return 'cpp'
         return self.lang
 
     def compile(self):
+        """Compile checker, must be called before using checker on every checking machine"""
         if self.status not in [STATUS_CWAIT, STATUS_COMPILEFAIL, STATUS_WAIT]:
             return False, b'', b''
 
@@ -70,6 +87,7 @@ class Checker(db.Model):
         return success, stdout
 
     def set_act(self):
+        """Set as active checker for problem, works only if checker compiled successfully"""
         if self.status == STATUS_DONE:
             Checker.query \
             .filter(db.and_(Checker.problem_id == self.problem_id, Checker.status == STATUS_ACT)) \
@@ -80,7 +98,17 @@ class Checker(db.Model):
         else:
             return False
 
-    def check_test(self, submission, test, ntest=0):
+    def check_test(self, submission, test):
+        """Run submission on test. For internal use.
+
+        Arguments:
+        submission -- Submission object for checking
+        test -- TestPair object for checking
+
+        Returns: 
+        Tuple: (Checker output, Submission output)
+
+        """
         submission.current_test_id = test.id
         cstdout, cstderr = (b'', b'')
         result, stdout, stderr = submission.run(test.input,
@@ -140,13 +168,22 @@ class Checker(db.Model):
         return cstdout.decode(), stdout.decode()
 
     def check(self, submission, session=None):
+        """(Re)check submission. For internal use.
+
+        Arguments:
+        submission -- Submission object for checking
+        session -- SQLAlchemy session object to use. Default -- db.session
+
+        Returns:
+        pysistem.submissions.const -- Submission's result
+
+        """
         session = session or db.session
         from pysistem.submissions.model import SubmissionLog
         submission.result = RESULT_OK
         submission.status = STATUS_CHECKING
         submission.score = 0
         submission.check_log = ''
-        ntest = 0
         last_result = RESULT_OK
         session.commit()
         from pysistem.test_pairs.model import TestPair, TestGroup
@@ -155,8 +192,7 @@ class Checker(db.Model):
             all_passed = True
             for test in session.query(TestPair) \
                 .filter(test_group.id == TestPair.test_group_id):
-                cstdout, stdout = self.check_test(submission, test, ntest)
-                ntest += 1
+                cstdout, stdout = self.check_test(submission, test)
                 submission_log = session.query(SubmissionLog).filter(db.and_(\
                     SubmissionLog.submission_id == submission.id, \
                     SubmissionLog.test_pair_id == test.id \

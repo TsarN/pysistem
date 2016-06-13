@@ -30,6 +30,7 @@ def check_thread_interrupt():
     check_thread.cancel()
 
 def check_thread_wake():
+    """Check submissions"""
     global common_data
     global check_thread
     with data_lock:
@@ -75,6 +76,7 @@ if app.config.get('LAUNCH_CHECK_THREAD', True):
 # Misc functions
 
 def redirect_url(default='index'):
+    """Return previous url"""
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)

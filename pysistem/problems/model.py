@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from pysistem import db
-#from pysistem.contests.model import contest_problem_reltable
 from pysistem.submissions.const import *
 import pickle
 import gzip
@@ -10,6 +9,23 @@ import hashlib
 EXPORTVER = 2
 
 class Problem(db.Model):
+    """Solvable programming problem
+
+    Fields:
+    id -- unique problem identifier
+    name -- problem name
+    description -- problem's description, in short
+    statement -- problem's statement with HTML markup
+    time_limit -- maximum time problem's solutions are allowed to execute for, in milliseconds
+    memory_limit -- maximum memory problem's solutions are allowed to consume, in KiB
+
+    Relationships:
+    submissions -- All user-made submissions to this problem
+    test_groups -- All test groups this problem has
+    checkers -- All checkers this problem has
+
+    contests -- All contests this problem is part of (ContestProblemAssociation)
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.String(256))
@@ -35,6 +51,7 @@ class Problem(db.Model):
         return '<Problem %r>' % self.name
 
     def get_user_failed_attempts(self, user, freeze=None):
+        """(For ACM/ICPC contests): return amount of user's failed attempts before 'freeze'"""
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
@@ -52,6 +69,7 @@ class Problem(db.Model):
         return ans
 
     def user_succeed(self, user, freeze=None):
+        """Return Tuple: (Score for this problem, last time of last meaningful submission)"""
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
@@ -71,6 +89,14 @@ class Problem(db.Model):
         return max_score, last_sub
 
     def user_status(self, user, color=True, score=False, only_color=False):
+        """Return formatted verdict string
+
+        Arguments:
+        user -- User, whose verdict needs to be returned
+        color -- enable color, will return HTML markup
+        score -- show score in brackets after verdict
+        only_color -- will return ONLY Bootstrap color class: 'success', 'danger' etc
+        """
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
@@ -95,6 +121,7 @@ class Problem(db.Model):
         
 
     def export_gzip(self):
+        """Returns binary data in gzip format that accepts Problem.import_gzip"""
         to_write = pickle.dumps({
             'name': self.name,
             'time_limit': self.time_limit,
@@ -125,6 +152,7 @@ class Problem(db.Model):
         return out.getvalue()
 
     def import_gzip(self, data):
+        """Update this problem using gzip-encoded 'data'"""
         from pysistem.checkers.model import Checker
         from pysistem.test_pairs.model import TestPair, TestGroup
         f = io.BytesIO()
@@ -176,6 +204,7 @@ class Problem(db.Model):
         return True
 
     def transliterate_name(self):
+        """Transliterate this problem's name to English"""
         fallback = 'problem' + str(self.id)
         try:
             from transliterate import detect_language, translit
@@ -194,6 +223,7 @@ class Problem(db.Model):
         return re.sub('[-\s]+', '-', slug) or fallback
 
     def get_max_score(self):
+        """Get problem's maximum achievable score"""
         score = 0
         for test_group in self.test_groups:
             score += test_group.score

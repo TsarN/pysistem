@@ -6,7 +6,11 @@ from flask_babel import gettext
 from pysistem.test_pairs.model import TestPair, TestGroup
 
 def yield_test_pair(field='id', yield_field='test'):
-    # Yield test pair identified by 'field' to 'yield_field'
+    """Decorator
+    Get test pair identified by 'field' keyword argument
+    and save it to 'yield_field' keyword argument.
+    If test pair does not exist return 404 Not Found error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -19,7 +23,11 @@ def yield_test_pair(field='id', yield_field='test'):
     return decorator
 
 def yield_test_group(field='id', yield_field='test_group'):
-    # Yield test group identified by 'field' to 'yield_field'
+    """Decorator
+    Get test group identified by 'field' keyword argument
+    and save it to 'yield_field' keyword argument.
+    If test group does not exist return 404 Not Found error
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

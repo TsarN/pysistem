@@ -23,11 +23,13 @@ mod = Blueprint('problems', __name__, url_prefix='/problem')
 @yield_problem()
 @guard_problem()
 def view(id, problem):
+    """View problem's statement"""
     return render_template('problems/view.html', problem=problem)
 
 @mod.route('/new')
 @requires_admin
 def new():
+    """Create new problem"""
     contest_id = request.args.get('contest_id')
     return render_template('problems/edit.html', problem=Problem(), contest_id=contest_id)
 
@@ -35,6 +37,7 @@ def new():
 @mod.route('/new/post', methods=['POST'])
 @requires_admin
 def edit(id=-1):
+    """Create/Update problem"""
     error = None
     problem = Problem.query.get(id)
     if request.method == 'POST':
@@ -83,6 +86,7 @@ def edit(id=-1):
 @yield_problem()
 @requires_admin(problem="problem")
 def export(id, problem):
+    """Export problem to gzip-encoded file"""
     content = problem.export_gzip()
     response = Response(content, mimetype='application/gzip')
     response.headers['Content-Disposition'] = 'attachment; filename=%s.pysistem.gz' % problem.transliterate_name()
@@ -91,6 +95,7 @@ def export(id, problem):
 @mod.route('/import', methods=['POST'])
 @requires_admin
 def import_():
+    """Create new problem from gzip-encoded file"""
     problem = Problem()
     if 'import_file' not in request.files:
         flash('::warning ' + gettext('problems.import.filemissing'))
@@ -124,6 +129,7 @@ def import_():
 @yield_problem()
 @requires_admin(problem="problem")
 def delete(id, problem):
+    """Delete problem from database"""
     for x in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.problem_id == problem.id):
         db.session.delete(x)
@@ -135,6 +141,7 @@ def delete(id, problem):
 @yield_problem()
 @requires_admin(problem="problem")
 def tests(id, problem):
+    """View and edit problem's test pairs"""
     test_groups = TestGroup.query.filter(TestGroup.problem_id == problem.id).all()
     return render_template('problems/tests.html', problem=problem, test_groups=test_groups)
 
@@ -143,6 +150,7 @@ def tests(id, problem):
 @yield_problem()
 @requires_admin(problem="problem")
 def update_test_group(id, problem, group_id=None):
+    """Update/Create test pair group"""
     test_group = (TestGroup.query.get(group_id) if group_id else None) or TestGroup()
     is_new = test_group.id is None
     test_group.score = int(request.form.get('score', test_group.score))
@@ -161,6 +169,7 @@ def update_test_group(id, problem, group_id=None):
 @yield_test_group()
 @requires_admin(test_group="test_group")
 def delete_test_group(id, test_group):
+    """Delete test pair group"""
     db.session.delete(test_group)
     db.session.commit()
     flash(gettext('problems.deltestgroup.success'))
@@ -170,6 +179,7 @@ def delete_test_group(id, test_group):
 @yield_test_pair()
 @requires_admin(test_pair="test")
 def deltest(id, test):
+    """Delete test pair"""
     db.session.delete(test)
     db.session.commit()
     flash(gettext('problems.deltest.success'))
@@ -179,6 +189,7 @@ def deltest(id, test):
 @yield_test_group()
 @requires_admin(test_group="test_group")
 def addtest(id, test_group):
+    """Create new test in test group"""
     input_str = ''
     pattern_str = ''
 
@@ -208,6 +219,7 @@ def addtest(id, test_group):
 @yield_test_group()
 @requires_admin(test_group="test_group")
 def addtestzip(id, test_group):
+    """Create many tests in test group from ZIP file"""
     if 'zip_file' not in request.files:
         flash('::warning ' + gettext('problems.addtestzip.inputmissing'))
         return redirect(url_for('problems.tests', id=test_group.problem_id))
@@ -241,6 +253,7 @@ def addtestzip(id, test_group):
 @yield_problem()
 @requires_admin(problem="problem")
 def checkers(id, problem):
+    """View and edit problem's checkers"""
     checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
     return render_template('problems/checkers.html', problem=problem, checkers=checkers)
 
@@ -248,6 +261,7 @@ def checkers(id, problem):
 @yield_problem()
 @requires_admin(problem="problem")
 def addchecker(id, problem):
+    """Add new checker"""
     source = ''
 
     if 'source_file' not in request.files:
@@ -275,6 +289,7 @@ def addchecker(id, problem):
 @yield_checker()
 @requires_admin(problem="problem")
 def delchecker(id, checker):
+    """Delete checker"""
     db.session.delete(checker)
     db.session.commit()
     flash(gettext('problems.delchecker.success'))
@@ -284,6 +299,7 @@ def delchecker(id, checker):
 @yield_checker()
 @requires_admin(problem="problem")
 def actchecker(id, checker):
+    """Make chekcer active"""
     checker.set_act()
     flash(gettext('problems.actchecker.success'))
     return redirect(redirect_url())
@@ -294,6 +310,7 @@ def actchecker(id, checker):
 @yield_problem()
 @guard_problem()
 def submissions(id, problem, username=None):
+    """View user's submissions or submit new"""
     user = g.user
     if username is not None:
         user = User.query.filter( \
