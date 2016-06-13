@@ -69,10 +69,6 @@ def check_thread_init():
     check_thread = threading.Timer(CHECK_THREAD_TIME, check_thread_wake, ())
     check_thread.start()
 
-if app.config.get('LAUNCH_CHECK_THREAD', True):
-    check_thread_init()
-    atexit.register(check_thread_interrupt)
-
 # Misc functions
 
 def redirect_url(default='index'):
@@ -99,5 +95,9 @@ try:
 
     from pysistem.compilers.model import detect_compilers
     detect_compilers()
+    
+    if app.config.get('LAUNCH_CHECK_THREAD', True):
+        check_thread_init()
+        atexit.register(check_thread_interrupt)
 
 except: pass
