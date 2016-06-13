@@ -32,21 +32,21 @@ def linkwith(id, problem_id, contest, problem):
 def unlinkwith(id, problem_id, contest, problem):
     """Remove problem from contest"""
     assoc = ContestProblemAssociation.query.filter(db.and_(
-        ContestProblemAssociation.contest_id == contest.id,
-        ContestProblemAssociation.problem_id == problem.id)).first()
+        ContestProblemAssociation.contest_id == id,
+        ContestProblemAssociation.problem_id == problem_id)).first()
     db.session.delete(assoc)
     db.session.commit()
     return redirect(redirect_url())
 
 @mod.route('/<int:id>/problemprefix/<int:problem_id>', methods=['GET', 'POST'])
 @yield_contest()
-@requires_admin(contest="contest")
+@requires_admin(contest="id")
 @yield_problem(field="problem_id")
 def problemprefix(id, problem_id, contest, problem):
     """Update problem prefix in contest"""
     assoc = ContestProblemAssociation.query.filter(db.and_(
-        ContestProblemAssociation.contest_id == contest.id,
-        ContestProblemAssociation.problem_id == problem.id)).first()
+        ContestProblemAssociation.contest_id == id,
+        ContestProblemAssociation.problem_id == problem_id)).first()
     assoc.prefix = request.values.get('prefix', assoc.prefix)
     db.session.commit();
     if request.method == 'POST':
@@ -71,7 +71,7 @@ def new():
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/new/post', methods=['POST'])
-@requires_admin
+@requires_admin(contest="id")
 def edit(id=-1):
     """Create/Update contest"""
     contest = Contest.query.get(id)

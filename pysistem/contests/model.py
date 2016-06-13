@@ -14,7 +14,6 @@ class ContestProblemAssociation(db.Model):
     Relationships:
     contest, contest_id -- Contest
     problem, problem_id -- Problem
-
     """
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'), primary_key=True)
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'), primary_key=True)
@@ -52,6 +51,7 @@ class Contest(db.Model):
 
     Relationships:
     problems -- problems in contest (ContestProblemAssociation)
+    groups -- groups to which contest is attached (GroupContestAssociation)
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -63,6 +63,8 @@ class Contest(db.Model):
 
     problems = db.relationship('ContestProblemAssociation',
         back_populates='contest', order_by='ContestProblemAssociation.prefix')
+
+    groups = db.relationship('GroupContestAssociation', back_populates='contest')
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
         self.name = name

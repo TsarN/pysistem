@@ -5,6 +5,9 @@ import hashlib
 import base64
 import time
 from flask_babel import gettext
+from pysistem.groups.model import GroupUserAssociation, GroupContestAssociation
+from pysistem.problems.model import Problem
+from pysistem.contests.model import Contest
 
 class User(db.Model):
     """Registred user - participant or admin
@@ -20,6 +23,7 @@ class User(db.Model):
 
     Relationships:
     submissions -- all user's submissions
+    groups -- all user's groups (GroupUserAssociation)
     """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
@@ -30,6 +34,7 @@ class User(db.Model):
     role = db.Column(db.String(8))
 
     submissions = db.relationship('Submission', cascade = "all,delete", backref='user')
+    groups = db.relationship('GroupUserAssociation', back_populates='user')
 
     def __init__(self, username=None, password=None, first_name=None, last_name=None, email=None, role='user'):
         if username is None:
@@ -106,5 +111,77 @@ class User(db.Model):
                 (g.user.id == self.id))
 
     def is_admin(self, **kwargs):
-        """Check if user is admin"""
-        return self.role == 'admin'
+        """Check if user is admin
+        Keyword arguments (all optional):
+        contest, problem, submission, test_group, test_pair, user
+
+        All keyword arguments identify object against which
+        test admin rights.
+        """
+
+        if self.role == 'admin':
+            return True
+
+        admin_groups = GroupUserAssociation.query.filter(db.and_(
+            GroupUserAssociation.user_id == self.id,
+            GroupUserAssociation.role == 'admin')).all()
+
+        admin_groups_ids = [x.group_id for x in admin_groups]
+
+        contest = kwargs.get('contest')
+        if contest:
+            if type(contest) is not int:
+                contest_id = contest.id
+            else:
+                contest_id = contest
+            if GroupContestAssociation.query.filter(db.and_( \
+                GroupContestAssociation.contest_id == contest_id, \
+                GroupContestAssociation.group_id.in_(admin_groups_ids))).first():
+                return True
+            else:
+                return False
+
+        problem = kwargs.get('problem')
+        if problem:
+            if type(problem) is not int:
+                problem_id = problem.id
+            else:
+                problem_id = problem
+            if Problem.query.filter(db.and_( \
+                Problem.id == problem_id, \
+                Problem.contests.any(Contest.groups.any( \
+                GroupContestAssociation.group_id.in_(admin_groups_ids))))).first():
+                return True
+            else:
+                return False
+
+        user = kwargs.get('user')
+        if user:
+            if type(user) is not int:
+                user_id = user.id
+            else:
+                user_id = user
+            if GroupContestAssociation.query.filter(db.and_( \
+                GroupUserAssociation.user_id == user_id, \
+                GroupUserAssociation.group_id.in_(admin_groups_ids) \
+                )).first():
+                return True
+            else:
+                return False
+
+        test_group = kwargs.get('test_group')
+        if test_group:
+            return self.is_admin(problem=test_group.problem)
+
+        test_pair = kwargs.get('test_pair')
+        if test_pair:
+            return self.is_admin(test_group=test_pair.test_group)
+
+        submission = kwargs.get('submission')
+        if submission:
+            if type(submission) is list:
+                submission = submission[0]
+            return self.is_admin(user=submission.user) or \
+                   self.is_admin(problem=submission.problem)
+
+        return False

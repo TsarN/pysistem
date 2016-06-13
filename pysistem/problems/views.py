@@ -356,7 +356,7 @@ def submissions(id, problem, username=None):
     rendered_subs = render_template('submissions/list.html', submissions=submissions)
 
     attempted_users = None
-    if g.user.role == 'admin':
+    if g.user.is_admin(problem=id):
         attempted_users = User.query.filter(User.submissions.any(
             Submission.problem_id == problem.id)).all()
 
