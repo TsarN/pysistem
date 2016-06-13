@@ -3,7 +3,6 @@ import os
 from flask import Flask, g, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
-from contextlib import closing
 import random
 import threading
 import atexit
@@ -26,7 +25,7 @@ data_lock = threading.Lock()
 check_thread = threading.Thread()
 common_data = {}
 
-def interrupt():
+def check_thread_interrupt():
     global check_thread
     check_thread.cancel()
 
@@ -36,11 +35,21 @@ def check_thread_wake():
     with data_lock:
         Session = common_data['Session']
         Submission = common_data['Submission']
+        Compiler = common_data['Compiler']
+        SubmissionLog = common_data['SubmissionLog']
         session = Session()
         for sub in session.query(Submission).filter( \
-            Submission.status.in_([STATUS_CWAIT, STATUS_WAIT])).all():
-            if sub.compile()[0]:
-                sub.check(session)
+            Submission.status.in_([STATUS_CWAIT, STATUS_WAIT])):
+
+            compiler = session.query(Compiler).filter(Compiler.id == sub.compiler_id).first()
+            if compiler and compiler.is_available():
+                for log in session.query(SubmissionLog) \
+                    .filter(SubmissionLog.submission_id == sub.id):
+                    session.add(log)
+                    session.delete(log)
+                if sub.compile()[0]:
+                    sub.check(session)
+                session.commit()
         Session.remove()
     check_thread = threading.Timer(CHECK_THREAD_TIME, check_thread_wake, ())
     check_thread.start()
@@ -49,14 +58,19 @@ def check_thread_init():
     global check_thread
     global common_data
     from pysistem.submissions.model import Submission
+    from pysistem.submissions.model import SubmissionLog
+    from pysistem.compilers.model import Compiler
     common_data['Submission'] = Submission
+    common_data['SubmissionLog'] = SubmissionLog
+    common_data['Compiler'] = Compiler
     Session = db.scoped_session(db.sessionmaker(bind=db.engine))
     common_data['Session'] = Session
     check_thread = threading.Timer(CHECK_THREAD_TIME, check_thread_wake, ())
     check_thread.start()
 
-check_thread_init()
-atexit.register(interrupt)
+if app.config.get('LAUNCH_CHECK_THREAD', True):
+    check_thread_init()
+    atexit.register(check_thread_interrupt)
 
 # Misc functions
 

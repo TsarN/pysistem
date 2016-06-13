@@ -38,3 +38,6 @@ PATH_EXTRA = []
 
 # How often check submissions
 CHECK_THREAD_TIME = 1
+
+# Do check submissions?
+LAUNCH_CHECK_THREAD = True 

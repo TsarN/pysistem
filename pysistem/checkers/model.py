@@ -148,14 +148,6 @@ class Checker(db.Model):
         submission.check_log = ''
         ntest = 0
         last_result = RESULT_OK
-        for test_group in self.problem.test_groups:
-            for x in SubmissionLog.query.filter(db.and_( \
-                SubmissionLog.submission_id == submission.id, \
-                SubmissionLog.test_pair_id.in_([y.id for y in test_group.test_pairs]) \
-                )):
-                try:
-                    session.delete(x)
-                except: pass
         session.commit()
         from pysistem.test_pairs.model import TestPair, TestGroup
         for test_group in session.query(TestGroup) \
@@ -186,5 +178,4 @@ class Checker(db.Model):
         submission.current_test_id = 0
         submission.result = last_result
         submission.done()
-        session.commit()
         return submission.result

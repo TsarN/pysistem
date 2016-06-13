@@ -14,6 +14,7 @@ class Compiler(db.Model):
     cmd_compile = db.Column(db.String(8192))
     cmd_run = db.Column(db.String(8192))
     autodetect = db.Column(db.String(16))
+    executable = db.Column(db.String(80))
 
     submissions = db.relationship('Submission', cascade = "all,delete", backref='compiler')
 
@@ -56,6 +57,16 @@ class Compiler(db.Model):
         os.remove(input_path)
         os.remove(output_path)
         return (p.returncode, stdout, b'')
+
+    def is_available(self):
+        from distutils.spawn import find_executable
+        path = os.environ['PATH']
+        if app.config.get('PATH_EXTRA'):
+            path = path + os.pathsep + os.pathsep.join(app.config.get('PATH_EXTRA'))
+        if (find_executable(self.executable, path=path)):
+            return True
+        else:
+            return False
 
 detectable_compilers = {
     "gcc": {
@@ -162,5 +173,6 @@ def detect_compilers():
             c.cmd_compile = build
             c.cmd_run = run
             c.autodetect = compilerid
+            c.executable = compiler['executable']
             db.session.add(c)
     db.session.commit()

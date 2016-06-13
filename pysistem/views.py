@@ -49,6 +49,16 @@ def before_request():
                 if request.path not in allowed_urls:
                     return render_template('guest_view_denied.html', allow_signup=SETTINGS.get('allow_signup', True))
 
+@app.teardown_request
+def teardown_request(*args, **kwargs):
+    del g.is_first_time
+    del g.now
+    del g.user
+    del g.now_formatted
+    del g.raw_content
+    del g.SETTINGS
+    del g.disable_navbar
+
 def pad_zero(x, min_len=2):
     return '0' * (max(0, min_len - len(str(x)))) + str(x)
 
