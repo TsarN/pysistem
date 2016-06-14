@@ -5,7 +5,7 @@ import hashlib
 import base64
 import time
 from flask_babel import gettext
-from pysistem.groups.model import GroupUserAssociation, GroupContestAssociation
+from pysistem.groups.model import Group, GroupUserAssociation, GroupContestAssociation
 from pysistem.problems.model import Problem
 from pysistem.contests.model import Contest
 
@@ -113,20 +113,33 @@ class User(db.Model):
     def is_admin(self, **kwargs):
         """Check if user is admin
         Keyword arguments (all optional):
-        contest, problem, submission, test_group, test_pair, user
+        contest, problem, submission, test_group, test_pair, user, group
 
         All keyword arguments identify object against which
         test admin rights.
         """
-
         if self.role == 'admin':
             return True
+
+        if not kwargs:
+            return False
 
         admin_groups = GroupUserAssociation.query.filter(db.and_(
             GroupUserAssociation.user_id == self.id,
             GroupUserAssociation.role == 'admin')).all()
 
         admin_groups_ids = [x.group_id for x in admin_groups]
+
+        group = kwargs.get('group')
+        if group:
+            if type(group) is not int:
+                group_id = group.id
+            else:
+                group_id = group
+            if group_id in admin_groups_ids:
+                return True
+            else:
+                return False
 
         contest = kwargs.get('contest')
         if contest:

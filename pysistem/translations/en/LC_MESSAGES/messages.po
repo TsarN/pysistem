@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-12 15:51+0300\n"
+"POT-Creation-Date: 2016-06-14 15:41+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,159 +18,163 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:127
+#: views.py:155
 msgid "naturaltime.justnow"
 msgstr "just now"
 
-#: views.py:129
+#: views.py:157
 msgid "naturaltime.secondsago"
 msgstr "seconds ago"
 
-#: views.py:131
+#: views.py:159
 msgid "naturaltime.minuteago"
 msgstr "a minute ago"
 
-#: views.py:133
+#: views.py:161
 msgid "naturaltime.minutesago"
 msgstr "minutes ago"
 
-#: views.py:135
+#: views.py:163
 msgid "naturaltime.hourago"
 msgstr "an hour ago"
 
-#: views.py:137
+#: views.py:165
 msgid "naturaltime.hoursago"
 msgstr "hours ago"
 
-#: views.py:139
+#: views.py:167
 msgid "naturaltime.yesterday"
 msgstr "yesterday"
 
-#: views.py:141
+#: views.py:169
 msgid "naturaltime.daysago"
 msgstr "days ago"
 
-#: views.py:143
+#: views.py:171
 msgid "naturaltime.weekago"
 msgstr "a week ago"
 
-#: views.py:145
+#: views.py:173
 msgid "naturaltime.weeksago"
 msgstr "weeks ago"
 
-#: views.py:147
+#: views.py:175
 msgid "naturaltime.monthago"
 msgstr "a month ago"
 
-#: views.py:149
+#: views.py:177
 msgid "naturaltime.monthsago"
 msgstr "months ago"
 
-#: views.py:150
+#: views.py:178
 msgid "naturaltime.yearsago"
 msgstr "years ago"
 
-#: contests/views.py:85
+#: contests/views.py:104
 msgid "contests.edit.invaliddates"
 msgstr "Dates are invalid: Start &le; Freeze &le; End"
 
-#: contests/views.py:98
+#: contests/views.py:136
 msgid "contests.new.success"
 msgstr "Contest created"
 
-#: contests/views.py:101
+#: contests/views.py:139
 msgid "contests.edit.success"
 msgstr "Contest updated"
 
-#: contests/views.py:104
+#: contests/views.py:142
+msgid "contests.edit.atleastonegroup"
+msgstr "Select at least one group"
+
+#: contests/views.py:144
 msgid "contests.edit.emptyname"
 msgstr "Contest name is empty"
 
-#: locale/views.py:14
+#: locale/views.py:15
 msgid "locale.set.success"
 msgstr "Language changed to %(lang)s"
 
-#: locale/views.py:16
+#: locale/views.py:17
 msgid "locale.set.langnotfound"
 msgstr "No such language: %(lang)s"
 
-#: problems/views.py:67
+#: problems/views.py:71
 msgid "problems.new.success"
 msgstr "New problem created"
 
-#: problems/views.py:72
+#: problems/views.py:76
 msgid "problems.edit.success"
 msgstr "Changes saved"
 
-#: problems/views.py:75
+#: problems/views.py:79
 msgid "problems.edit.emptyname"
 msgstr "Problem name is empty"
 
-#: problems/views.py:95 problems/views.py:100
+#: problems/views.py:101 problems/views.py:106
 msgid "problems.import.filemissing"
 msgstr "No problem file"
 
-#: problems/views.py:119
+#: problems/views.py:125
 msgid "problems.import.error"
 msgstr "Importing failed"
 
-#: problems/views.py:152
+#: problems/views.py:161
 msgid "problems.addtestgroup.success"
 msgstr "Test group added"
 
-#: problems/views.py:154
+#: problems/views.py:163
 msgid "problems.modtestgroup.success"
 msgstr "Test group updated"
 
-#: problems/views.py:165
+#: problems/views.py:175
 msgid "problems.deltestgroup.success"
 msgstr "Test group deleted"
 
-#: problems/views.py:174
+#: problems/views.py:185
 msgid "problems.deltest.success"
 msgstr "Test was deleted"
 
-#: problems/views.py:185 problems/views.py:190
+#: problems/views.py:197 problems/views.py:202
 msgid "problems.addtest.inputmissing"
 msgstr "No input file"
 
-#: problems/views.py:211 problems/views.py:216
+#: problems/views.py:224 problems/views.py:229
 msgid "problems.addtestzip.inputmissing"
 msgstr "No ZIP file"
 
-#: problems/views.py:233
+#: problems/views.py:246
 msgid "problems.addtestzip.success"
 msgstr "Tests added from ZIP file"
 
-#: problems/views.py:236
+#: problems/views.py:249
 msgid "problems.addtestzip.invalid"
 msgstr "ZIP file is corrupted"
 
-#: problems/views.py:253 problems/views.py:258
+#: problems/views.py:268 problems/views.py:273
 msgid "problems.addchecker.sourcemissing"
 msgstr "No source file"
 
-#: problems/views.py:279
+#: problems/views.py:295
 msgid "problems.delchecker.success"
 msgstr "Checker was deleted"
 
-#: problems/views.py:287
+#: problems/views.py:304
 msgid "problems.actchecker.success"
 msgstr "Checker is now active"
 
-#: problems/views.py:309 problems/views.py:314
+#: problems/views.py:327 problems/views.py:332
 msgid "problems.submit.sourcemissing"
 msgstr "No file chosen"
 
-#: problems/views.py:323
+#: problems/views.py:341
 msgid "problems.submit.selectcompiler"
 msgstr "Compiler is not selected"
 
-#: problems/views.py:329
+#: problems/views.py:349
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: submissions/model.py:113 submissions/model.py:127
+#: submissions/model.py:164
 msgid "common.outof"
 msgstr "out of"
 
@@ -179,33 +183,50 @@ msgid "title.home"
 msgstr "Home"
 
 #: templates/base.html:82 templates/contests/list.html:2
+#: templates/groups/base.html:10
 msgid "title.contestlist"
 msgstr "Contests"
 
-#: templates/base.html:91 templates/problems/checkers.html:10
+#: templates/base.html:88 templates/contests/edit.html:100
+msgid "title.groups"
+msgstr "Groups"
+
+#: templates/base.html:95
+msgid "groups.role.admin"
+msgstr "Administrator"
+
+#: templates/base.html:100
+msgid "groups.role.user"
+msgstr "Member"
+
+#: templates/base.html:118
+msgid "groups.new"
+msgstr "Create group"
+
+#: templates/base.html:132 templates/problems/checkers.html:10
 #: templates/submissions/list.html:49
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:110
+#: templates/base.html:151
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:115 templates/users/edit_profile.html:2
+#: templates/base.html:156 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:117
+#: templates/base.html:158
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:119 templates/guest_view_denied.html:13
+#: templates/base.html:160 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:121 templates/guest_view_denied.html:18
+#: templates/base.html:162 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
@@ -237,11 +258,11 @@ msgstr "Cancel"
 msgid "common.delete"
 msgstr "Delete"
 
-#: templates/contests/base.html:95 templates/contests/list.html:30
+#: templates/contests/base.html:95 templates/contests/rawlist.html:3
 msgid "contests.problems"
 msgstr "Problems"
 
-#: templates/contests/base.html:98 templates/contests/list.html:72
+#: templates/contests/base.html:98 templates/contests/rawlist.html:45
 msgid "contests.scoreboard"
 msgstr "Scoreboard"
 
@@ -249,25 +270,25 @@ msgstr "Scoreboard"
 msgid "contests.edit"
 msgstr "Edit contest"
 
-#: templates/contests/base.html:116 templates/contests/edit.html:55
-#: templates/contests/edit.html:58
+#: templates/contests/base.html:116 templates/contests/edit.html:62
+#: templates/contests/edit.html:65
 msgid "contests.start"
 msgstr "Starts at"
 
-#: templates/contests/base.html:117 templates/contests/edit.html:69
-#: templates/contests/edit.html:72
+#: templates/contests/base.html:117 templates/contests/edit.html:72
+#: templates/contests/edit.html:75
 msgid "contests.end"
 msgstr "Ends at"
 
-#: templates/contests/base.html:119 templates/contests/list.html:53
+#: templates/contests/base.html:119 templates/contests/rawlist.html:26
 msgid "contests.remaining"
 msgstr "Remaining time"
 
-#: templates/contests/base.html:121 templates/contests/list.html:55
+#: templates/contests/base.html:121 templates/contests/rawlist.html:28
 msgid "contests.beforestart"
 msgstr "Before start"
 
-#: templates/contests/base.html:128 templates/contests/list.html:63
+#: templates/contests/base.html:128 templates/contests/rawlist.html:36
 msgid "contests.finished"
 msgstr "Finished"
 
@@ -279,61 +300,64 @@ msgstr "Scoreboard is frozen"
 msgid "contest.adminfrozen"
 msgstr "Scoreboard is frozen for unprivileged users"
 
-#: templates/contests/edit.html:7 templates/contests/edit.html:33
+#: templates/contests/edit.html:7 templates/contests/edit.html:38
 #: templates/contests/list.html:22
 msgid "contests.new"
 msgstr "New contest"
 
-#: templates/contests/edit.html:37 templates/problems/edit.html:31
+#: templates/contests/edit.html:42 templates/problems/edit.html:31
 #: templates/users/edit_profile.html:7 templates/users/login.html:6
 #: templates/users/signup.html:6
 msgid "common.error"
 msgstr "Error"
 
-#: templates/contests/edit.html:48 templates/contests/edit.html:51
-#: templates/contests/list.html:29 templates/contests/problems.html:55
+#: templates/contests/edit.html:53 templates/submissions/rawview.html:3
+msgid "common.general"
+msgstr "General"
+
+#: templates/contests/edit.html:57 templates/contests/edit.html:60
+#: templates/contests/problems.html:55 templates/contests/rawlist.html:2
 #: templates/problems/checkers.html:8 templates/problems/checkers.html:19
 #: templates/problems/edit.html:67 templates/problems/edit.html:70
 msgid "common.name"
 msgstr "Name"
 
-#: templates/contests/edit.html:62 templates/contests/edit.html:65
+#: templates/contests/edit.html:67 templates/contests/edit.html:70
 msgid "contests.freeze"
 msgstr "Freeze"
 
-#: templates/contests/edit.html:76
+#: templates/contests/edit.html:77
 msgid "contests.ruleset"
 msgstr "Ruleset"
 
-#: templates/contests/edit.html:91
+#: templates/contests/edit.html:90
 msgid "contests.unfreezeafterend"
 msgstr "Unfreeze after finish"
 
-#: templates/contests/edit.html:99 templates/problems/edit.html:107
+#: templates/contests/edit.html:121 templates/problems/edit.html:107
 #: templates/problems/tests.html:49 templates/users/edit_profile.html:48
 msgid "common.update"
 msgstr "Update"
 
-#: templates/contests/edit.html:101 templates/problems/edit.html:109
+#: templates/contests/edit.html:123 templates/problems/edit.html:109
 #: templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Create"
 
 #: templates/contests/list.html:11 templates/contests/problems.html:16
+#: templates/groups/contests.html:10
 msgid "datatables.search"
 msgstr "Search"
 
 #: templates/contests/list.html:12 templates/contests/problems.html:17
+#: templates/groups/contests.html:11
 msgid "datatables.emptytable"
 msgstr "No records here"
 
 #: templates/contests/list.html:13 templates/contests/problems.html:18
+#: templates/groups/contests.html:12
 msgid "datatables.zerorecords"
 msgstr "No records found"
-
-#: templates/contests/list.html:31
-msgid "common.time"
-msgstr "Time"
 
 #: templates/contests/problems.html:34 templates/problems/edit.html:9
 #: templates/problems/edit.html:55
@@ -356,6 +380,10 @@ msgstr "Description"
 #: templates/contests/raw_scoreboard.html:4 templates/submissions/list.html:40
 msgid "common.user"
 msgstr "User"
+
+#: templates/contests/rawlist.html:4
+msgid "common.time"
+msgstr "Time"
 
 #: templates/contests/scoreboard.html:20
 msgid "common.lastupdated"
@@ -385,6 +413,24 @@ msgstr "404 - Page not found"
 #: templates/errors/404.html:5
 msgid "error.404.text"
 msgstr "Sorry, but we couldn't find page that you've requested"
+
+#: templates/groups/base.html:14
+msgid "title.users"
+msgstr "Users"
+
+#: templates/groups/users.html:7 templates/users/edit_profile.html:18
+#: templates/users/edit_profile.html:21 templates/users/login.html:14
+#: templates/users/signup.html:20
+msgid "common.username"
+msgstr "Username"
+
+#: templates/groups/users.html:8
+msgid "common.fullname"
+msgstr "Full name"
+
+#: templates/groups/users.html:9
+msgid "common.role"
+msgstr "Role"
 
 #: templates/problems/base.html:16
 msgid "problems.delete.confirm"
@@ -571,10 +617,6 @@ msgstr "Reject"
 msgid "problems.submissions.delete"
 msgstr "Delete"
 
-#: templates/submissions/rawview.html:3
-msgid "common.general"
-msgstr "General"
-
 #: templates/submissions/rawview.html:21
 msgid "common.compilelog"
 msgstr "Compilation log"
@@ -598,11 +640,6 @@ msgstr "Checker comment"
 #: templates/submissions/view.html:2
 msgid "title.submission"
 msgstr "Submission"
-
-#: templates/users/edit_profile.html:18 templates/users/edit_profile.html:21
-#: templates/users/login.html:14 templates/users/signup.html:20
-msgid "common.username"
-msgstr "Username"
 
 #: templates/users/edit_profile.html:26 templates/users/edit_profile.html:29
 #: templates/users/profile.html:11
@@ -655,55 +692,55 @@ msgstr "Access code from server's console"
 msgid "signup.admin.code"
 msgstr "Access code"
 
-#: users/decorators.py:12
+#: users/decorators.py:14
 msgid "error.permission.authrequired"
 msgstr "Please log in to view this page"
 
-#: users/model.py:57
+#: users/model.py:81
 msgid "auth.login.invalidcredentials"
 msgstr "Invalid credentials"
 
-#: users/model.py:79
+#: users/model.py:106
 msgid "common.hidden"
 msgstr "Hidden"
 
-#: users/views.py:21
+#: users/views.py:22
 msgid "auth.login.success"
 msgstr "You were authorized"
 
-#: users/views.py:31
+#: users/views.py:33
 msgid "auth.signup.forbidden"
 msgstr "Registration is forbidden on this server"
 
-#: users/views.py:40
+#: users/views.py:42
 msgid "auth.signup.admin.invalidcode"
 msgstr "Invalid access code"
 
-#: users/views.py:52
+#: users/views.py:54
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:55
+#: users/views.py:57
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:57
+#: users/views.py:59
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:59
+#: users/views.py:61
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:61
+#: users/views.py:63
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:67
+#: users/views.py:70
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:107
+#: users/views.py:112
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
 

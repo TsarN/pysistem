@@ -8,6 +8,7 @@ from pysistem.users.model import User
 from pysistem.contests.model import Contest
 from pysistem.submissions.model import Submission
 from pysistem.problems.model import Problem
+from pysistem.groups.model import Group
 
 from pysistem.conf import LANGUAGES
 from flask_babel import gettext
@@ -21,6 +22,8 @@ def get_locale():
 
 @app.before_request
 def before_request():
+    if request.path.startswith('/static/'):
+        return
     g.is_first_time = (User.query.count() == 0)
     g.now = datetime.now()
     session['language'] = get_locale()
@@ -33,6 +36,17 @@ def before_request():
             g.raw_content = True
 
     g.disable_navbar = False
+    g.user_groups = {}
+
+    user = None
+    if g.user.id:
+        user = User.query.get(g.user.id)
+
+    if user:
+        for group in user.groups:
+            if not g.user_groups.get(group.role):
+                g.user_groups[group.role] = []
+            g.user_groups[group.role].append(group)
 
     if not SETTINGS.get('allow_guest_view', True) or g.is_first_time:
         if (g.user.id is None) and \
@@ -47,17 +61,21 @@ def before_request():
                 if SETTINGS.get('allow_signup', True):
                     allowed_urls.append(url_for('users.signup'))
                 if request.path not in allowed_urls:
-                    return render_template('guest_view_denied.html', allow_signup=SETTINGS.get('allow_signup', True))
+                    return render_template('guest_view_denied.html', \
+                        allow_signup=SETTINGS.get('allow_signup', True))
 
 @app.teardown_request
 def teardown_request(*args, **kwargs):
-    del g.is_first_time
-    del g.now
-    del g.user
-    del g.now_formatted
-    del g.raw_content
-    del g.SETTINGS
-    del g.disable_navbar
+    try:
+        del g.is_first_time
+        del g.now
+        del g.user
+        del g.now_formatted
+        del g.raw_content
+        del g.SETTINGS
+        del g.disable_navbar
+        del g.user_groups
+    except: pass
 
 def pad_zero(x, min_len=2):
     return '0' * (max(0, min_len - len(str(x)))) + str(x)
@@ -208,3 +226,6 @@ app.register_blueprint(submissions_module)
 
 from pysistem.test_pairs.views import mod as test_pairs_module
 app.register_blueprint(test_pairs_module)
+
+from pysistem.groups.views import mod as groups_module
+app.register_blueprint(groups_module)

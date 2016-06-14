@@ -1,7 +1,6 @@
-{% extends "base.html" %}
-{% block title %}{{ _('title.contestlist') }}{% endblock %}
-{% block navbar_link_contests %}active{% endblock %}
-{% block content %}
+{% extends "groups/base.html" %}
+{% block group_nav_link_contests %}active{% endblock %}
+{% block group_content %}
 <script type="text/javascript">
     $(document).ready(function() {
         $("#table-contests").DataTable({
@@ -16,13 +15,6 @@
     })
 </script>
 
-{% if g.user.is_admin() %}
-<div style="float: right; margin-bottom: 16px">
-<a href="{{ url_for('contests.new') }}" class="btn btn-success" id="btn-newcontest">
-    {{ _('contests.new') }}
-</a>
-</div>
-{% endif %}
 <div class="table-responsive" style="display: inline-block; width: 100%">
 <table class="table table-stripped" id="table-contests">
 {{ rawlist|safe }}

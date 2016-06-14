@@ -3,6 +3,7 @@ from pysistem import db
 
 class GroupUserAssociation(db.Model):
     """Helper class to associate groups and users between each other
+    By default it acts like User
 
     Fields:
     role -- user's role in group. Currently either 'user' or 'admin'
@@ -25,8 +26,14 @@ class GroupUserAssociation(db.Model):
         else:
             return '<GroupUserAssociation Unknown>'
 
+    def __getattr__(self, attr):
+        if attr[0] != '_':
+            return self.user.__getattribute__(attr)
+        raise AttributeError
+
 class GroupContestAssociation(db.Model):
     """Helper class to associate groups and contests between each other
+    By default it acts like Contest
 
     Relationships:
     group, group_id -- Group
@@ -44,6 +51,11 @@ class GroupContestAssociation(db.Model):
             return '<Group=%r Contest=%r>' % (self.group.name, self.contest.name)
         else:
             return '<GroupContestAssociation Unknown>'
+
+    def __getattr__(self, attr):
+        if attr[0] != '_':
+            return self.contest.__getattribute__(attr)
+        raise AttributeError
 
 class Group(db.Model):
     """Collection of users and contests

@@ -9,6 +9,7 @@ from pysistem.users.decorators import requires_login, requires_admin
 from pysistem.contests.decorators import yield_contest
 from pysistem.problems.decorators import yield_problem
 from datetime import datetime
+from pysistem.groups.model import Group, GroupContestAssociation, GroupUserAssociation
 
 mod = Blueprint('contests', __name__, url_prefix='/contest')
 
@@ -76,6 +77,14 @@ def edit(id=-1):
     """Create/Update contest"""
     contest = Contest.query.get(id)
     error = None
+
+    if g.user.is_admin():
+        admin_groups = Group.query.all()
+    else:
+        admin_groups = Group.query.filter(Group.users.any(db.and_( \
+            GroupUserAssociation.user_id == g.user.id, \
+            GroupUserAssociation.role == 'admin')))
+
     if request.method == 'POST':
         contest = contest or Contest()
         is_new = contest.id is None
@@ -86,32 +95,69 @@ def edit(id=-1):
         unfreeze_after_end = bool(request.form.get('unfreeze_after_end', False))
         rules = request.form.get('ruleset', 'acm')
 
+        group_test = any([g.user.is_admin()] + \
+            [bool(request.form.get('group-%d' % group.id, False)) \
+            for group in admin_groups])
+
         if (start > freeze) or (freeze > end) or (start > end) or not \
             (start and end and freeze):
             error = gettext('contests.edit.invaliddates')
         else:
             if len(name.strip(' \t\n\r')) > 0:
-                contest.name = name
-                contest.start = start
-                contest.end = end
-                contest.freeze = freeze
-                contest.unfreeze_after_end = unfreeze_after_end
-                contest.rules = rules if rules in contest_rulesets.keys() else 'acm'
-                if is_new:
-                    db.session.add(contest)
-                db.session.commit()
-                if is_new:
-                    flash(gettext('contests.new.success'))
-                    return redirect(url_for('contests.problems', id=contest.id))
+                if group_test:
+                    contest.name = name
+                    contest.start = start
+                    contest.end = end
+                    contest.freeze = freeze
+                    contest.unfreeze_after_end = unfreeze_after_end
+                    contest.rules = rules if rules in contest_rulesets.keys() else 'acm'
+
+                    if is_new:
+                        db.session.add(contest)
+
+                    for group in admin_groups:
+                        ch = bool(request.form.get('group-%d' % group.id, False))
+                        assoc = None
+                        if not is_new:
+                            assoc = GroupContestAssociation.query.filter(db.and_( \
+                                GroupContestAssociation.contest_id == contest.id, \
+                                GroupContestAssociation.group_id == group.id      \
+                                )).first()
+                        if assoc and not ch:
+                            db.session.delete(assoc)
+                        if not assoc and ch:
+                            assoc = GroupContestAssociation()
+                            assoc.contest_id = contest.id
+                            assoc.group_id = group.id
+                            db.session.add(assoc)
+
+                    db.session.commit()
+                    if is_new:
+                        flash(gettext('contests.new.success'))
+                        return redirect(url_for('contests.problems', id=contest.id))
+                    else:
+                        flash(gettext('contests.edit.success'))
+                        return redirect(url_for('contests.edit', id=contest.id))
                 else:
-                    flash(gettext('contests.edit.success'))
-                    return redirect(url_for('contests.edit', id=contest.id))
+                    error = gettext('contests.edit.atleastonegroup')
             else:
                 error = gettext('contests.edit.emptyname')
 
     if contest is None:
         return render_template('errors/404.html'), 404
-    return render_template('contests/edit.html', contest=contest, error=error, contest_rulesets=contest_rulesets)
+
+    contest_groups = Group.query.filter(Group.contests.any( \
+        GroupContestAssociation.contest_id == contest.id))
+
+    contest_groups_map = {}
+    for group in contest_groups:
+        contest_groups_map[group.id] = True
+
+    for group in admin_groups:
+        group.active = contest_groups_map.get(group.id, False)
+
+    return render_template('contests/edit.html', contest=contest,
+        error=error, contest_rulesets=contest_rulesets, admin_groups=admin_groups)
 
 @mod.route('/<int:id>/delete')
 @yield_contest()
@@ -183,4 +229,5 @@ def scoreboard(id, contest):
 def list():
     """List active contests"""
     contests = Contest.query.all()
-    return render_template('contests/list.html', contests=contests)
+    raw = render_template('contests/rawlist.html', contests=contests)
+    return render_template('contests/list.html', rawlist=raw)

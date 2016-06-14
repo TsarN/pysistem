@@ -41,7 +41,6 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
 {% if error %}
 <div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error|safe }}</div>
 {% endif %}
-<div class="row">
 <form method="POST" action="
     {% if contest.id %}
         {{ url_for('contests.edit', id=contest.id) }}
@@ -49,55 +48,73 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
         {{ url_for('contests.edit') }}
     {% endif %}
 " role="form" class="form-horizontal">
-<div class="form-group">
-    <label for="name" class="col-sm-2 control-label">{{ _('common.name') }}</label>
-    <div class="col-sm-10">
-        <input type="text" class="form-control" id="name" name="name"
-        placeholder="{{ _('common.name') }}" value="{{ contest.name or '' }}" />
+<div class="panel panel-default">
+<div class="panel-heading">
+    {{ _('common.general') }}
+</div>
+<div class="panel-body">
+<div class="row">
+<label for="name" class="col-sm-4 control-label">{{ _('common.name') }}</label>
+<div class="col-sm-8">
+    <input type="text" class="form-control" id="name" name="name"
+    placeholder="{{ _('common.name') }}" value="{{ contest.name or '' }}" />
+</div>
+<label for="start" class="col-sm-4 control-label">{{ _('contests.start') }}</label>
+<div class="col-sm-8">
+    <input size="16" type="text" class="form-control form-datetime" id="start" name="start"
+    placeholder="{{ _('contests.start') }}" value="{{ (contest.start or g.now)|dtp }}" />
+</div>
+<label for="freeze" class="col-sm-4 control-label">{{ _('contests.freeze') }}</label>
+<div class="col-sm-8">
+    <input size="16" type="text" class="form-control form-datetime" id="freeze" name="freeze"
+    placeholder="{{ _('contests.freeze') }}" value="{{ (contest.freeze or g.now)|dtp }}" />
+</div>
+<label for="end" class="col-sm-4 control-label">{{ _('contests.end') }}</label>
+<div class="col-sm-8">
+    <input size="16" type="text" class="form-control form-datetime" id="end" name="end"
+    placeholder="{{ _('contests.end') }}" value="{{ (contest.end or g.now)|dtp }}" />
+</div>
+<label for="rules" class="col-sm-4 control-label">{{ _('contests.ruleset') }}</label>
+<div class="col-sm-8">
+    <select name="ruleset" class="form-control">
+    {% for ruleset in contest_rulesets %}
+    <option value="{{ ruleset }}" autocomplete="off" {{ 'selected="selected"' if contest.rules == ruleset else ''}}>
+        {{ contest_rulesets[ruleset] }}
+    </option>
+    {% endfor %}
+    </select>
+</div>
+<div class="col-sm-offset-4 col-sm-8">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="unfreeze_after_end" {{ contest.unfreeze_after_end and 'checked' }} /> {{ _('contests.unfreezeafterend') }}
+        </label>
     </div>
 </div>
-<div class="form-group">
-    <label for="start" class="col-sm-2 control-label">{{ _('contests.start') }}</label>
-    <div class="col-sm-10">
-        <input size="16" type="text" class="form-control form-datetime" id="start" name="start"
-        placeholder="{{ _('contests.start') }}" value="{{ (contest.start or g.now)|dtp }}" />
+</div>
+</div>
+</div>
+{% if admin_groups %}
+<div class="panel panel-default">
+<div class="panel-heading">
+    {{ _('title.groups') }}
+</div>
+<div class="panel-body">
+<div class="row">
+{% for group in admin_groups %}
+<div class="col-sm-offset-4 col-sm-8">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="group-{{ group.id }}" {{ group.active and 'checked' }} />
+            {{ group.name }}
+        </label>
     </div>
 </div>
-<div class="form-group">
-    <label for="freeze" class="col-sm-2 control-label">{{ _('contests.freeze') }}</label>
-    <div class="col-sm-10">
-        <input size="16" type="text" class="form-control form-datetime" id="freeze" name="freeze"
-        placeholder="{{ _('contests.freeze') }}" value="{{ (contest.freeze or g.now)|dtp }}" />
-    </div>
+{% endfor %}
 </div>
-<div class="form-group">
-    <label for="end" class="col-sm-2 control-label">{{ _('contests.end') }}</label>
-    <div class="col-sm-10">
-        <input size="16" type="text" class="form-control form-datetime" id="end" name="end"
-        placeholder="{{ _('contests.end') }}" value="{{ (contest.end or g.now)|dtp }}" />
-    </div>
 </div>
-<div class="form-group">
-    <label for="rules" class="col-sm-2 control-label">{{ _('contests.ruleset') }}</label>
-    <div class="col-sm-10">
-        <select name="ruleset" class="form-control">
-        {% for ruleset in contest_rulesets %}
-        <option value="{{ ruleset }}" autocomplete="off" {{ 'selected="selected"' if contest.rules == ruleset else ''}}>
-            {{ contest_rulesets[ruleset] }}
-        </option>
-        {% endfor %}
-        </select>
-    </div>
 </div>
-<div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" name="unfreeze_after_end" {{ contest.unfreeze_after_end and 'checked' }} /> {{ _('contests.unfreezeafterend') }}
-            </label>
-        </div>
-    </div>
-</div>
+{% endif %}
 <div class="col-sm-4 col-sm-offset-4">
 <button type="submit" name="update_contest" class="btn btn-lg btn-primary btn-block">
 {% if contest.id %}
@@ -106,7 +123,6 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
     {{ _('common.create') }}
 {% endif %}
 </button>
-</div>
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -117,6 +133,5 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
     })
 </script>
 </form>
-</div>
 
 {% endblock %}

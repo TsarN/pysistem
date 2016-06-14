@@ -34,10 +34,11 @@ def requires_admin(*args_, **kwargs_):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            new_kwargs = dict(kwargs_)
             for kw in kwargs_:
                 if type(kwargs_[kw]) is str:
-                    kwargs_[kw] = kwargs.get(kwargs.get(kw))
-            if not g.user.is_admin(**kwargs_):
+                    new_kwargs[kw] = kwargs.get(kwargs_[kw])
+            if not g.user.is_admin(**new_kwargs):
                 return render_template('errors/403.html'), 403
             return f(*args, **kwargs)
         return decorated_function
