@@ -110,8 +110,7 @@ class Problem(db.Model):
                 if sub.result in [RESULT_OK]:
                     return sub.get_str_result(color=color, score=score, only_color=only_color)
                 elif sub.result not in [RESULT_IE, RESULT_UNKNOWN]:
-                    if sub.score > 0:
-                        attempted = sub
+                    attempted = sub
             elif sub.status in [STATUS_CHECKING]:
                 attempted = sub
         if attempted:
