@@ -13,41 +13,78 @@
     {{ user.username }}
 </h2>
 <form method="POST" action="{{ url_for('users.edit_profile', username=user.username) }}" role="form" class="form-horizontal">
-{% if g.user.is_admin(user=user) %}
-<div class="form-group">
-    <label for="username" class="col-sm-4 control-label">{{ _('common.username') }}</label>
-    <div class="col-sm-8">
-    <input type="text" class="form-control" id="username" name="username"
-    placeholder="{{ _('common.username') }}" value="{{ user.username or '' }}" />
-    </div>
+<div class="panel panel-default">
+<div class="panel-heading">
+{{ _('common.general') }}
+</div>
+<div class="panel-body">
+{% if g.user.is_admin() %}
+<label for="username" class="col-sm-4 control-label">{{ _('common.username') }}</label>
+<div class="col-sm-8">
+<input type="text" class="form-control" id="username" name="username"
+placeholder="{{ _('common.username') }}" value="{{ user.username or '' }}" />
 </div>
 {% endif %}
-<div class="form-group">
-    <label for="first_name" class="col-sm-4 control-label">{{ _('common.firstname') }}</label>
-    <div class="col-sm-8">
-    <input type="text" class="form-control" id="first_name" name="first_name"
-    placeholder="{{ _('common.firstname') }}" value="{{ user.first_name or '' }}" />
-    </div>
+
+<label for="first_name" class="col-sm-4 control-label">{{ _('common.firstname') }}</label>
+<div class="col-sm-8">
+<input type="text" class="form-control" id="first_name" name="first_name"
+placeholder="{{ _('common.firstname') }}" value="{{ user.first_name or '' }}" />
 </div>
-<div class="form-group">
-    <label for="last_name" class="col-sm-4 control-label">{{ _('common.lastname') }}</label>
-    <div class="col-sm-8">
-    <input type="text" class="form-control" id="last_name" name="last_name"
-    placeholder="{{ _('common.lastname') }}" value="{{ user.last_name or '' }}" />
-    </div>
+
+<label for="last_name" class="col-sm-4 control-label">{{ _('common.lastname') }}</label>
+<div class="col-sm-8">
+<input type="text" class="form-control" id="last_name" name="last_name"
+placeholder="{{ _('common.lastname') }}" value="{{ user.last_name or '' }}" />
 </div>
-<div class="form-group">
-    <label for="email" class="col-sm-4 control-label">{{ _('common.email') }}</label>
-    <div class="col-sm-8">
-    <input type="email" class="form-control" id="email" name="email"
-    placeholder="{{ _('common.email') }}" value="{{ user.email or '' }}" />
-    </div>
+
+<label for="email" class="col-sm-4 control-label">{{ _('common.email') }}</label>
+<div class="col-sm-8">
+<input type="email" class="form-control" id="email" name="email"
+placeholder="{{ _('common.email') }}" value="{{ user.email or '' }}" />
 </div>
+
+</div>
+</div>
+
+{% if g.user.is_admin() %}
+<div class="panel panel-default">
+<div class="panel-heading">
+    {{ _('title.groups') }}
+</div>
+<div class="panel-body">
+<div class="row">
+{% for group in groups %}
+<label for="g{{ group.id }}" class="col-sm-4 control-label">{{ group.name }}</label>
+<div class="col-sm-8">
+    <label class="radio-inline">
+        <input type="radio" name="group-{{ group.id }}" value="none"
+        {{ '' if group.role_ else 'checked' }} />
+        {{ _('groups.role.none') }}
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="group-{{ group.id }}" value="user"
+        {{ (group.role_ == 'user') and 'checked' }} />
+        {{ _('groups.role.user') }}
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="group-{{ group.id }}" value="admin"
+        {{ (group.role_ == 'admin') and 'checked' }} />
+        {{ _('groups.role.admin') }}
+    </label>
+</div>
+{% endfor %}
+</div>
+</div>
+</div>
+{% endif %}
+
 <div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
 <button type="submit" name="update_info" class="btn btn-lg btn-primary btn-block">
     {{ _('common.update') }}
 </button>
 </div>
+
 </form>
 </div>
 </div>

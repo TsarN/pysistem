@@ -156,6 +156,8 @@ def edit(id=-1):
     for group in admin_groups:
         group.active = contest_groups_map.get(group.id, False)
 
+    del contest_groups_map
+
     return render_template('contests/edit.html', contest=contest,
         error=error, contest_rulesets=contest_rulesets, admin_groups=admin_groups)
 

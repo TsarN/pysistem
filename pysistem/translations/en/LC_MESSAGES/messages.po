@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-14 15:41+0300\n"
+"POT-Creation-Date: 2016-06-14 17:53+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -188,14 +188,15 @@ msgid "title.contestlist"
 msgstr "Contests"
 
 #: templates/base.html:88 templates/contests/edit.html:100
+#: templates/users/edit_profile.html:53
 msgid "title.groups"
 msgstr "Groups"
 
-#: templates/base.html:95
+#: templates/base.html:95 templates/users/edit_profile.html:73
 msgid "groups.role.admin"
 msgstr "Administrator"
 
-#: templates/base.html:100
+#: templates/base.html:100 templates/users/edit_profile.html:68
 msgid "groups.role.user"
 msgstr "Member"
 
@@ -312,6 +313,7 @@ msgid "common.error"
 msgstr "Error"
 
 #: templates/contests/edit.html:53 templates/submissions/rawview.html:3
+#: templates/users/edit_profile.html:18
 msgid "common.general"
 msgstr "General"
 
@@ -335,7 +337,7 @@ msgid "contests.unfreezeafterend"
 msgstr "Unfreeze after finish"
 
 #: templates/contests/edit.html:121 templates/problems/edit.html:107
-#: templates/problems/tests.html:49 templates/users/edit_profile.html:48
+#: templates/problems/tests.html:49 templates/users/edit_profile.html:84
 msgid "common.update"
 msgstr "Update"
 
@@ -418,8 +420,8 @@ msgstr "Sorry, but we couldn't find page that you've requested"
 msgid "title.users"
 msgstr "Users"
 
-#: templates/groups/users.html:7 templates/users/edit_profile.html:18
-#: templates/users/edit_profile.html:21 templates/users/login.html:14
+#: templates/groups/users.html:7 templates/users/edit_profile.html:22
+#: templates/users/edit_profile.html:25 templates/users/login.html:14
 #: templates/users/signup.html:20
 msgid "common.username"
 msgstr "Username"
@@ -641,20 +643,24 @@ msgstr "Checker comment"
 msgid "title.submission"
 msgstr "Submission"
 
-#: templates/users/edit_profile.html:26 templates/users/edit_profile.html:29
+#: templates/users/edit_profile.html:29 templates/users/edit_profile.html:32
 #: templates/users/profile.html:11
 msgid "common.firstname"
 msgstr "First name"
 
-#: templates/users/edit_profile.html:33 templates/users/edit_profile.html:36
+#: templates/users/edit_profile.html:35 templates/users/edit_profile.html:38
 #: templates/users/profile.html:14
 msgid "common.lastname"
 msgstr "Last name"
 
-#: templates/users/edit_profile.html:40 templates/users/edit_profile.html:43
+#: templates/users/edit_profile.html:41 templates/users/edit_profile.html:44
 #: templates/users/profile.html:17
 msgid "common.email"
 msgstr "E-Mail address"
+
+#: templates/users/edit_profile.html:63
+msgid "groups.role.none"
+msgstr "Excluded"
 
 #: templates/users/login.html:9 templates/users/login.html:19
 msgid "common.login"
@@ -704,43 +710,43 @@ msgstr "Invalid credentials"
 msgid "common.hidden"
 msgstr "Hidden"
 
-#: users/views.py:22
+#: users/views.py:23
 msgid "auth.login.success"
 msgstr "You were authorized"
 
-#: users/views.py:33
+#: users/views.py:34
 msgid "auth.signup.forbidden"
 msgstr "Registration is forbidden on this server"
 
-#: users/views.py:42
+#: users/views.py:43
 msgid "auth.signup.admin.invalidcode"
 msgstr "Invalid access code"
 
-#: users/views.py:54
+#: users/views.py:55
 msgid "auth.signup.success"
 msgstr "You were registred"
 
-#: users/views.py:57
+#: users/views.py:58
 msgid "auth.signup.shortpassword"
 msgstr "Password is too short"
 
-#: users/views.py:59
+#: users/views.py:60
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Passwords do not match"
 
-#: users/views.py:61
+#: users/views.py:62
 msgid "auth.signup.exists"
 msgstr "User already exists"
 
-#: users/views.py:63
+#: users/views.py:64
 msgid "auth.signup.invalidusername"
 msgstr "Invalid username"
 
-#: users/views.py:70
+#: users/views.py:71
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:112
+#: users/views.py:134
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
 

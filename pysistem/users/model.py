@@ -194,7 +194,6 @@ class User(db.Model):
         if submission:
             if type(submission) is list:
                 submission = submission[0]
-            return self.is_admin(user=submission.user) or \
-                   self.is_admin(problem=submission.problem)
+            return self.is_admin(user=submission.user)
 
         return False
