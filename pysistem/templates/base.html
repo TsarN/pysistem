@@ -92,7 +92,9 @@
                     {% for role in ['admin', 'user'] %}
                     {% if g.user_groups.get(role) %}
                         {% if role == 'admin' %}
+                        {% if not g.user.is_admin() %}
                         <li class="dropdown-header">{{ _('groups.role.admin') }}</li>
+                        {% endif %}
                         {% else %}
                         {% if g.user_groups.get('admin') %}
                         <li class="divider"></li>
@@ -101,8 +103,8 @@
                         {% endif %}
                         {% for group in g.user_groups.get(role) %}
                         <li>
-                            <a href="{{ url_for('groups.contests', id=group.group.id) }}">
-                                {{ group.group.name }}
+                            <a href="{{ url_for('groups.contests', id=group.id) }}">
+                                {{ group.name }}
                             </a>
                         </li>
                         {% endfor %}

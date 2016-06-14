@@ -43,10 +43,13 @@ def before_request():
         user = User.query.get(g.user.id)
 
     if user:
-        for group in user.groups:
-            if not g.user_groups.get(group.role):
-                g.user_groups[group.role] = []
-            g.user_groups[group.role].append(group)
+        if user.is_admin():
+            g.user_groups['admin'] = Group.query.all()
+        else:
+            for group in user.groups:
+                if not g.user_groups.get(group.role):
+                    g.user_groups[group.role] = []
+                g.user_groups[group.role].append(group)
 
     if not SETTINGS.get('allow_guest_view', True) or g.is_first_time:
         if (g.user.id is None) and \
