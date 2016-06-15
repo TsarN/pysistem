@@ -33,9 +33,9 @@ class Problem(db.Model):
     time_limit = db.Column(db.Integer)
     memory_limit = db.Column(db.Integer)
 
-    submissions = db.relationship('Submission', cascade = "all,delete", backref='problem')
-    test_groups = db.relationship('TestGroup', cascade = "all,delete", backref='problem')
-    checkers = db.relationship('Checker', cascade = "all,delete", backref='problem')
+    submissions = db.relationship('Submission', cascade='all,delete', backref='problem')
+    test_groups = db.relationship('TestGroup', cascade='all,delete', backref='problem')
+    checkers = db.relationship('Checker', cascade='all,delete', backref='problem')
 
     contests = db.relationship('ContestProblemAssociation',
         back_populates='problem')

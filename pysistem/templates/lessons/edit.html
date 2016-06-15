@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if lesson.id %}
+        {{ lesson.name }}
+    {% else %}
+        {{ _('title.lessons.new') }}
+    {% endif %}
+{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript"
+src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}">
+</script>
+{% if session['language'] == 'ru' %}
+<script type="text/javascript"
+src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.ru.js') }}">
+</script>
+{% endif %}
+{% endblock %}
+
+{% block navbar_link_groups %}active{% endblock %}
+{% block content %}
+
+{% if lesson.id %}
+    <h2 class="text-center page-header">{{ lesson.name }}</h2>
+{% else %}
+    <h2 class="text-center page-header">{{ _('title.lessons.new') }}</h2>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
+{% endif %}
+
+<form action="{{ url_for('lessons.edit', id=lesson.id) if lesson.id else url_for('lessons.edit', group_id=group.id) }}" method="POST" class="form-horizontal">
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.general') }}
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <label for="group" class="col-sm-4 control-label">{{ _('common.group') }}</label>
+            <div class="col-sm-8">
+                <input type="text" readonly="readonly" class="form-control" id="group"
+                value="{{ group.name or '' }}" />
+            </div>
+            <label for="name" class="col-sm-4 control-label">{{ _('common.name') }}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="name" name="name"
+                placeholder="{{ _('common.name') }}" value="{{ lesson.name or '' }}" />
+            </div>
+            <label for="start" class="col-sm-4 control-label">{{ _('lessons.start') }}</label>
+            <div class="col-sm-8">
+                <input size="16" type="text" class="form-control form-datetime" id="start" name="start"
+                placeholder="{{ _('lessons.start') }}" value="{{ (lesson.start or g.now)|dtp }}" />
+            </div>
+            <label for="end" class="col-sm-4 control-label">{{ _('lessons.end') }}</label>
+            <div class="col-sm-8">
+                <input size="16" type="text" class="form-control form-datetime" id="end" name="end"
+                placeholder="{{ _('lessons.end') }}" value="{{ (lesson.end or g.now)|dtp }}" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-4 col-sm-offset-4">
+    <button type="submit" name="update_lesson" class="btn btn-lg btn-primary btn-block">
+    {% if lesson.id %}
+        {{ _('common.update') }}
+    {% else %}
+        {{ _('common.create') }}
+    {% endif %}
+    </button>
+</div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".form-datetime").datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            language: '{{ session['language'] }}'
+        });
+    })
+</script>
+{% endblock %}

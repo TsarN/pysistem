@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-14 17:53+0300\n"
+"POT-Creation-Date: 2016-06-15 18:44+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,55 +19,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:155
+#: views.py:177
 msgid "naturaltime.justnow"
 msgstr "только что"
 
-#: views.py:157
+#: views.py:179
 msgid "naturaltime.secondsago"
 msgstr "секунд назад"
 
-#: views.py:159
+#: views.py:181
 msgid "naturaltime.minuteago"
 msgstr "минуту назад"
 
-#: views.py:161
+#: views.py:183
 msgid "naturaltime.minutesago"
 msgstr "минут назад"
 
-#: views.py:163
+#: views.py:185
 msgid "naturaltime.hourago"
 msgstr "час назад"
 
-#: views.py:165
+#: views.py:187
 msgid "naturaltime.hoursago"
 msgstr "часов назад"
 
-#: views.py:167
+#: views.py:189
 msgid "naturaltime.yesterday"
 msgstr "вчера"
 
-#: views.py:169
+#: views.py:191
 msgid "naturaltime.daysago"
 msgstr "дней назад"
 
-#: views.py:171
+#: views.py:193
 msgid "naturaltime.weekago"
 msgstr "неделю назад"
 
-#: views.py:173
+#: views.py:195
 msgid "naturaltime.weeksago"
 msgstr "недель назад"
 
-#: views.py:175
+#: views.py:197
 msgid "naturaltime.monthago"
 msgstr "месяц назад"
 
-#: views.py:177
+#: views.py:199
 msgid "naturaltime.monthsago"
 msgstr "месяцев назад"
 
-#: views.py:178
+#: views.py:200
 msgid "naturaltime.yearsago"
 msgstr "лет назад"
 
@@ -90,6 +90,26 @@ msgstr "Укажите хотя бы одну группу"
 #: contests/views.py:144
 msgid "contests.edit.emptyname"
 msgstr "Пустое название турнира"
+
+#: lessons/views.py:21
+msgid "lessons.delete.success"
+msgstr "Занятие удалено"
+
+#: lessons/views.py:68
+msgid "lessons.new.success"
+msgstr "Занятие добавлено"
+
+#: lessons/views.py:70
+msgid "lessons.edit.success"
+msgstr "Занятие обновлено"
+
+#: lessons/views.py:73
+msgid "lessons.edit.emptyname"
+msgstr "Пустое название занятия"
+
+#: lessons/views.py:75
+msgid "lessons.edit.invaliddates"
+msgstr "Начало позже окончания"
 
 #: locale/views.py:15
 msgid "locale.set.success"
@@ -184,7 +204,7 @@ msgid "title.home"
 msgstr "Главная"
 
 #: templates/base.html:82 templates/contests/list.html:2
-#: templates/groups/base.html:10
+#: templates/groups/base.html:11
 msgid "title.contestlist"
 msgstr "Турниры"
 
@@ -193,42 +213,42 @@ msgstr "Турниры"
 msgid "title.groups"
 msgstr "Группы"
 
-#: templates/base.html:95 templates/users/edit_profile.html:73
+#: templates/base.html:96 templates/users/edit_profile.html:73
 msgid "groups.role.admin"
 msgstr "Администратор"
 
-#: templates/base.html:100 templates/users/edit_profile.html:68
+#: templates/base.html:102 templates/users/edit_profile.html:68
 msgid "groups.role.user"
 msgstr "Участник"
 
-#: templates/base.html:118
+#: templates/base.html:120
 msgid "groups.new"
 msgstr "Создать группу"
 
-#: templates/base.html:132 templates/problems/checkers.html:10
+#: templates/base.html:134 templates/problems/checkers.html:10
 #: templates/submissions/list.html:49
 msgid "common.language"
 msgstr "Язык"
 
-#: templates/base.html:151
+#: templates/base.html:153
 msgid "common.anonymous"
 msgstr "Гость"
 
-#: templates/base.html:156 templates/users/edit_profile.html:2
+#: templates/base.html:158 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Профиль"
 
-#: templates/base.html:158
+#: templates/base.html:160
 msgid "title.logout"
 msgstr "Выйти"
 
-#: templates/base.html:160 templates/guest_view_denied.html:13
+#: templates/base.html:162 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Войти"
 
-#: templates/base.html:162 templates/guest_view_denied.html:18
+#: templates/base.html:164 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Зарегистрироваться"
@@ -273,14 +293,14 @@ msgid "contests.edit"
 msgstr "Редактировать турнир"
 
 #: templates/contests/base.html:116 templates/contests/edit.html:62
-#: templates/contests/edit.html:65
+#: templates/contests/edit.html:65 templates/groups/lessons.html:13
 msgid "contests.start"
 msgstr "Начало"
 
 #: templates/contests/base.html:117 templates/contests/edit.html:72
 #: templates/contests/edit.html:75
 msgid "contests.end"
-msgstr "Конец"
+msgstr "Окончание"
 
 #: templates/contests/base.html:119 templates/contests/rawlist.html:26
 msgid "contests.remaining"
@@ -307,21 +327,23 @@ msgstr "Турнирная таблица заморожена для непри
 msgid "contests.new"
 msgstr "Новый турнир"
 
-#: templates/contests/edit.html:42 templates/problems/edit.html:31
-#: templates/users/edit_profile.html:7 templates/users/login.html:6
-#: templates/users/signup.html:6
+#: templates/contests/edit.html:42 templates/lessons/edit.html:32
+#: templates/problems/edit.html:31 templates/users/edit_profile.html:7
+#: templates/users/login.html:6 templates/users/signup.html:6
 msgid "common.error"
 msgstr "Ошибка"
 
-#: templates/contests/edit.html:53 templates/submissions/rawview.html:3
-#: templates/users/edit_profile.html:18
+#: templates/contests/edit.html:53 templates/lessons/edit.html:39
+#: templates/submissions/rawview.html:3 templates/users/edit_profile.html:18
 msgid "common.general"
 msgstr "Основное"
 
 #: templates/contests/edit.html:57 templates/contests/edit.html:60
 #: templates/contests/problems.html:55 templates/contests/rawlist.html:2
-#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
-#: templates/problems/edit.html:67 templates/problems/edit.html:70
+#: templates/groups/lessons.html:12 templates/lessons/edit.html:48
+#: templates/lessons/edit.html:51 templates/problems/checkers.html:8
+#: templates/problems/checkers.html:19 templates/problems/edit.html:67
+#: templates/problems/edit.html:70
 msgid "common.name"
 msgstr "Название"
 
@@ -337,13 +359,14 @@ msgstr "Правила"
 msgid "contests.unfreezeafterend"
 msgstr "Разморозить после окончания"
 
-#: templates/contests/edit.html:121 templates/problems/edit.html:107
-#: templates/problems/tests.html:49 templates/users/edit_profile.html:84
+#: templates/contests/edit.html:121 templates/lessons/edit.html:70
+#: templates/problems/edit.html:107 templates/problems/tests.html:49
+#: templates/users/edit_profile.html:84
 msgid "common.update"
 msgstr "Обновить"
 
-#: templates/contests/edit.html:123 templates/problems/edit.html:109
-#: templates/problems/tests.html:49
+#: templates/contests/edit.html:123 templates/lessons/edit.html:72
+#: templates/problems/edit.html:109 templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Создать"
 
@@ -417,9 +440,21 @@ msgstr "404 - страница не найдена"
 msgid "error.404.text"
 msgstr "Мы не смогли найти страницу, к которой Вы обратились"
 
-#: templates/groups/base.html:14
+#: templates/groups/base.html:15
 msgid "title.users"
 msgstr "Пользователи"
+
+#: templates/groups/base.html:18
+msgid "title.lessons"
+msgstr "Занятия"
+
+#: templates/groups/lessons.html:6
+msgid "lessons.new"
+msgstr "Добавить занятие"
+
+#: templates/groups/lessons.html:14
+msgid "common.duration"
+msgstr "Продолжительность"
 
 #: templates/groups/users.html:7 templates/users/edit_profile.html:22
 #: templates/users/edit_profile.html:25 templates/users/login.html:14
@@ -434,6 +469,22 @@ msgstr "Имя"
 #: templates/groups/users.html:9
 msgid "common.role"
 msgstr "Роль"
+
+#: templates/lessons/edit.html:6 templates/lessons/edit.html:28
+msgid "title.lessons.new"
+msgstr "Добавить новое занятие"
+
+#: templates/lessons/edit.html:43
+msgid "common.group"
+msgstr "Группа"
+
+#: templates/lessons/edit.html:53 templates/lessons/edit.html:56
+msgid "lessons.start"
+msgstr "Начало"
+
+#: templates/lessons/edit.html:58 templates/lessons/edit.html:61
+msgid "lessons.end"
+msgstr "Окончание"
 
 #: templates/problems/base.html:16
 msgid "problems.delete.confirm"

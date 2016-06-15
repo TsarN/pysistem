@@ -190,6 +190,10 @@ class User(db.Model):
         if test_pair:
             return self.is_admin(test_group=test_pair.test_group)
 
+        lesson = kwargs.get('lesson')
+        if lesson:
+            return self.is_admin(group=lesson.group)
+
         submission = kwargs.get('submission')
         if submission:
             if type(submission) is list:

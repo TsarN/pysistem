@@ -52,6 +52,7 @@ class Contest(db.Model):
     Relationships:
     problems -- problems in contest (ContestProblemAssociation)
     groups -- groups to which contest is attached (GroupContestAssociation)
+    lessons -- attached lessons (Lesson)
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -63,8 +64,8 @@ class Contest(db.Model):
 
     problems = db.relationship('ContestProblemAssociation',
         back_populates='contest', order_by='ContestProblemAssociation.prefix')
-
     groups = db.relationship('GroupContestAssociation', back_populates='contest')
+    lessons = db.relationship('Lesson', cascade='all,delete', backref='contest')
 
     def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
         self.name = name

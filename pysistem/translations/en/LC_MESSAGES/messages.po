@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-14 17:53+0300\n"
+"POT-Creation-Date: 2016-06-15 18:44+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,55 +18,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:155
+#: views.py:177
 msgid "naturaltime.justnow"
 msgstr "just now"
 
-#: views.py:157
+#: views.py:179
 msgid "naturaltime.secondsago"
 msgstr "seconds ago"
 
-#: views.py:159
+#: views.py:181
 msgid "naturaltime.minuteago"
 msgstr "a minute ago"
 
-#: views.py:161
+#: views.py:183
 msgid "naturaltime.minutesago"
 msgstr "minutes ago"
 
-#: views.py:163
+#: views.py:185
 msgid "naturaltime.hourago"
 msgstr "an hour ago"
 
-#: views.py:165
+#: views.py:187
 msgid "naturaltime.hoursago"
 msgstr "hours ago"
 
-#: views.py:167
+#: views.py:189
 msgid "naturaltime.yesterday"
 msgstr "yesterday"
 
-#: views.py:169
+#: views.py:191
 msgid "naturaltime.daysago"
 msgstr "days ago"
 
-#: views.py:171
+#: views.py:193
 msgid "naturaltime.weekago"
 msgstr "a week ago"
 
-#: views.py:173
+#: views.py:195
 msgid "naturaltime.weeksago"
 msgstr "weeks ago"
 
-#: views.py:175
+#: views.py:197
 msgid "naturaltime.monthago"
 msgstr "a month ago"
 
-#: views.py:177
+#: views.py:199
 msgid "naturaltime.monthsago"
 msgstr "months ago"
 
-#: views.py:178
+#: views.py:200
 msgid "naturaltime.yearsago"
 msgstr "years ago"
 
@@ -89,6 +89,26 @@ msgstr "Select at least one group"
 #: contests/views.py:144
 msgid "contests.edit.emptyname"
 msgstr "Contest name is empty"
+
+#: lessons/views.py:21
+msgid "lessons.delete.success"
+msgstr "Lesson deleted"
+
+#: lessons/views.py:68
+msgid "lessons.new.success"
+msgstr "Lesson created"
+
+#: lessons/views.py:70
+msgid "lessons.edit.success"
+msgstr "Lesson updated"
+
+#: lessons/views.py:73
+msgid "lessons.edit.emptyname"
+msgstr "Empty lesson name"
+
+#: lessons/views.py:75
+msgid "lessons.edit.invaliddates"
+msgstr "Start is later than end"
 
 #: locale/views.py:15
 msgid "locale.set.success"
@@ -183,7 +203,7 @@ msgid "title.home"
 msgstr "Home"
 
 #: templates/base.html:82 templates/contests/list.html:2
-#: templates/groups/base.html:10
+#: templates/groups/base.html:11
 msgid "title.contestlist"
 msgstr "Contests"
 
@@ -192,42 +212,42 @@ msgstr "Contests"
 msgid "title.groups"
 msgstr "Groups"
 
-#: templates/base.html:95 templates/users/edit_profile.html:73
+#: templates/base.html:96 templates/users/edit_profile.html:73
 msgid "groups.role.admin"
 msgstr "Administrator"
 
-#: templates/base.html:100 templates/users/edit_profile.html:68
+#: templates/base.html:102 templates/users/edit_profile.html:68
 msgid "groups.role.user"
 msgstr "Member"
 
-#: templates/base.html:118
+#: templates/base.html:120
 msgid "groups.new"
 msgstr "Create group"
 
-#: templates/base.html:132 templates/problems/checkers.html:10
+#: templates/base.html:134 templates/problems/checkers.html:10
 #: templates/submissions/list.html:49
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:151
+#: templates/base.html:153
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:156 templates/users/edit_profile.html:2
+#: templates/base.html:158 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:158
+#: templates/base.html:160
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:160 templates/guest_view_denied.html:13
+#: templates/base.html:162 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:162 templates/guest_view_denied.html:18
+#: templates/base.html:164 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
@@ -272,7 +292,7 @@ msgid "contests.edit"
 msgstr "Edit contest"
 
 #: templates/contests/base.html:116 templates/contests/edit.html:62
-#: templates/contests/edit.html:65
+#: templates/contests/edit.html:65 templates/groups/lessons.html:13
 msgid "contests.start"
 msgstr "Starts at"
 
@@ -306,21 +326,23 @@ msgstr "Scoreboard is frozen for unprivileged users"
 msgid "contests.new"
 msgstr "New contest"
 
-#: templates/contests/edit.html:42 templates/problems/edit.html:31
-#: templates/users/edit_profile.html:7 templates/users/login.html:6
-#: templates/users/signup.html:6
+#: templates/contests/edit.html:42 templates/lessons/edit.html:32
+#: templates/problems/edit.html:31 templates/users/edit_profile.html:7
+#: templates/users/login.html:6 templates/users/signup.html:6
 msgid "common.error"
 msgstr "Error"
 
-#: templates/contests/edit.html:53 templates/submissions/rawview.html:3
-#: templates/users/edit_profile.html:18
+#: templates/contests/edit.html:53 templates/lessons/edit.html:39
+#: templates/submissions/rawview.html:3 templates/users/edit_profile.html:18
 msgid "common.general"
 msgstr "General"
 
 #: templates/contests/edit.html:57 templates/contests/edit.html:60
 #: templates/contests/problems.html:55 templates/contests/rawlist.html:2
-#: templates/problems/checkers.html:8 templates/problems/checkers.html:19
-#: templates/problems/edit.html:67 templates/problems/edit.html:70
+#: templates/groups/lessons.html:12 templates/lessons/edit.html:48
+#: templates/lessons/edit.html:51 templates/problems/checkers.html:8
+#: templates/problems/checkers.html:19 templates/problems/edit.html:67
+#: templates/problems/edit.html:70
 msgid "common.name"
 msgstr "Name"
 
@@ -336,13 +358,14 @@ msgstr "Ruleset"
 msgid "contests.unfreezeafterend"
 msgstr "Unfreeze after finish"
 
-#: templates/contests/edit.html:121 templates/problems/edit.html:107
-#: templates/problems/tests.html:49 templates/users/edit_profile.html:84
+#: templates/contests/edit.html:121 templates/lessons/edit.html:70
+#: templates/problems/edit.html:107 templates/problems/tests.html:49
+#: templates/users/edit_profile.html:84
 msgid "common.update"
 msgstr "Update"
 
-#: templates/contests/edit.html:123 templates/problems/edit.html:109
-#: templates/problems/tests.html:49
+#: templates/contests/edit.html:123 templates/lessons/edit.html:72
+#: templates/problems/edit.html:109 templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Create"
 
@@ -416,9 +439,21 @@ msgstr "404 - Page not found"
 msgid "error.404.text"
 msgstr "Sorry, but we couldn't find page that you've requested"
 
-#: templates/groups/base.html:14
+#: templates/groups/base.html:15
 msgid "title.users"
 msgstr "Users"
+
+#: templates/groups/base.html:18
+msgid "title.lessons"
+msgstr "Lessons"
+
+#: templates/groups/lessons.html:6
+msgid "lessons.new"
+msgstr "Add lesson"
+
+#: templates/groups/lessons.html:14
+msgid "common.duration"
+msgstr "Duration"
 
 #: templates/groups/users.html:7 templates/users/edit_profile.html:22
 #: templates/users/edit_profile.html:25 templates/users/login.html:14
@@ -433,6 +468,22 @@ msgstr "Full name"
 #: templates/groups/users.html:9
 msgid "common.role"
 msgstr "Role"
+
+#: templates/lessons/edit.html:6 templates/lessons/edit.html:28
+msgid "title.lessons.new"
+msgstr "Add new lesson"
+
+#: templates/lessons/edit.html:43
+msgid "common.group"
+msgstr "Group"
+
+#: templates/lessons/edit.html:53 templates/lessons/edit.html:56
+msgid "lessons.start"
+msgstr "Start"
+
+#: templates/lessons/edit.html:58 templates/lessons/edit.html:61
+msgid "lessons.end"
+msgstr "End"
 
 #: templates/problems/base.html:16
 msgid "problems.delete.confirm"

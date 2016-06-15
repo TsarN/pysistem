@@ -1,5 +1,5 @@
 #!/bin/bash
-modules=(checkers compilers contests problems submissions test_pairs users groups)
+modules=(checkers compilers contests problems submissions test_pairs users groups lessons)
 echo "from pysistem import db, app" > /tmp/pysistem_startup
 for mod in ${modules[@]}; do
     echo "from pysistem.${mod}.model import *" >> /tmp/pysistem_startup

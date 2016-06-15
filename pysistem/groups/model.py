@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from pysistem import db
+from pysistem.lessons.model import Lesson
+from datetime import datetime
 
 class GroupUserAssociation(db.Model):
     """Helper class to associate groups and users between each other
@@ -67,15 +69,23 @@ class Group(db.Model):
     Relationships:
     users -- attached users (GroupUserAssociation)
     contests -- attached contests (GroupContestAssociation)
+    lessons -- attached lessons (Lesson)
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
 
     users = db.relationship('GroupUserAssociation', back_populates='group')
     contests = db.relationship('GroupContestAssociation', back_populates='group')
+    lessons = db.relationship('Lesson', cascade='all,delete', backref='group',
+                              order_by=Lesson.start.desc())
 
     def __init__(self, name=None):
         self.name = name
 
     def __repr__(self):
         return '<Group %r>' % self.name
+
+    def get_current_lessons(self):
+        now = datetime.now()
+        return Lesson.query.filter(db.and_(Lesson.group_id == self.id, \
+               Lesson.start <= now, Lesson.end >= now)).all()
