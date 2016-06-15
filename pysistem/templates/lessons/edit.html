@@ -64,6 +64,56 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
     </div>
 </div>
 
+{% if lesson.id %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('lessons.attendants') }}
+    </div>
+    <table class="table" id="lesson-attendants">
+        <thead>
+            <tr>
+                <th>{{ _('common.username') }}</th>
+                <th>{{ _('common.fullname') }}</th>
+                <th>{{ _('lessons.attendance') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('users.profile', username=user.username) }}">
+                        {{ user.username }}
+                    </a>
+                </td>
+                <td>{{ user.last_name or '' }} {{ user.first_name or ''}}</td>
+                <td>
+                    <input class="user-was-checkbox" type="checkbox"
+                    {{ 'checked="checked"' if user.mark else '' }}
+                    name="user-was-{{ user.id }}" autocomplete="off" />
+                    &nbsp;
+                    <input title="{{ _('lessons.mark') }}" type="text"
+                    style="{{ 'display: none' if not user.mark else '' }}"
+                    size="1" class="user-mark-edit" value="{{ user.mark or '' if user.mark != True else '' }}"
+                    name="user-mark-{{ user.id }}" autocomplete="off" />
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(".user-was-checkbox").change(function() {
+        if (this.checked)
+            $(this).siblings(".user-mark-edit").show()
+        else
+            $(this).siblings(".user-mark-edit").hide()
+    })
+</script>
+
+{% endif %}
+
 <div class="col-sm-4 col-sm-offset-4">
     <button type="submit" name="update_lesson" class="btn btn-lg btn-primary btn-block">
     {% if lesson.id %}
@@ -80,7 +130,7 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
         $(".form-datetime").datetimepicker({
             format: 'yyyy-mm-dd hh:ii',
             language: '{{ session['language'] }}'
-        });
+        })
     })
 </script>
 {% endblock %}

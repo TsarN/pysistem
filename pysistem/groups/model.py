@@ -22,6 +22,7 @@ class GroupUserAssociation(db.Model):
     user = db.relationship('User', back_populates='groups')
     def __init__(self, role=None):
         self.role = role
+        
     def __repr__(self):
         if self.user and self.group:
             return '<Group=%r User=%r>' % (self.group.name, self.user.username)

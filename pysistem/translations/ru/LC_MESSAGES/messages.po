@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-15 18:44+0300\n"
+"POT-Creation-Date: 2016-06-15 20:42+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,55 +19,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:177
+#: views.py:179
 msgid "naturaltime.justnow"
 msgstr "только что"
 
-#: views.py:179
+#: views.py:181
 msgid "naturaltime.secondsago"
 msgstr "секунд назад"
 
-#: views.py:181
+#: views.py:183
 msgid "naturaltime.minuteago"
 msgstr "минуту назад"
 
-#: views.py:183
+#: views.py:185
 msgid "naturaltime.minutesago"
 msgstr "минут назад"
 
-#: views.py:185
+#: views.py:187
 msgid "naturaltime.hourago"
 msgstr "час назад"
 
-#: views.py:187
+#: views.py:189
 msgid "naturaltime.hoursago"
 msgstr "часов назад"
 
-#: views.py:189
+#: views.py:191
 msgid "naturaltime.yesterday"
 msgstr "вчера"
 
-#: views.py:191
+#: views.py:193
 msgid "naturaltime.daysago"
 msgstr "дней назад"
 
-#: views.py:193
+#: views.py:195
 msgid "naturaltime.weekago"
 msgstr "неделю назад"
 
-#: views.py:195
+#: views.py:197
 msgid "naturaltime.weeksago"
 msgstr "недель назад"
 
-#: views.py:197
+#: views.py:199
 msgid "naturaltime.monthago"
 msgstr "месяц назад"
 
-#: views.py:199
+#: views.py:201
 msgid "naturaltime.monthsago"
 msgstr "месяцев назад"
 
-#: views.py:200
+#: views.py:202
 msgid "naturaltime.yearsago"
 msgstr "лет назад"
 
@@ -91,23 +91,23 @@ msgstr "Укажите хотя бы одну группу"
 msgid "contests.edit.emptyname"
 msgstr "Пустое название турнира"
 
-#: lessons/views.py:21
+#: lessons/views.py:22
 msgid "lessons.delete.success"
 msgstr "Занятие удалено"
 
-#: lessons/views.py:68
+#: lessons/views.py:91
 msgid "lessons.new.success"
 msgstr "Занятие добавлено"
 
-#: lessons/views.py:70
+#: lessons/views.py:93
 msgid "lessons.edit.success"
 msgstr "Занятие обновлено"
 
-#: lessons/views.py:73
+#: lessons/views.py:96
 msgid "lessons.edit.emptyname"
 msgstr "Пустое название занятия"
 
-#: lessons/views.py:75
+#: lessons/views.py:98
 msgid "lessons.edit.invaliddates"
 msgstr "Начало позже окончания"
 
@@ -359,13 +359,13 @@ msgstr "Правила"
 msgid "contests.unfreezeafterend"
 msgstr "Разморозить после окончания"
 
-#: templates/contests/edit.html:121 templates/lessons/edit.html:70
+#: templates/contests/edit.html:121 templates/lessons/edit.html:120
 #: templates/problems/edit.html:107 templates/problems/tests.html:49
 #: templates/users/edit_profile.html:84
 msgid "common.update"
 msgstr "Обновить"
 
-#: templates/contests/edit.html:123 templates/lessons/edit.html:72
+#: templates/contests/edit.html:123 templates/lessons/edit.html:122
 #: templates/problems/edit.html:109 templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Создать"
@@ -456,13 +456,13 @@ msgstr "Добавить занятие"
 msgid "common.duration"
 msgstr "Продолжительность"
 
-#: templates/groups/users.html:7 templates/users/edit_profile.html:22
-#: templates/users/edit_profile.html:25 templates/users/login.html:14
-#: templates/users/signup.html:20
+#: templates/groups/users.html:7 templates/lessons/edit.html:76
+#: templates/users/edit_profile.html:22 templates/users/edit_profile.html:25
+#: templates/users/login.html:14 templates/users/signup.html:20
 msgid "common.username"
 msgstr "Имя пользователя"
 
-#: templates/groups/users.html:8
+#: templates/groups/users.html:8 templates/lessons/edit.html:77
 msgid "common.fullname"
 msgstr "Имя"
 
@@ -485,6 +485,18 @@ msgstr "Начало"
 #: templates/lessons/edit.html:58 templates/lessons/edit.html:61
 msgid "lessons.end"
 msgstr "Окончание"
+
+#: templates/lessons/edit.html:71
+msgid "lessons.attendants"
+msgstr "Присутствующие"
+
+#: templates/lessons/edit.html:78
+msgid "lessons.attendance"
+msgstr "Присутствие"
+
+#: templates/lessons/edit.html:95
+msgid "lessons.mark"
+msgstr "Оценка"
 
 #: templates/problems/base.html:16
 msgid "problems.delete.confirm"
@@ -754,11 +766,11 @@ msgstr "Код доступа"
 msgid "error.permission.authrequired"
 msgstr "Для просмотра страницы необходимо авторизироваться"
 
-#: users/model.py:81
+#: users/model.py:82
 msgid "auth.login.invalidcredentials"
 msgstr "Неправильный логин или пароль"
 
-#: users/model.py:106
+#: users/model.py:107
 msgid "common.hidden"
 msgstr "Скрыто"
 

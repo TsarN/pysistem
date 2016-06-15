@@ -2,11 +2,12 @@
 from pysistem import app, db
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from flask_babel import gettext
-from pysistem.lessons.model import Lesson
+from pysistem.lessons.model import Lesson, LessonUserAssociation
 from pysistem.lessons.decorators import yield_lesson
 from pysistem.groups.decorators import yield_group
 from pysistem.users.decorators import requires_admin
-from pysistem.groups.model import Group
+from pysistem.groups.model import Group, GroupUserAssociation
+from pysistem.users.model import User
 from datetime import datetime
 
 mod = Blueprint('lessons', __name__, url_prefix='/lesson')
@@ -59,6 +60,28 @@ def edit(id=-1, group_id=-1):
                 lesson.start = start
                 lesson.end = end
 
+                if not is_new:
+                    # Updating attendance and marks
+                    users = GroupUserAssociation.query.filter(db.and_(
+                        GroupUserAssociation.group_id == lesson.group_id,
+                        GroupUserAssociation.role == 'user'))
+
+                    for user in users:
+                        attendance = bool(request.form.get('user-was-%d' % user.id))
+                        mark = request.form.get('user-mark-%d' % user.id)
+
+                        assoc = LessonUserAssociation.query.filter(db.and_(
+                            LessonUserAssociation.lesson_id == lesson.id,
+                            LessonUserAssociation.user_id == user.id)).first()
+
+                        if attendance and not assoc:
+                            assoc = LessonUserAssociation(mark)
+                            assoc.lesson_id = lesson.id
+                            assoc.user_id = user.id
+                            db.session.add(assoc)
+                        if not attendance and assoc:
+                            db.session.delete(assoc)
+
                 if is_new:
                     lesson.group_id = group.id
                     db.session.add(lesson)
@@ -68,7 +91,7 @@ def edit(id=-1, group_id=-1):
                     flash(gettext('lessons.new.success'))
                 else:
                     flash(gettext('lessons.edit.success'))
-                return redirect(url_for('groups.lessons', id=lesson.group_id))
+                return redirect(url_for('lessons.edit', id=lesson.id))
             else:
                 error = gettext('lessons.edit.emptyname')
         else:
@@ -85,4 +108,15 @@ def edit(id=-1, group_id=-1):
 
     group = group or lesson.group
 
-    return render_template('lessons/edit.html', lesson=lesson, error=error, group=group)
+    marked_users = {}
+    for assoc in lesson.users:
+        marked_users[assoc.user.id] = assoc.mark or True
+
+    users = [x for x in lesson.group.users if x.role == 'user']
+    for user in users:
+        user.mark = marked_users.get(user.id)
+
+    users.sort(key=lambda x:x.last_name + ' ' + x.first_name)
+
+    return render_template('lessons/edit.html', lesson=lesson,
+        error=error, group=group, users=users)

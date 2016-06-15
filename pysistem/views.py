@@ -27,6 +27,7 @@ def before_request():
     g.is_first_time = (User.query.count() == 0)
     g.now = datetime.now()
     session['language'] = get_locale()
+    g.locale = session['language']
     g.user = User()
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
     g.raw_content = False
@@ -78,6 +79,7 @@ def teardown_request(*args, **kwargs):
         del g.SETTINGS
         del g.disable_navbar
         del g.user_groups
+        del g.locale
     except: pass
 
 def pad_zero(x, min_len=2):

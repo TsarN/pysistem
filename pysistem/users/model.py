@@ -35,6 +35,7 @@ class User(db.Model):
 
     submissions = db.relationship('Submission', cascade = "all,delete", backref='user')
     groups = db.relationship('GroupUserAssociation', back_populates='user')
+    lessons = db.relationship('LessonUserAssociation', back_populates='user')
 
     def __init__(self, username=None, password=None, first_name=None, last_name=None, email=None, role='user'):
         if username is None:
