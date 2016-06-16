@@ -75,7 +75,11 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
             <tr>
                 <th>{{ _('common.username') }}</th>
                 <th>{{ _('common.fullname') }}</th>
-                <th>{{ _('lessons.attendance') }}</th>
+                <th>
+                    <input type="checkbox" id="checkall" disabled="disabled" />
+                    &nbsp;
+                    {{ _('lessons.attendance') }}
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -104,11 +108,33 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
 </div>
 
 <script type="text/javascript">
-    $(".user-was-checkbox").change(function() {
+    var all_checked = true;
+
+    $(".user-was-checkbox")
+
+    .each(function() {
+        if (!this.checked) {
+            all_checked = false;
+            return false;
+        }
+    })
+
+    .change(function() {
         if (this.checked)
             $(this).siblings(".user-mark-edit").show()
         else
             $(this).siblings(".user-mark-edit").hide()
+    })
+
+    $("#checkall")
+    .prop('disabled', false)
+    .prop('checked', all_checked)
+    .change(function() {
+        $(".user-was-checkbox").prop('checked', this.checked)
+        if (this.checked)
+            $(".user-mark-edit").show()
+        else 
+            $(".user-mark-edit").hide()
     })
 </script>
 
