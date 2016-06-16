@@ -6,15 +6,21 @@
         $("#table-contests").DataTable({
             "paging": false,
             "info": false,
+            {% if g.locale == 'ru' %}
             "language": {
-                "search": "{{ _('datatables.search') }} ",
-                "emptyTable": "{{ _('datatables.emptytable') }}",
-                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+                "url": "{{ url_for('static', filename='datatables/Russian.json') }}"
             }
+            {% endif %}
         })
     })
 </script>
-
+{% if g.user.is_admin(group=group) %}
+<div style="float: right; margin-bottom: 16px">
+<a href="{{ url_for('contests.new', group_id=group.id) }}" class="btn btn-success" id="btn-newcontest">
+    {{ _('contests.new') }}
+</a>
+</div>
+{% endif %}
 <div class="table-responsive" style="display: inline-block; width: 100%">
 <table class="table table-stripped" id="table-contests">
 {{ rawlist|safe }}

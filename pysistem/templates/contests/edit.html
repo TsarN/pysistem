@@ -48,6 +48,9 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
         {{ url_for('contests.edit') }}
     {% endif %}
 " role="form" class="form-horizontal">
+{% if group %}
+<input type="hidden" name="group_id" value="{{ group.id }}" />
+{% endif %}
 <div class="panel panel-default">
 <div class="panel-heading">
     {{ _('common.general') }}

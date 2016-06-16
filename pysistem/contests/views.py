@@ -68,15 +68,33 @@ def problems(id, contest):
 @mod.route('/new')
 def new():
     """Create new contest"""
-    return render_template('contests/edit.html', contest=Contest(), contest_rulesets=contest_rulesets)
+    group_id = request.args.get('group_id')
+    try:
+        group_id = int(group_id)
+    except: pass
+    group = None
+    if not group_id and not g.user.is_admin():
+        return render_template('errors/403.html'), 403
+    elif group_id:
+        group = Group.query.get(group_id)
+        if not group:
+            return render_template('errors/404.html'), 404
+        if not g.user.is_admin(group=group_id):
+            return render_template('errors/403.html'), 403
+
+    return render_template('contests/edit.html', contest=Contest(),
+        contest_rulesets=contest_rulesets, group=group)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/new/post', methods=['POST'])
-@requires_admin(contest="id")
 def edit(id=-1):
     """Create/Update contest"""
     contest = Contest.query.get(id)
     error = None
+
+    if contest:
+        if not g.user.is_admin(contest=contest):
+            return render_template('errors/403.html'), 403
 
     if g.user.is_admin():
         admin_groups = Group.query.all()
@@ -99,6 +117,22 @@ def edit(id=-1):
             [bool(request.form.get('group-%d' % group.id, False)) \
             for group in admin_groups])
 
+        group_id = request.form.get('group_id')
+        try:
+            group_id = int(group_id)
+        except: pass
+        group = None
+        if is_new:
+            if not group_id and not g.user.is_admin():
+                return render_template('errors/403.html'), 403
+            elif group_id:
+                group = Group.query.get(group_id)
+                if not group:
+                    return render_template('errors/404.html'), 404
+                if not g.user.is_admin(group=group_id):
+                    return render_template('errors/403.html'), 403
+                group_test = True
+
         if (start > freeze) or (freeze > end) or (start > end) or not \
             (start and end and freeze):
             error = gettext('contests.edit.invaliddates')
@@ -114,6 +148,11 @@ def edit(id=-1):
 
                     if is_new:
                         db.session.add(contest)
+                        if group:
+                            assoc = GroupContestAssociation()
+                            assoc.group_id = group.id
+                            assoc.contest = contest
+                            db.session.add(assoc)
 
                     for group in admin_groups:
                         ch = bool(request.form.get('group-%d' % group.id, False))
@@ -168,6 +207,9 @@ def delete(id, contest):
     """Delete contest"""
     for x in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.contest_id == contest.id):
+        db.session.delete(x)
+    for x in GroupContestAssociation.query.filter( \
+        GroupContestAssociation.contest_id == contest.id):
         db.session.delete(x)
     db.session.delete(contest)
     db.session.commit()
