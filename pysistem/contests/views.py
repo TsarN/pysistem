@@ -65,6 +65,7 @@ def problems(id, contest):
     return render_template('contests/problems.html', contest=contest, addable_problems=addable_problems)
 
 @mod.route('/new')
+@requires_admin
 def new():
     """Create new contest"""
     return render_template('contests/edit.html', contest=Contest(), contest_rulesets=contest_rulesets)
