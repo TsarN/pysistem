@@ -74,10 +74,14 @@ def edit(id=-1, group_id=-1):
                             LessonUserAssociation.lesson_id == lesson.id,
                             LessonUserAssociation.user_id == user.id)).first()
 
+                        if assoc:
+                            assoc.mark = mark
+
                         if attendance and not assoc:
-                            assoc = LessonUserAssociation(mark)
+                            assoc = LessonUserAssociation()
                             assoc.lesson_id = lesson.id
                             assoc.user_id = user.id
+                            assoc.mark = mark
                             db.session.add(assoc)
                         if not attendance and assoc:
                             db.session.delete(assoc)
