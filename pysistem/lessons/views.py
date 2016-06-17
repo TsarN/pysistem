@@ -2,12 +2,13 @@
 from pysistem import app, db
 from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
 from flask_babel import gettext
-from pysistem.lessons.model import Lesson, LessonUserAssociation
+from pysistem.lessons.model import Lesson, LessonUserAssociation, AutoMark
 from pysistem.lessons.decorators import yield_lesson
 from pysistem.groups.decorators import yield_group
 from pysistem.users.decorators import requires_admin
 from pysistem.groups.model import Group, GroupUserAssociation
 from pysistem.users.model import User
+from pysistem.contests.model import Contest
 from datetime import datetime
 
 mod = Blueprint('lessons', __name__, url_prefix='/lesson')
@@ -54,14 +55,42 @@ def edit(id=-1, group_id=-1):
         start = datetime.strptime(request.form.get('start', g.now_formatted), "%Y-%m-%d %H:%M")
         end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
 
+        contest = None
+        contest_id = request.form.get('contest_id', "none")
+        if contest_id != "none":
+            try:
+                contest_id = int(contest_id)
+            except: pass
+
+            contest = Contest.query.get(contest_id)
+
+            if not contest:
+                return render_template('errors/404.html'), 404
+
         if start <= end:
             if len(name.strip(' \t\n\r')) > 0:
                 lesson.name = name
                 lesson.start = start
                 lesson.end = end
+                db.session.add(lesson)
+                changed_contest = False
+                if contest:
+                    if lesson.contest_id != contest.id:
+                        changed_contest = True
+                        if lesson.auto_marks:
+                            for auto_mark in lesson.auto_marks:
+                                db.session.delete(auto_mark)
+                    lesson.contest_id = contest.id
+                else:
+                    lesson.contest_id = None
+
+                if is_new:
+                    lesson.group_id = group.id
+
+                db.session.commit()
 
                 if not is_new:
-                    # Updating attendance and marks
+                    # Updating attendance, marks and auto marks
                     users = GroupUserAssociation.query.filter(db.and_(
                         GroupUserAssociation.group_id == lesson.group_id,
                         GroupUserAssociation.role == 'user'))
@@ -86,11 +115,52 @@ def edit(id=-1, group_id=-1):
                         if not attendance and assoc:
                             db.session.delete(assoc)
 
-                if is_new:
-                    lesson.group_id = group.id
-                    db.session.add(lesson)
+                    if not changed_contest:
+                        for auto_mark in lesson.auto_marks:
+                            delete = bool(request.form.get('am%d-delete' % auto_mark.id))
+                            if delete:
+                                db.session.delete(auto_mark)
+                                continue
+                            
+                            required = request.form.get('am%d-required' % auto_mark.id)
+                            mark = request.form.get('am%d-mark' % auto_mark.id)
+                            points = request.form.get('am%d-points' % auto_mark.id)
 
-                db.session.commit()
+                            try:
+                                auto_mark.required = int(required)
+                            except: pass
+
+                            try:
+                                auto_mark.mark = mark
+                            except: pass
+
+                            try:
+                                auto_mark.points = int(points)
+                            except: pass
+
+                            db.session.add(auto_mark)
+
+                        for t in ("score", "place", "solved"):
+                            idx = 0
+                            while True:
+                                idx += 1
+                                avail = request.form.get('am-new%s%d-avail' % (t, idx), False)
+                                if not avail:
+                                    break
+                                required = request.form.get('am-new%s%d-required' % (t, idx))
+                                mark = request.form.get('am-new%s%d-mark' % (t, idx))
+                                points = request.form.get('am-new%s%d-points' % (t, idx))
+                                try:
+                                    required = int(required)
+                                    points = int(points)
+                                except:
+                                    continue
+
+                                m = AutoMark(type=t, required=required, mark=mark, points=points)
+                                m.lesson_id = lesson.id
+                                db.session.add(m)
+
+                    db.session.commit()
                 if is_new:
                     flash(gettext('lessons.new.success'))
                 else:
@@ -122,5 +192,7 @@ def edit(id=-1, group_id=-1):
 
     users.sort(key=lambda x:x.last_name + ' ' + x.first_name)
 
+    contests = [x for x in Contest.query if g.user.is_admin(contest=x)]
+
     return render_template('lessons/edit.html', lesson=lesson,
-        error=error, group=group, users=users)
+        error=error, group=group, users=users, contests=contests)

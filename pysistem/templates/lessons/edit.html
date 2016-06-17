@@ -12,6 +12,13 @@
 <script type="text/javascript"
 src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}">
 </script>
+<style type="text/css">
+        .vcenter {
+        display: inline-block;
+        vertical-align: middle;
+        float: none;
+    }
+</style>
 {% if session['language'] == 'ru' %}
 <script type="text/javascript"
 src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.ru.js') }}">
@@ -107,7 +114,107 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
     </table>
 </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.contest') }}
+    </div>
+    <div class="panel-body">
+        <select name="contest_id" class="form-control" id="contest-selector" autocomplete="off">
+            <option value="none" {% if not lesson.contest_id %}selected="selected"{% endif %}>
+                {{ _('lessons.nocontest') }}
+            </option>
+            {% for contest in contests %}
+            <option value="{{ contest.id }}" {% if lesson.contest_id == contest.id %}selected="selected"{% endif %}>
+                {{ contest.name }}
+            </option>
+            {% endfor %}
+        </select>
+        <div class="text-info" style="display: none" id="auto-marks-warn">
+            {{ _('lessons.editautomarkswarning') }}
+        </div>
+    </div>
+</div>
+
+{% if lesson.contest_id %}
+
+<div class="panel panel-default" id="auto-marks-panel">
+    <div class="panel-heading">
+        {{ _('lessons.automarks') }}
+    </div>
+    <div class="panel-body">
+        {% for t in ("score", "place", "solved") %}
+        {% if not loop.first %}<hr />{% endif %}
+        <table class="table automarks-table">
+            <caption>
+                {{ _('lessons.automarks.' + t) }}
+                <div class="pull-right">
+                    <a href="#" onclick="addAutoMarksRow($('#automarks-{{ t }}-rows'), '{{ t }}'); return false;">
+                        {{ _('lessons.automarks.addrow') }}
+                    </a>
+                </div>
+            </caption>
+            <thead>
+                <th>{{ _('lessons.automarks.%s.atleast' % t) }}</th>
+                <th>{{ _('lessons.mark') }}</th>
+                <th>{{ _('common.points') }}</th>
+                <th>{{ _('common.delete') }}</th>
+            </thead>
+            <tbody id="automarks-{{ t }}-rows">
+                {% for auto_mark in lesson.auto_marks[::(-1 if t == 'place' else 1)] if auto_mark.type == loop.index0 %}
+                <tr>
+                    <td>
+                        <input type="number" autocomplete="off" name="am{{ auto_mark.id }}-required"
+                        value="{{ auto_mark.required }}" />
+                    </td>
+                    <td>
+                        <input size="1" autocomplete="off" name="am{{ auto_mark.id }}-mark"
+                        value="{{ auto_mark.mark }}" />
+                    </td>
+                    <td>
+                        <input type="number" autocomplete="off" name="am{{ auto_mark.id }}-points"
+                        value="{{ auto_mark.points }}" >
+                    </td>
+                    <td>
+                        <input type="checkbox" autocomplete="off" 
+                        name="am{{ auto_mark.id }}-delete" />
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+</div>
+
+{% endif %}
+
 <script type="text/javascript">
+    var auto_marks_rows = {"score": 0, "place": 0, "solved": 0};
+
+    function addAutoMarksRow(parent, type) {
+        $(parent).parents("table").children("thead").show()
+        var x = ++auto_marks_rows[type];
+        var parentTr = $("<tr/>")
+        var requiredTd = $("<td/>")
+        requiredTd.html('<input type="number" autocomplete="off" name="am-new'
+            + type + x.toString() + '-required" />')
+        var markTd = $("<td/>")
+        markTd.html('<input size="1" autocomplete="off" name="am-new'
+            + type + x.toString() + '-mark" />')
+        var pointsTd = $("<td />")
+        pointsTd.html('<input type="number" autocomplete="off" value="0" name="am-new'
+            + type + x.toString() + '-points" />')
+        var plusTd = $("<td />")
+        plusTd.html('<div class="vcenter"><span class="glyphicon glyphicon-plus text-success" \
+style="font-size: 16px"></span></div>')
+        parentTr
+        .append(requiredTd)
+        .append(markTd)
+        .append(pointsTd)
+        .append(plusTd)
+        .append('<input type="hidden" name="am-new' + type + x.toString() + '-avail" value="on" />')
+        $(parent).append(parentTr)
+    }
     var all_checked = true;
 
     $(".user-was-checkbox")
@@ -146,6 +253,29 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
             $(".user-mark-edit").show()
         else 
             $(".user-mark-edit").hide()
+    })
+    $("#contest-selector").change(function() {
+        {% if lesson.contest_id %}
+        if ($(this).val() != {{ lesson.contest_id }}) {
+            $("#auto-marks-panel").hide()
+            if ($(this).val() != "none")
+                $("#auto-marks-warn").show()
+        } else {
+            $("#auto-marks-panel").show()
+            $("#auto-marks-warn").hide()
+        }
+        {% else %}
+        if ($(this).val() != "none")
+            $("#auto-marks-warn").show()
+        else
+            $("#auto-marks-warn").hide()
+        {% endif %}
+    })
+
+    $(".automarks-table > tbody").each(function() {
+        if ($(this).children().size() == 0) {
+            $(this).parents('table').children('thead').hide()
+        }
     })
 </script>
 

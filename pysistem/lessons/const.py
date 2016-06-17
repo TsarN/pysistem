@@ -1,0 +1,4 @@
+# -*- coding: utf-8 -*-
+AUTO_MARK_SCORE = 0
+AUTO_MARK_PLACE = 1
+AUTO_MARK_SOLVED = 2
