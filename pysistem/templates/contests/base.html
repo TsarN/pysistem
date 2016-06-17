@@ -136,9 +136,11 @@
     </span>
     <br />
     {% if contest.is_frozen() %}
+    {% if not contest.is_admin_frozen() %}
     <b>{{ _('contest.frozen') }}</b>
-    {% elif contest.is_admin_frozen() %}
+    {% else %}
     <b>{{ _('contest.adminfrozen') }}</b>
+    {% endif %}
     {% endif %}
 </div>
 <div class="col-sm-9" id="contest-content">

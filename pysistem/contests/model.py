@@ -83,11 +83,11 @@ class Contest(db.Model):
             freeze = self.end
         return freeze
 
-    def is_frozen(self):
-        """Is active user an admin of this contest AND if scoreboard is frozen"""
-        return g.user.is_admin(contest=self) and self.is_admin_frozen()
-
     def is_admin_frozen(self):
+        """Is active user an admin of this contest AND if scoreboard is frozen"""
+        return g.user.is_admin(contest=self) and self.is_frozen()
+
+    def is_frozen(self):
         """If scoreboard is frozen"""
         if self.unfreeze_after_end and (datetime.now() > self.end):
             return False
