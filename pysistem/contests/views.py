@@ -171,6 +171,30 @@ def scoreboard(id, contest):
         else:
             users.sort(key=lambda x:(-x['score'][0]))
 
+        # Calculating fair places
+        if users:
+            last_idx = 0
+            cur_place = 1
+            cur_score = users[0]['score']
+            users[0]['place'] = '1'
+            users[0]['int_place'] = 1
+
+            for i in range(1, len(users)):
+                if cur_score != users[i]['score']:
+                    cur_score = users[i]['score']
+                    cur_place = i + 1
+                    for j in range(i - 1, last_idx - 1, -1):
+                        if i != users[j]['int_place']:
+                            users[j]['place'] += '-' + str(i)
+                    last_idx = i
+                users[i]['place'] = str(cur_place)
+                users[i]['int_place'] = cur_place
+
+            user_len = len(users)
+            for j in range(user_len - 1, last_idx - 1, -1):
+                if users[j]['int_place'] != user_len:
+                    users[j]['place'] += '-' + str(user_len)
+
         rawscore = (render_template('contests/raw_scoreboard.html',
             contest=contest, problems=problems, users=users), g.now)
         cache.set(cache_name, rawscore, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
