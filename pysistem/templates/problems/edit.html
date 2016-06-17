@@ -98,7 +98,13 @@
 </div>
 <script type="text/javascript">
     tinymce.init({
-        selector: '#statement'
+        selector: '#statement',
+        plugins: [
+            'advlist autolink lists link image preview hr anchor',
+            'searchreplace visualblocks visualchars code fullscreen',
+            'insertdatetime media nonbreaking save table contextmenu directionality',
+            'template paste textcolor colorpicker textpattern imagetools'
+        ]
     })
 </script>
 <div class="col-sm-4 col-sm-offset-4" style="margin-top: 16px">
