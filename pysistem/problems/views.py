@@ -27,15 +27,22 @@ def view(id, problem):
     return render_template('problems/view.html', problem=problem)
 
 @mod.route('/new')
-@requires_admin
 def new():
     """Create new problem"""
     contest_id = request.args.get('contest_id')
+    if contest_id:
+        contest = Contest.query.get(contest_id)
+        if not contest:
+            return render_template('errors/404.html'), 404
+        if not g.user.is_admin(contest=contest):
+            return render_template('errors/403.html'), 403
+    else:
+        if not g.user.is_admin():
+            return render_template('errors/403.html'), 403
     return render_template('problems/edit.html', problem=Problem(), contest_id=contest_id)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/new/post', methods=['POST'])
-@requires_admin
 def edit(id=-1):
     """Create/Update problem"""
     error = None
@@ -48,6 +55,20 @@ def edit(id=-1):
         statement = request.form.get('statement', '')
         time_limit = request.form.get('time_limit', 1000)
         memory_limit = request.form.get('memory_limit', 65536)
+        if is_new:
+            contest_id = request.args.get('contest_id')
+            if contest_id:
+                contest = Contest.query.get(contest_id)
+                if not contest:
+                    return render_template('errors/404.html'), 404
+                if not g.user.is_admin(contest=contest):
+                    return render_template('errors/403.html'), 403
+            else:
+                if not g.user.is_admin():
+                    return render_template('errors/403.html'), 403
+        else:
+            if not g.user.is_admin(problem=problem):
+                return render_template('errors/403.html'), 403
 
         if len(name.strip(' \t\n\r')) > 0:
             problem.name = name
@@ -80,6 +101,8 @@ def edit(id=-1):
     else:
         if problem is None:
             return render_template('errors/404.html'), 404
+        if not g.user.is_admin(problem=problem):
+            return render_template('errors/403.html'), 403
     return render_template('problems/edit.html', problem=problem, error=error)
 
 @mod.route('/<int:id>/export')

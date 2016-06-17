@@ -15,8 +15,9 @@ mod = Blueprint('contests', __name__, url_prefix='/contest')
 
 @mod.route('/<int:id>/linkwith/<int:problem_id>')
 @yield_contest()
-@requires_admin(contest="contest")
 @yield_problem(field='problem_id')
+@requires_admin(contest="contest")
+@requires_admin(problem="problem")
 def linkwith(id, problem_id, contest, problem):
     """Add problem to contest"""
     assoc = ContestProblemAssociation()
@@ -63,6 +64,7 @@ def problems(id, contest):
     if g.user.is_admin(contest=contest) and (len(contest.problems) > 0):
         addable_problems = \
         Problem.query.filter(~Problem.id.in_([x.id for x in contest.problems])).all()
+        addable_problems = [x for x in addable_problems if g.user.is_admin(problem=x)]
     return render_template('contests/problems.html', contest=contest, addable_problems=addable_problems)
 
 @mod.route('/new')
