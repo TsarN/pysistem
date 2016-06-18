@@ -155,9 +155,9 @@ class Checker(db.Model):
             os.remove(pattern_path)
 
             if r == 1:
-                subres = RESULT_PE
-            elif r == 2:
                 subres = RESULT_WA
+            elif r == 2:
+                subres = RESULT_PE
             elif r == 3:
                 subres = RESULT_IE
 
