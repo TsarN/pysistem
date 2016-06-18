@@ -518,7 +518,7 @@ msgstr "мс"
 
 #: templates/problems/view.html:5
 msgid "common.units.kilobytes"
-msgstr "КБ"
+msgstr "КиБ"
 
 #: templates/submissions/list.html:8 templates/submissions/list.html:17
 msgid "common.hide"
