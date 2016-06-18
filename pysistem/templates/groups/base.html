@@ -1,10 +1,40 @@
 {% extends "base.html" %}
 {% block title %}{{ group.name }}{% endblock %}
 {% block navbar_link_groups %}active{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    #group-header > a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    #group-header {
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    #group-name-edit {
+        width: calc(100% - 80px);
+    }
+</style>
+{% endblock %}
 {% block content %}
 {% block group_nav %}
-<h2 class="text-center page-header">
-    {{ group.name }}
+<h2 class="text-center page-header" id="group-header">
+    <span id="group-name-span">{{ group.name }}</span>
+    <form style="display: inline" id="rename-form" action="{{ url_for('groups.rename', id=group.id) }}" method="POST">
+    <input autocomplete="off" id="group-name-edit" name="name" value="{{ group.name }}" style="display: none" />
+    </form>
+    <a href="#" id="rename-group">
+        <span class="glyphicon glyphicon-pencil"></span>
+    </a>
+    <a href="#" id="cancel-rename" style="display: none">
+        <span class="glyphicon glyphicon-remove"></span>
+    </a>
+    <a href="#" id="submit-rename" style="display: none">
+        <span class="glyphicon glyphicon-ok"></span>
+    </a>
 </h2>
 <ul class="nav nav-tabs">
     <li role="presentation" class="{% block group_nav_link_contests %}{% endblock %}">
@@ -20,6 +50,25 @@
     {% endif %}
 </ul>
 <br />
+<script type="text/javascript">
+    $("#rename-group").click(function() {
+        $("#cancel-rename,#submit-rename").show();
+        $("#rename-group").hide();
+        $("#group-name-span").hide();
+        $("#group-name-edit").show();
+    });
+
+    $("#cancel-rename").click(function() {
+        $("#cancel-rename,#submit-rename").hide();
+        $("#rename-group").show();
+        $("#group-name-span").show();
+        $("#group-name-edit").val('{{ group.name }}').hide();
+    })
+
+    $("#submit-rename").click(function() {
+        $("#rename-form").submit()
+    })
+</script>
 {% endblock %}
 {% block group_content %}
 {% endblock %}

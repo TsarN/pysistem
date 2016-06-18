@@ -57,6 +57,36 @@
     {% endblock %}
 </head>
 <body>
+{% if g.user.is_admin() %}
+<div id="modal-create-group" class="modal fade" tabindex="-1" role="dialog">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+    <form method="POST" action="{{ url_for('groups.create') }}">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ _('title.groups.new') }}</h4>
+    </div>
+    <div class="modal-body">
+        <input name="name" type="text" class="form-control" placeholder="{{ _('common.name') }}" />
+    </div>
+    <div class="modal-footer">
+        <div>
+            <a href="#" onclick="$('#modal-confirm-delete').modal('hide')"
+            class="btn btn-default">
+                {{ _('common.cancel') }}
+            </a>
+            <button type="submit" class="btn btn-primary">
+                {{ _('common.create') }}
+            </button>
+        </div>
+    </div>
+    </form>
+</div>
+</div>
+</div>
+{% endif %}
 {% block navbar %}
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -111,14 +141,19 @@
                     {% endif %}
                     {% endfor %}
                     {% if g.user.is_admin() %}
-                    {% if g.user_groups %}
+                    {% if g.user_groups.get('admin') %}
                     <li class="divider"></li>
                     {% endif %}
                     <li>
-                        <a href="#">
+                        <a href="#" id="create-group">
                             <span class="glyphicon glyphicon-plus"></span>
                             {{ _('groups.new') }}
                         </a>
+                        <script type="text/javascript">
+                            $("#create-group").click(function() {
+                                $("#modal-create-group").modal('show')
+                            })
+                        </script>
                     </li>
                     {% endif %}
                 </ul>
