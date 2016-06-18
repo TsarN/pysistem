@@ -42,15 +42,25 @@
     <td>
         {% if checker.status == 7 %}
             <b>ACT</b>
-        {% else %}
+        {% elif checker.status == 6 %}
             <a href="{{ url_for('problems.actchecker', id=checker.id) }}"><b>ACT</b></a>
         {% endif %}
-        {{ checker.name }}
+        {{ checker.name }}<br />
+        {{ checker.get_result()|safe }}
+        {% if checker.status == 2 %}
+            <br />
+            <a target="_blank" href="{{ url_for('problems.checkercompilelog', id=checker.id) }}">
+                {{ _('problems.submissions.viewcompilelog') }}
+            </a>
+        {% endif %}
     </td>
     <td>
         {{ checker.compiler.name }}
     </td>
-    <td><pre><code>{{ checker.source }}</code></pre></td>
+    <td>
+        <a href="#" class="view-source" data-action="show">{{ _('common.show') }}</a>
+        <pre style="display: none"><code>{{ checker.source }}</code></pre>
+    </td>
 </tr>
 {% endfor %}
 </tbody>
@@ -59,6 +69,20 @@
 <script type="text/javascript">
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
+})
+
+$('.view-source').click(function() {
+    var action = $(this).attr('data-action');
+    if (action == 'show') {
+        $(this).attr('data-action', 'hide');
+        $(this).siblings('pre').show();
+        $(this).html('{{ _("common.hide") }}');
+    } else {
+        $(this).attr('data-action', 'show');
+        $(this).siblings('pre').hide();
+        $(this).html('{{ _("common.show") }}');
+    };
+    return false;
 })
 </script>
 {% endblock %}

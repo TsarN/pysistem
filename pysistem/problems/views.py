@@ -310,6 +310,13 @@ def actchecker(id, checker):
     flash(gettext('problems.actchecker.success'))
     return redirect(redirect_url())
 
+@mod.route('/checkercompilelog/<int:id>')
+@yield_checker()
+@requires_admin(checker="checker")
+def checkercompilelog(id, checker):
+    """Return checker's compilation log"""
+    return Response(checker.compile_log, mimetype='text/plain')
+
 @mod.route('/<int:id>/submissions', methods=['GET', 'POST'])
 @mod.route('/<int:id>/submissions/user/<username>')
 @requires_login

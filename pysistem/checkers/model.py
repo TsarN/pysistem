@@ -57,6 +57,13 @@ class Checker(db.Model):
     def get_src_path(self):
         return DIR + '/work/work/checker_%d.%s' % (self.id, self.get_ext())
 
+    def get_result(self):
+        if self.status in [STATUS_DONE, STATUS_ACT]:
+            return '<span class="text-success">%s</span>' % STR_RESULT[RESULT_OK]
+        if self.status in [STATUS_COMPILEFAIL]:
+            return '<span class="text-danger">%s</span>' % STR_STATUS[STATUS_COMPILEFAIL]
+        return STR_STATUS[self.status]
+
     def compile(self):
         """Compile checker, must be called before using checker on every checking machine"""
         if self.status not in [STATUS_CWAIT, STATUS_COMPILEFAIL, STATUS_WAIT]:

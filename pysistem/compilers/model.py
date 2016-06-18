@@ -20,6 +20,7 @@ class Compiler(db.Model):
 
     Relationships:
     submissions -- All submissions that were compiled by this compiler
+    checkers -- All checkers that were compiled by this compiler
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
