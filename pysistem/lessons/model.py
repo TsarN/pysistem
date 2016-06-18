@@ -94,6 +94,20 @@ class AutoMark(db.Model):
         return '<AutoMark>'
 
 class Lesson(db.Model):
+    """An event that has start, end, attached contest and attendance
+
+    Fields:
+    id -- unique lesson id
+    name -- lesson name
+    start -- lesson's start datetime
+    end -- lesson's end datetime
+
+    Relationships:
+    group, group_id -- group, whose lesson it is
+    contest, contest_id -- attached contest
+    users -- lesson's attendants (LessonUserAssociation)
+    auto_marks -- lesson's auto marks settings (AutoMark)
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     start = db.Column(db.DateTime, default=datetime.now)
@@ -118,6 +132,7 @@ class Lesson(db.Model):
             return '<Lesson %r>' % self.name
 
     def get_automarks(self, **kwargs):
+        """Return (mark, points) by user's score, place or solved problems"""
         allowed = ("score", "place", "solved")
         valid_keys = list(filter(lambda x: x in allowed, kwargs.keys()))
         params = len(valid_keys)
