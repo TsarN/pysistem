@@ -1,0 +1,36 @@
+{% extends "groups/base.html" %}
+{% block group_nav_link_lessons %}active{% endblock %}
+{% block group_content %}
+<div style="float: right; margin-bottom: 16px">
+<a href="{{ url_for('lessons.new', group_id=group.id) }}" class="btn btn-success" id="btn-newlesson">
+    {{ _('lessons.new') }}
+</a>
+</div>
+<table class="table table-hover">
+<thead>
+    <tr>
+        <th>{{ _('common.name') }}</th>
+        <th>{{ _('contests.start') }}</th>
+        <th>{{ _('common.duration') }}</th>
+    </tr>
+</thead>
+<tbody>
+{% for lesson in group.lessons %}
+    {% if (lesson.start <= g.now) and (lesson.end >= g.now) %}
+    <tr class="active">
+    {% else %}
+    <tr>
+    {% endif %}
+        <td>
+            <a href="{{ url_for('lessons.delete', id=lesson.id) }}" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
+            <a href="{{ url_for('lessons.edit', id=lesson.id) }}">
+                {{ lesson.name }}
+            </a>
+        </td>
+        <td>{{ lesson.start|naturaldate }}</td>
+        <td>{{ (lesson.end - lesson.start).total_seconds()|timeonly(enable_seconds=False) }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

@@ -1,24 +1,22 @@
-{% extends "base.html" %}
-{% block title %}{{ _('title.contestlist') }}{% endblock %}
-{% block navbar_link_contests %}active{% endblock %}
-{% block content %}
+{% extends "groups/base.html" %}
+{% block group_nav_link_contests %}active{% endblock %}
+{% block group_content %}
 <script type="text/javascript">
     $(document).ready(function() {
         $("#table-contests").DataTable({
             "paging": false,
             "info": false,
+            {% if g.locale == 'ru' %}
             "language": {
-                "search": "{{ _('datatables.search') }} ",
-                "emptyTable": "{{ _('datatables.emptytable') }}",
-                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+                "url": "{{ url_for('static', filename='datatables/Russian.json') }}"
             }
+            {% endif %}
         })
     })
 </script>
-
-{% if g.user.is_admin() %}
+{% if g.user.is_admin(group=group) %}
 <div style="float: right; margin-bottom: 16px">
-<a href="{{ url_for('contests.new') }}" class="btn btn-success" id="btn-newcontest">
+<a href="{{ url_for('contests.new', group_id=group.id) }}" class="btn btn-success" id="btn-newcontest">
     {{ _('contests.new') }}
 </a>
 </div>

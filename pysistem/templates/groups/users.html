@@ -1,0 +1,30 @@
+{% extends "groups/base.html" %}
+{% block group_nav_link_users %}active{% endblock %}
+{% block group_content %}
+<table class="table table-hover">
+<thead>
+    <tr>
+        <th>{{ _('common.username') }}</th>
+        <th>{{ _('common.fullname') }}</th>
+        <th>{{ _('common.role') }}</th>
+    </tr>
+</thead>
+<tbody>
+{% for user in users %}
+    <tr>
+        <td>
+            <a href="{{ url_for('users.profile', username=user.user.username) }}">
+                {{ user.user.username }}
+            </a>
+        </td>
+        <td>
+            {{ user.user.last_name or '' }} {{ user.user.first_name or '' }}
+        </td>
+        <td>
+            {{ _('groups.role.' + user.role) }}
+        </td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

@@ -6,6 +6,7 @@ from pysistem.users.model import User
 from pysistem.submissions.model import Submission
 from pysistem.users.decorators import requires_guest, requires_login
 from flask_babel import gettext
+from pysistem.groups.model import Group, GroupUserAssociation
 
 mod = Blueprint('users', __name__, url_prefix='/user')
 
@@ -98,17 +99,48 @@ def edit_profile(username):
             return render_template('errors/404.html'), 404
     if not user.check_permissions():
         return render_template(url_for('errors/403.html')), 403
+
+    groups = Group.query.all()
+
     if request.method == 'POST':
         if request.form.get('update_info', None) is not None:
             user.first_name = request.form.get('first_name', user.first_name)
             user.last_name = request.form.get('last_name', user.last_name)
             user.email = request.form.get('email', user.email)
-            if g.user.is_admin(user=user):
+
+            if g.user.is_admin():
+                for group in groups:
+                    radio = request.form.get('group-%d' % group.id, "none")
+                    ch = (radio == "none")
+                    role = 'admin' if (radio == 'admin') else 'user'
+                    assoc = GroupUserAssociation.query.filter(db.and_( \
+                        GroupUserAssociation.user_id == user.id, \
+                        GroupUserAssociation.group_id == group.id \
+                        )).first()
+                    if assoc and ch:
+                        db.session.delete(assoc)
+                    if not ch:
+                        assoc = assoc or GroupUserAssociation()
+                        assoc.role = role
+                        assoc.user_id = user.id
+                        assoc.group_id = group.id
+                        db.session.add(assoc)
+                        
                 username = request.form.get('username', user.username)
                 if re.compile(g.SETTINGS.get('username_pattern', '.*')).match(username):
                     if not User.exists(username):
                         user.username = username
             db.session.commit()
             flash(gettext('profile.update.success'))
-            return redirect(url_for('users.profile', id=user.id))
-    return render_template('users/edit_profile.html', user=user)
+            return redirect(url_for('users.edit_profile', username=user.username))
+
+    group_map = {}
+    for group in user.groups:
+        group_map[group.group.id] = group.role
+
+    for group in groups:
+        group.role_ = group_map.get(group.id)
+
+    del group_map
+
+    return render_template('users/edit_profile.html', user=user, groups=groups)

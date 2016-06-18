@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block navbar_link_groups %}active{% endblock %}
+{% block content %}
+{% block group_nav %}
+<h2 class="text-center page-header">
+    {{ group.name }}
+</h2>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="{% block group_nav_link_contests %}{% endblock %}">
+        <a href="{{ url_for('groups.contests', id=group.id) }}">{{ _('title.contestlist') }}</a>
+    </li>
+    {% if g.user.is_admin(group=group) %}
+    <li role="presentation" class="{% block group_nav_link_users %}{% endblock %}">
+        <a href="{{ url_for('groups.users', id=group.id) }}">{{ _('title.users') }}</a>
+    </li>
+    <li role="presentation" class="{% block group_nav_link_lessons %}{% endblock %}">
+        <a href="{{ url_for('groups.lessons', id=group.id) }}">{{ _('title.lessons') }}</a>
+    </li>
+    {% endif %}
+</ul>
+<br />
+{% endblock %}
+{% block group_content %}
+{% endblock %}
+{% endblock %}

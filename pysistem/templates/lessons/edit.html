@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if lesson.id %}
+        {{ lesson.name }}
+    {% else %}
+        {{ _('title.lessons.new') }}
+    {% endif %}
+{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript"
+src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}">
+</script>
+<style type="text/css">
+        .vcenter {
+        display: inline-block;
+        vertical-align: middle;
+        float: none;
+    }
+</style>
+{% if session['language'] == 'ru' %}
+<script type="text/javascript"
+src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimepicker.ru.js') }}">
+</script>
+{% endif %}
+{% endblock %}
+
+{% block navbar_link_groups %}active{% endblock %}
+{% block content %}
+
+{% if lesson.id %}
+    <h2 class="text-center page-header">{{ lesson.name }}</h2>
+{% else %}
+    <h2 class="text-center page-header">{{ _('title.lessons.new') }}</h2>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
+{% endif %}
+
+<form action="{{ url_for('lessons.edit', id=lesson.id) if lesson.id else url_for('lessons.edit', group_id=group.id) }}" method="POST" class="form-horizontal">
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.general') }}
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <label for="group" class="col-sm-4 control-label">{{ _('common.group') }}</label>
+            <div class="col-sm-8">
+                <input type="text" readonly="readonly" class="form-control" id="group"
+                value="{{ group.name or '' }}" />
+            </div>
+            <label for="name" class="col-sm-4 control-label">{{ _('common.name') }}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="name" name="name"
+                placeholder="{{ _('common.name') }}" value="{{ lesson.name or '' }}" />
+            </div>
+            <label for="start" class="col-sm-4 control-label">{{ _('lessons.start') }}</label>
+            <div class="col-sm-8">
+                <input size="16" type="text" class="form-control form-datetime" id="start" name="start"
+                placeholder="{{ _('lessons.start') }}" value="{{ (lesson.start or g.now)|dtp }}" />
+            </div>
+            <label for="end" class="col-sm-4 control-label">{{ _('lessons.end') }}</label>
+            <div class="col-sm-8">
+                <input size="16" type="text" class="form-control form-datetime" id="end" name="end"
+                placeholder="{{ _('lessons.end') }}" value="{{ (lesson.end or g.now)|dtp }}" />
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if lesson.id %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('lessons.attendants') }}
+    </div>
+    <table class="table" id="lesson-attendants">
+        <thead>
+            <tr>
+                <th>{{ _('common.username') }}</th>
+                <th>{{ _('common.fullname') }}</th>
+                <th>
+                    <input type="checkbox" id="checkall" disabled="disabled" />
+                    &nbsp;
+                    {{ _('lessons.attendance') }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('users.profile', username=user.username) }}">
+                        {{ user.username }}
+                    </a>
+                </td>
+                <td>{{ user.last_name or '' }} {{ user.first_name or ''}}</td>
+                <td>
+                    <input class="user-was-checkbox" type="checkbox"
+                    {{ 'checked="checked"' if user.mark else '' }}
+                    name="user-was-{{ user.id }}" autocomplete="off" />
+                    &nbsp;
+                    <input title="{{ _('lessons.mark') }}" type="text"
+                    style="{{ 'display: none' if not user.mark else '' }}"
+                    size="1" class="user-mark-edit" value="{{ user.mark or '' if user.mark != True else '' }}"
+                    name="user-mark-{{ user.id }}" autocomplete="off" />
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{ _('common.contest') }}
+    </div>
+    <div class="panel-body">
+        <select name="contest_id" class="form-control" id="contest-selector" autocomplete="off">
+            <option value="none" {% if not lesson.contest_id %}selected="selected"{% endif %}>
+                {{ _('lessons.nocontest') }}
+            </option>
+            {% for contest in contests %}
+            <option value="{{ contest.id }}" {% if lesson.contest_id == contest.id %}selected="selected"{% endif %}>
+                {{ contest.name }}
+            </option>
+            {% endfor %}
+        </select>
+        <div class="text-info" style="display: none" id="auto-marks-warn">
+            {{ _('lessons.editautomarkswarning') }}
+        </div>
+    </div>
+</div>
+
+{% if lesson.contest_id %}
+
+<div class="panel panel-default" id="auto-marks-panel">
+    <div class="panel-heading">
+        {{ _('lessons.automarks') }}
+    </div>
+    <div class="panel-body">
+        {% for t in ("score", "place", "solved") %}
+        {% if not loop.first %}<hr />{% endif %}
+        <table class="table automarks-table">
+            <caption>
+                {{ _('lessons.automarks.' + t) }}
+                <div class="pull-right">
+                    <a href="#" onclick="addAutoMarksRow($('#automarks-{{ t }}-rows'), '{{ t }}'); return false;">
+                        {{ _('lessons.automarks.addrow') }}
+                    </a>
+                </div>
+            </caption>
+            <thead>
+                <th>{{ _('lessons.automarks.%s.atleast' % t) }}</th>
+                <th>{{ _('lessons.mark') }}</th>
+                <th>{{ _('common.points') }}</th>
+                <th>{{ _('common.delete') }}</th>
+            </thead>
+            <tbody id="automarks-{{ t }}-rows">
+                {% for auto_mark in lesson.auto_marks[::(-1 if t == 'place' else 1)] if auto_mark.type == loop.index0 %}
+                <tr>
+                    <td>
+                        <input type="number" autocomplete="off" name="am{{ auto_mark.id }}-required"
+                        value="{{ auto_mark.required }}" />
+                    </td>
+                    <td>
+                        <input size="1" autocomplete="off" name="am{{ auto_mark.id }}-mark"
+                        value="{{ auto_mark.mark }}" />
+                    </td>
+                    <td>
+                        <input type="number" autocomplete="off" name="am{{ auto_mark.id }}-points"
+                        value="{{ auto_mark.points }}" >
+                    </td>
+                    <td>
+                        <input type="checkbox" autocomplete="off" 
+                        name="am{{ auto_mark.id }}-delete" />
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+</div>
+
+{% endif %}
+
+<script type="text/javascript">
+    var auto_marks_rows = {"score": 0, "place": 0, "solved": 0};
+
+    function addAutoMarksRow(parent, type) {
+        $(parent).parents("table").children("thead").show()
+        var x = ++auto_marks_rows[type];
+        var parentTr = $("<tr/>")
+        var requiredTd = $("<td/>")
+        requiredTd.html('<input type="number" autocomplete="off" name="am-new'
+            + type + x.toString() + '-required" />')
+        var markTd = $("<td/>")
+        markTd.html('<input size="1" autocomplete="off" name="am-new'
+            + type + x.toString() + '-mark" />')
+        var pointsTd = $("<td />")
+        pointsTd.html('<input type="number" autocomplete="off" value="0" name="am-new'
+            + type + x.toString() + '-points" />')
+        var plusTd = $("<td />")
+        plusTd.html('<div class="vcenter"><span class="glyphicon glyphicon-plus text-success" \
+style="font-size: 16px"></span></div>')
+        parentTr
+        .append(requiredTd)
+        .append(markTd)
+        .append(pointsTd)
+        .append(plusTd)
+        .append('<input type="hidden" name="am-new' + type + x.toString() + '-avail" value="on" />')
+        $(parent).append(parentTr)
+    }
+    var all_checked = true;
+
+    $(".user-was-checkbox")
+
+    .each(function() {
+        if (!this.checked) {
+            all_checked = false;
+            return false;
+        }
+    })
+
+    .change(function() {
+        if (this.checked) {
+            $(this).siblings(".user-mark-edit").show()
+            all_checked = true;
+            $(".user-was-checkbox").each(function() {
+                if (!this.checked) {
+                    all_checked = false;
+                    return false;
+                }
+            })
+            $("#checkall").prop('checked', all_checked)
+        }
+        else {
+            $(this).siblings(".user-mark-edit").hide()
+            $("#checkall").prop('checked', false)
+        }
+    })
+
+    $("#checkall")
+    .prop('disabled', false)
+    .prop('checked', all_checked)
+    .change(function() {
+        $(".user-was-checkbox").prop('checked', this.checked)
+        if (this.checked)
+            $(".user-mark-edit").show()
+        else 
+            $(".user-mark-edit").hide()
+    })
+    $("#contest-selector").change(function() {
+        {% if lesson.contest_id %}
+        if ($(this).val() != {{ lesson.contest_id }}) {
+            $("#auto-marks-panel").hide()
+            if ($(this).val() != "none")
+                $("#auto-marks-warn").show()
+        } else {
+            $("#auto-marks-panel").show()
+            $("#auto-marks-warn").hide()
+        }
+        {% else %}
+        if ($(this).val() != "none")
+            $("#auto-marks-warn").show()
+        else
+            $("#auto-marks-warn").hide()
+        {% endif %}
+    })
+
+    $(".automarks-table > tbody").each(function() {
+        if ($(this).children().size() == 0) {
+            $(this).parents('table').children('thead').hide()
+        }
+    })
+</script>
+
+{% endif %}
+
+<div class="col-sm-4 col-sm-offset-4">
+    <button type="submit" name="update_lesson" class="btn btn-lg btn-primary btn-block">
+    {% if lesson.id %}
+        {{ _('common.update') }}
+    {% else %}
+        {{ _('common.create') }}
+    {% endif %}
+    </button>
+</div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".form-datetime").datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            language: '{{ session['language'] }}'
+        })
+    })
+</script>
+{% endblock %}

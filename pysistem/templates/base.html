@@ -81,6 +81,49 @@
                 <li class="{% block navbar_link_contests %}{% endblock%}">
                     <a href="{{ url_for('contests.list') }}">{{ _('title.contestlist') }}</a>
                 </li>
+                {% if g.user_groups or g.user.is_admin() %}
+                <li class="dropdown {% block navbar_link_groups %}{% endblock %}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                role="button" aria-haspopup="true" aria-expanded="false">
+                {{ _('title.groups') }}
+                <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    {% for role in ['admin', 'user'] %}
+                    {% if g.user_groups.get(role) %}
+                        {% if role == 'admin' %}
+                        {% if not g.user.is_admin() %}
+                        <li class="dropdown-header">{{ _('groups.role.admin') }}</li>
+                        {% endif %}
+                        {% else %}
+                        {% if g.user_groups.get('admin') %}
+                        <li class="divider"></li>
+                        {% endif %}
+                        <li class="dropdown-header">{{ _('groups.role.user') }}</li>
+                        {% endif %}
+                        {% for group in g.user_groups.get(role) %}
+                        <li>
+                            <a href="{{ url_for('groups.contests', id=group.id) }}">
+                                {{ group.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+                    {% if g.user.is_admin() %}
+                    {% if g.user_groups %}
+                    <li class="divider"></li>
+                    {% endif %}
+                    <li>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            {{ _('groups.new') }}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                </li>
+                {% endif %}
             </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
