@@ -162,13 +162,12 @@ class Checker(db.Model):
 
             if r == 0:
                 subres = RESULT_OK
-            if r == 1:
+            elif r == 1:
                 subres = RESULT_WA
             elif r == 2:
                 subres = RESULT_PE
             else:
                 subres = RESULT_IE
-
 
         submission.result = subres
         if submission.result == RESULT_OK:

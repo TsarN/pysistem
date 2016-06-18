@@ -177,35 +177,19 @@ const char* latestFeatures[] = {
 #endif
 
 #ifndef WA_EXIT_CODE
-#   ifdef EJUDGE
-#       define WA_EXIT_CODE 5
-#   else
-#       define WA_EXIT_CODE 1
-#   endif
+#   define WA_EXIT_CODE 1
 #endif
 
 #ifndef PE_EXIT_CODE
-#   ifdef EJUDGE
-#       define PE_EXIT_CODE 4
-#   else
-#       define PE_EXIT_CODE 2
-#   endif
+#   define PE_EXIT_CODE 2
 #endif
 
 #ifndef FAIL_EXIT_CODE
-#   ifdef EJUDGE
-#       define FAIL_EXIT_CODE 6
-#   else
-#       define FAIL_EXIT_CODE 3
-#   endif
+#   define FAIL_EXIT_CODE 3
 #endif
 
 #ifndef DIRT_EXIT_CODE
-#   ifdef EJUDGE
-#       define DIRT_EXIT_CODE 6
-#   else
-#       define DIRT_EXIT_CODE 4
-#   endif
+#   define DIRT_EXIT_CODE 4
 #endif
 
 #ifndef POINTS_EXIT_CODE
@@ -217,11 +201,7 @@ const char* latestFeatures[] = {
 #endif
 
 #ifndef PC_BASE_EXIT_CODE
-#   ifdef TESTSYS
-#       define PC_BASE_EXIT_CODE 50
-#   else
-#       define PC_BASE_EXIT_CODE 0
-#   endif
+#   define PC_BASE_EXIT_CODE 0
 #endif
 
 #ifdef __GNUC__

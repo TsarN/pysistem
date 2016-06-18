@@ -125,8 +125,8 @@ detectable_compilers = {
         "executable": "fpc",
         "lang": "pas",
         "find_version": "%s -iV",
-        "build": "cd `dirname __src__`; mkdir __src___WORK && __compiler__ -Mdelphi __src__ -FE__src___WORK \
-        && cp __src___WORK/`basename __src__ .pas` __exe__; X=$?; rm -r __src___WORK; exit $X"
+        "build": "cd `dirname __src__`; mkdir -p __src___WORK && __compiler__ -Mdelphi __src__ -FE__src___WORK \
+        && cp __src___WORK/`basename __src__ .pas` __exe__; X=$?; rm -rf __src___WORK; exit $X"
     },
     "python2.6": {
         "name": "Python %s",
