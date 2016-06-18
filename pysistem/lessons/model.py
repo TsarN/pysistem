@@ -131,7 +131,12 @@ class Lesson(db.Model):
         auto_marks = AutoMark.query.filter(db.and_( \
             AutoMark.lesson_id == self.id, \
             AutoMark.type == allowed.index(valid_keys[0]))).all()
-        for mark in auto_marks:
-            if mark.required <= kwargs[valid_keys[0]]:
-                return (mark.mark, mark.points)
+        if valid_keys[0] == "place":
+            for mark in auto_marks:
+                if mark.required >= kwargs[valid_keys[0]]:
+                    return (mark.mark, mark.points)
+        else:
+            for mark in auto_marks:
+                if mark.required <= kwargs[valid_keys[0]]:
+                    return (mark.mark, mark.points)
         return (None, 0)
