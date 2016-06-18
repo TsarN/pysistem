@@ -6,8 +6,8 @@
 <tr>
     <th></th>
     <th>{{ _('common.name') }}</th>
-    <th>{{ _('common.source') }}</th>
     <th>{{ _('common.language') }}</th>
+    <th>{{ _('common.source') }}</th>
 </tr>
 </thead>
 <tbody>
@@ -18,13 +18,16 @@
     </td>
     <td><input type="text" name="name" placeholder="{{ _('common.name') }}" /></td>
     <td>
-        <input type="file" name="source_file" />
+        <select name="compiler">
+        {% for compiler in compilers %}
+        <option value="{{ compiler.id }}" {% if loop.first %}selected="selected"{% endif %}>
+            {{ compiler.name }}
+        </option>
+        {% endfor %}
+        </select>
     </td>
     <td>
-        <select name="lang">
-            <option value="c" selected="selected">C</option>
-            <option value="c++">C++</option>
-        </select>
+        <input type="file" name="source_file" style="display: inline" />
         <button type="submit" class="btn btn-primary" style="float: right">
         <span class="glyphicon glyphicon-send" style="font-size: 16px"></span>
         </button>
@@ -33,23 +36,30 @@
 </form>
 {% for checker in checkers[::-1] %}
 <tr>
-    <td>
-        <a href="{{ url_for('problems.delchecker', id=checker.id) }}"
-        data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"
-        ><span class="glyphicon glyphicon-trash text-danger"></span></a>
-        {{ loop.revindex }}
+    <td style="white-space: nowrap;">
+        <a href="{{ url_for('problems.delchecker', id=checker.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>&nbsp;{{ loop.revindex }}
     </td>
     <td>
         {% if checker.status == 7 %}
             <b>ACT</b>
-        {% else %}
+        {% elif checker.status == 6 %}
             <a href="{{ url_for('problems.actchecker', id=checker.id) }}"><b>ACT</b></a>
         {% endif %}
-        {{ checker.name }}
+        {{ checker.name }}<br />
+        {{ checker.get_result()|safe }}
+        {% if checker.status == 2 %}
+            <br />
+            <a target="_blank" href="{{ url_for('problems.checkercompilelog', id=checker.id) }}">
+                {{ _('problems.submissions.viewcompilelog') }}
+            </a>
+        {% endif %}
     </td>
-    <td><pre><code>{{ checker.source }}</code></pre></td>
     <td>
-        {{ checker.lang.upper() }}
+        {{ checker.compiler.name }}
+    </td>
+    <td>
+        <a href="#" class="view-source" data-action="show">{{ _('common.show') }}</a>
+        <pre style="display: none"><code>{{ checker.source }}</code></pre>
     </td>
 </tr>
 {% endfor %}
@@ -59,6 +69,20 @@
 <script type="text/javascript">
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
+})
+
+$('.view-source').click(function() {
+    var action = $(this).attr('data-action');
+    if (action == 'show') {
+        $(this).attr('data-action', 'hide');
+        $(this).siblings('pre').show();
+        $(this).html('{{ _("common.hide") }}');
+    } else {
+        $(this).attr('data-action', 'show');
+        $(this).siblings('pre').hide();
+        $(this).html('{{ _("common.show") }}');
+    };
+    return false;
 })
 </script>
 {% endblock %}

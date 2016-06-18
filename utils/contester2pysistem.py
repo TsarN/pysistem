@@ -8,6 +8,11 @@ import xml.etree.ElementTree as ET
 import sys
 import fnmatch
 
+def ext_to_compiler(ext):
+    if ext == 'dpr':
+        return 'pas'
+    return ext
+
 parser = argparse.ArgumentParser(description='Convert Contester problem ZIP file to PySistem .pysistem.gz file')
 parser.add_argument('contesterzip', type=str, help='A Contester ZIP for conversion')
 parser.add_argument('-o', '--output', type=str, help='Output file. Default=<problemname>.pysistem.gz')
@@ -36,6 +41,7 @@ if problem_name is None:
 root = ET.fromstring(zf.read(problem_name + '.xml').decode(args.encoding))
 
 info = {}
+info['checkers'] = []
 
 for child in root:
     if child.tag.lower() == 'name':
@@ -58,6 +64,18 @@ for child in root:
         if child.attrib.get('lang', args.language) == args.language:
             info['description'] = child.text
 
+    elif child.tag.lower() == 'judge':
+        for c in child:
+            if c.tag.lower() == 'checker':
+                source = c.attrib.get('src')
+                source_text = zf.read(source).decode(args.encoding)
+                if source:
+                    info['checkers'].append({
+                        'name': source,
+                        'compiler': ext_to_compiler(source.split('.')[-1]),
+                        'source': source_text
+                    })
+
     elif child.tag.lower() == 'testlist':
         inp = child.attrib.get('inputmask', 'tests/%s_*_input.txt' % problem_name).lower()
         pat = child.attrib.get('patternmask', 'tests/%s_*_pattern.txt' % problem_name).lower()
@@ -74,13 +92,17 @@ for child in root:
         if len(tests_pattern) < len(tests_input):
             tests_pattern = [''] * len(tests_input)
 
-        info['test_pairs'] = [{
-            'input': tests_input[i], 
-            'pattern': tests_pattern[i]
-        } for i in range(len(tests_input))]
+        info['test_groups'] = [{
+            'score': 0,
+            'score_per_test': 1,
+            'check_all': False,
+            'test_pairs': [{
+                'input': tests_input[i], 
+                'pattern': tests_pattern[i]
+            } for i in range(len(tests_input))]
+        }]
 
-info['checkers'] = []
-info['version'] = 1
+info['version'] = 3
 
 to_write = pickle.dumps(info)
 out = io.BytesIO()

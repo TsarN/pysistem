@@ -255,7 +255,9 @@ def addtestzip(id, test_group):
 def checkers(id, problem):
     """View and edit problem's checkers"""
     checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
-    return render_template('problems/checkers.html', problem=problem, checkers=checkers)
+    compilers = Compiler.query.all()
+    return render_template('problems/checkers.html', problem=problem,
+        checkers=checkers, compilers=compilers)
 
 @mod.route('/<int:id>/addchecker', methods=['POST'])
 @yield_problem()
@@ -277,9 +279,13 @@ def addchecker(id, problem):
         source = source_file.stream.read().decode()
 
     name = request.form.get('name', '')
-    lang = request.form.get('lang', 'c')
+    compiler_id = request.form.get('compiler', -1)
+    compiler = Compiler.query.get(compiler_id)
+    if not compiler:
+        return render_template('errors/404.html'), 404
 
-    checker = Checker(name, source, problem, lang)
+    checker = Checker(name, source, problem)
+    checker.compiler_id = compiler.id
     db.session.add(checker)
     db.session.commit()
     checker.compile()
@@ -287,7 +293,7 @@ def addchecker(id, problem):
 
 @mod.route('/delchecker/<int:id>', methods=['GET', 'POST'])
 @yield_checker()
-@requires_admin(problem="problem")
+@requires_admin(checker="checker")
 def delchecker(id, checker):
     """Delete checker"""
     db.session.delete(checker)
@@ -297,12 +303,19 @@ def delchecker(id, checker):
 
 @mod.route('/actchecker/<int:id>', methods=['GET', 'POST'])
 @yield_checker()
-@requires_admin(problem="problem")
+@requires_admin(checker="checker")
 def actchecker(id, checker):
     """Make chekcer active"""
     checker.set_act()
     flash(gettext('problems.actchecker.success'))
     return redirect(redirect_url())
+
+@mod.route('/checkercompilelog/<int:id>')
+@yield_checker()
+@requires_admin(checker="checker")
+def checkercompilelog(id, checker):
+    """Return checker's compilation log"""
+    return Response(checker.compile_log, mimetype='text/plain')
 
 @mod.route('/<int:id>/submissions', methods=['GET', 'POST'])
 @mod.route('/<int:id>/submissions/user/<username>')
