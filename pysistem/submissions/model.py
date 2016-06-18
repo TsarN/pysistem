@@ -106,7 +106,9 @@ class Submission(db.Model):
 
         db.session.commit()
 
-        os.remove(source_path)
+        try:
+            os.remove(source_path)
+        except: pass
 
         return result, output
 

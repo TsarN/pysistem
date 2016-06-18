@@ -5,7 +5,6 @@ import tempfile
 import hashlib
 import os
 import shlex
-from time import sleep
 
 class Compiler(db.Model):
     """A submission runner backend
@@ -31,6 +30,7 @@ class Compiler(db.Model):
     executable = db.Column(db.String(80))
 
     submissions = db.relationship('Submission', cascade = "all,delete", backref='compiler')
+    checkers = db.relationship('Checker', cascade = "all,delete", backref='compiler')
 
     def __init__(self, name=None, lang=None, cmd_compile=None, cmd_run=None):
         self.name = name
@@ -124,7 +124,7 @@ detectable_compilers = {
         "executable": "fpc",
         "lang": "pas",
         "find_version": "%s -iV",
-        "build": "mkdir __src___WORK && __compiler__ __src__ -FE__src___WORK \
+        "build": "cd `dirname __src__`; mkdir __src___WORK && __compiler__ -Mdelphi __src__ -FE__src___WORK \
         && cp __src___WORK/`basename __src__ .pas` __exe__; X=$?; rm -r __src___WORK; exit $X"
     },
     "python2.6": {

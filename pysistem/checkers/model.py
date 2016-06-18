@@ -14,13 +14,13 @@ class Checker(db.Model):
     Fields:
     id -- unique checker identifier
     name -- checker name
-    source -- checker source, currently either C or C++
+    source -- checker source
     status -- checker status, see pysistem.submissions.const
     compile_log -- compilation log produced by compiler
-    lang -- language, currently either 'c' or 'c++'
 
     Relationships:
     problem, problem_id -- problem, whose checker it is
+    compiler, compiler_id -- compiler used to compile this checker
 
     """
     id = db.Column(db.Integer, primary_key=True)
@@ -28,16 +28,15 @@ class Checker(db.Model):
     source = db.Column(db.Text)
     status = db.Column(db.Integer)
     compile_log = db.Column(db.Text)
-    lang = db.Column(db.String(8))
 
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+    compiler_id = db.Column(db.Integer, db.ForeignKey('compiler.id'))
 
-    def __init__(self, name='', source='', problem=None, lang='c'):
+    def __init__(self, name='', source='', problem=None):
         self.name = name
         self.source = source
         self.status = STATUS_CWAIT
         self.compile_log = ''
-        self.lang = lang
 
         if type(problem) is int:
             problem = Problem.query.get(problem)
@@ -53,9 +52,10 @@ class Checker(db.Model):
 
     def get_ext(self):
         """Get checker source file extension"""
-        if self.lang == 'c++':
-            return 'cpp'
-        return self.lang
+        return self.compiler.lang
+
+    def get_src_path(self):
+        return DIR + '/work/work/checker_%d.%s' % (self.id, self.get_ext())
 
     def compile(self):
         """Compile checker, must be called before using checker on every checking machine"""
@@ -65,17 +65,16 @@ class Checker(db.Model):
         self.status = STATUS_COMPILING
         db.session.commit()
 
-        cmd = ''
+        with open(self.get_src_path(), "w") as f:
+            f.write(self.source)
 
-        if self.lang == 'c':
-            cmd = 'gcc -x c --std=c11 -o ' + self.get_exe_path() + ' - -lchecker -lsbox'
-        if self.lang == 'c++':
-            cmd = 'g++ -x c++ --std=gnu++11 -o ' + self.get_exe_path() + ' - -lchecker -lsbox'
+        success, stdout = self.compiler.compile(self.get_src_path(), self.get_exe_path())
 
-        p = Popen(cmd, shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        stdout, stderr = p.communicate(input=self.source.encode())
-        self.compile_log = stdout.decode()
-        success = (p.returncode == 0)
+        try:
+            os.remove(self.get_src_path())
+        except: pass
+
+        self.compile_log = stdout
 
         if success:
             self.status = STATUS_DONE

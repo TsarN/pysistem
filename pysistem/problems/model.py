@@ -5,8 +5,9 @@ import pickle
 import gzip
 import io
 import hashlib
+from pysistem.compilers.model import Compiler
 
-EXPORTVER = 2
+EXPORTVER = 3
 
 class Problem(db.Model):
     """Solvable programming problem
@@ -129,7 +130,7 @@ class Problem(db.Model):
             'statement': self.statement,
             'checkers': [{
                 'name': checker.name,
-                'lang': checker.lang,
+                'compiler': checker.compiler.autodetect or checker.compiler.lang,
                 'source': checker.source
             } for checker in self.checkers if checker.status in [STATUS_DONE, STATUS_ACT]],
             'test_groups': [{
@@ -152,55 +153,66 @@ class Problem(db.Model):
 
     def import_gzip(self, data):
         """Update this problem using gzip-encoded 'data'"""
-        from pysistem.checkers.model import Checker
-        from pysistem.test_pairs.model import TestPair, TestGroup
-        f = io.BytesIO()
-        f.write(data)
-        f.seek(0)
-        input_f = gzip.GzipFile(fileobj=f, mode='rb')
-        data = pickle.load(input_f)
-        version = data.get('version', 0)
-        if version not in [1, 2]:
-            return False
-        self.name = data.get('name', self.name)
-        self.time_limit = data.get('time_limit', self.time_limit)
-        self.memory_limit = data.get('memory_limit', self.memory_limit)
-        self.description = data.get('description', self.description)
-        self.statement = data.get('statement', self.statement)
-        for checker in data.get('checkers', ()):
-            c = Checker(
-                checker['name'],
-                checker['source'],
-                self,
-                checker['lang']
-            )
-            db.session.add(c)
-            db.session.commit()
-            c.compile()
-        if version == 1:
-            test_group = TestGroup(self)
-            for test in data.get('test_pairs', ()):
-                test_pair = TestPair(
-                    test['input'],
-                    test['pattern']
+        try:
+            from pysistem.checkers.model import Checker
+            from pysistem.test_pairs.model import TestPair, TestGroup
+            f = io.BytesIO()
+            f.write(data)
+            f.seek(0)
+            input_f = gzip.GzipFile(fileobj=f, mode='rb')
+            data = pickle.load(input_f)
+            version = data.get('version', 0)
+            if version not in [1, 2, 3]:
+                return False
+            self.name = data.get('name', self.name)
+            self.time_limit = data.get('time_limit', self.time_limit)
+            self.memory_limit = data.get('memory_limit', self.memory_limit)
+            self.description = data.get('description', self.description)
+            self.statement = data.get('statement', self.statement)
+            for checker in data.get('checkers', ()):
+                c = Checker(
+                    checker['name'],
+                    checker['source'],
+                    self
                 )
-                test_group.test_pairs.append(test_pair)
-            db.session.add(test_group)
-        if version == 2:
-            for tg in data.get('test_groups', ()):
+                compiler = None
+                if version in [1, 2]:
+                    compiler = Compiler.query.filter(Compiler.lang == checker['lang']).first()
+                else:
+                    compiler = Compiler.query.filter(Compiler.autodetect == checker['compiler']).first()
+                    if not compiler:
+                        compiler = Compiler.query.filter(Compiler.lang == checker['compiler']).first()
+                if compiler:
+                    c.compiler_id = compiler.id
+                db.session.add(c)
+                db.session.commit()
+                c.compile()
+            if version == 1:
                 test_group = TestGroup(self)
-                test_group.score = tg['score']
-                test_group.score_per_test = tg['score_per_test']
-                test_group.check_all = tg['check_all']
-                for test in tg['test_pairs']:
+                for test in data.get('test_pairs', ()):
                     test_pair = TestPair(
                         test['input'],
                         test['pattern']
                     )
                     test_group.test_pairs.append(test_pair)
                 db.session.add(test_group)
-        db.session.commit()
-        return True
+            if version in [2, 3]:
+                for tg in data.get('test_groups', ()):
+                    test_group = TestGroup(self)
+                    test_group.score = tg['score']
+                    test_group.score_per_test = tg['score_per_test']
+                    test_group.check_all = tg['check_all']
+                    for test in tg['test_pairs']:
+                        test_pair = TestPair(
+                            test['input'],
+                            test['pattern']
+                        )
+                        test_group.test_pairs.append(test_pair)
+                    db.session.add(test_group)
+            db.session.commit()
+            return True
+        except:
+            return False
 
     def transliterate_name(self):
         """Transliterate this problem's name to English"""
