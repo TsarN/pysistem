@@ -14,6 +14,8 @@ app.config.from_object(conf)
 app.config['CONFIRM_CODE'] = ''.join(random.SystemRandom().choice( \
 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789' \
 ) for _ in range(12))
+app.config['VERSION'] = '0.2-SNAPSHOT'
+
 db = SQLAlchemy(app)
 
 babel = Babel(app)
