@@ -69,10 +69,15 @@ for child in root:
             if c.tag.lower() == 'checker':
                 source = c.attrib.get('src')
                 source_text = zf.read(source).decode(args.encoding)
+                compiler = ext_to_compiler(source.split('.')[-1])
+                if compiler == 'pas':
+                    source_text = source_text.replace("'input.txt'", "paramstr(1)");
+                    source_text = source_text.replace("'output.txt'", "paramstr(2)");
+                    source_text = source_text.replace("'pattern.txt'", "paramstr(3)");
                 if source:
                     info['checkers'].append({
                         'name': source,
-                        'compiler': ext_to_compiler(source.split('.')[-1]),
+                        'compiler': compiler,
                         'source': source_text
                     })
 

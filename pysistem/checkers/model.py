@@ -160,11 +160,11 @@ class Checker(db.Model):
             os.remove(output_path)
             os.remove(pattern_path)
 
-            if r == 0:
+            if r in [0, 0xAC]:
                 subres = RESULT_OK
-            elif r == 1:
+            elif r in [1, 0xAB]:
                 subres = RESULT_WA
-            elif r == 2:
+            elif r in [2, 0xAA]:
                 subres = RESULT_PE
             else:
                 subres = RESULT_IE
