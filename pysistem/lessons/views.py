@@ -17,6 +17,7 @@ mod = Blueprint('lessons', __name__, url_prefix='/lesson')
 @yield_lesson()
 @requires_admin(lesson="lesson")
 def delete(id, lesson):
+    """Delete a lesson"""
     group_id = lesson.group_id
     db.session.delete(lesson)
     db.session.commit()
@@ -27,12 +28,14 @@ def delete(id, lesson):
 @yield_group(field="group_id")
 @requires_admin(group="group")
 def new(group_id, group):
+    """Create a lesson"""
     return render_template('lessons/edit.html', lesson=Lesson(), group=group)
 
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
 @mod.route('/<int:group_id>/new', methods=['POST'])
 def edit(id=-1, group_id=-1):
+    """Update a lesson"""
     error = None
     group = None
     lesson = Lesson.query.get(id)

@@ -10,6 +10,7 @@ mod = Blueprint('settings', __name__, url_prefix='/settings')
 @mod.route('/', methods=['GET', 'POST'])
 @requires_admin
 def edit():
+    """Edit server settings"""
     if request.method == 'POST':
         allow_signup = bool(request.form.get('allow_signup'))
         allow_guest_view = bool(request.form.get('allow_guest_view'))

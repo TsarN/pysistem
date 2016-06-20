@@ -55,6 +55,7 @@ class LessonUserAssociation(db.Model):
         raise AttributeError
 
     def int_mark(self):
+        """Turn string mark into int"""
         return parseInt(self.mark)
 
 

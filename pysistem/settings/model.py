@@ -48,6 +48,7 @@ class Setting(db.Model):
         return '<Setting %r>' % self.name
 
     def val(self):
+        """Get self value with auto-conversion"""
         if self.type == SETTING_INT:
             return self.value_int
         if self.type == SETTING_STRING:
@@ -57,6 +58,7 @@ class Setting(db.Model):
         return None
 
     def get(name, default=None):
+        """Global function. Get value by name"""
         default = DEFAULT.get(name) or default
         setting = Setting.query.get(name)
         if setting is None:
@@ -67,6 +69,7 @@ class Setting(db.Model):
         return value
 
     def set(name, value):
+        """Global function. Set value"""
         setting = Setting.query.get(name)
         if setting:
             if type(value) is int:
