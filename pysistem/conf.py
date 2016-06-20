@@ -18,15 +18,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 # Work directory. Leave as is
 DIR = os.path.dirname(os.path.realpath(__file__))
 
-# Server settings
-SETTINGS = {
-    "allow_signup": True,
-    "allow_guest_view": True,
-    "allow_raw_content": False,
-    "username_pattern": "^[A-Za-z0-9_]{3,15}$",
-    "scoreboard_cache_timeout": 60
-}
-
 # Auto-created directories. Leave as is
 CREATE_DIRS = (
     '/storage/checkers_bin',
@@ -40,4 +31,4 @@ PATH_EXTRA = []
 CHECK_THREAD_TIME = 1
 
 # Do check submissions?
-LAUNCH_CHECK_THREAD = True 
+LAUNCH_CHECK_THREAD = True

@@ -60,12 +60,8 @@
             min-height: 100%;
         }
 
-        body {
-            margin-bottom: 60px;
-        }
-
         body > .container {
-            padding: 60px 15px 0;
+            padding: 0 15px 0;
         }
 
         .footer > .container > p {
@@ -221,6 +217,9 @@
                     <ul class="dropdown-menu">
                         {% if not g.user.is_guest() %}
                             <li><a href="{{ url_for('users.profile') }}">{{ _('title.profile') }}</a></li>
+                        {% if g.user.is_admin() %}
+                            <li><a href="{{ url_for('settings.edit') }}">{{ _('title.settings') }}</a></li>
+                        {% endif %}
                             <li role="separator" class="divider"></li>
                             <li><a href="{{ url_for('users.logout') }}">{{ _('title.logout') }}</a></li>
                         {% else %}

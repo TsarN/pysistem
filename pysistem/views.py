@@ -14,7 +14,7 @@ from pysistem.conf import LANGUAGES
 from flask_babel import gettext
 from datetime import time, date, datetime
 
-from pysistem.conf import SETTINGS
+from pysistem.settings.model import Setting as SETTINGS
 
 @babel.localeselector
 def get_locale():
@@ -256,3 +256,6 @@ app.register_blueprint(groups_module)
 
 from pysistem.lessons.views import mod as lessons_module
 app.register_blueprint(lessons_module)
+
+from pysistem.settings.views import mod as settings_module
+app.register_blueprint(settings_module)

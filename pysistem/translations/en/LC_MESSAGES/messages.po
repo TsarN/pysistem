@@ -1,15 +1,15 @@
-# English translations for PROJECT.
-# Copyright (C) 2016 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# English translations for PySistem.
+# Copyright (C) 2016 Tsarev Nikita
+# This file is distributed under MIT license.
+# Tsarev Nikita <nikts53@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-06-18 21:09+0300\n"
+"Project-Id-Version: PySistem 0.2-SNAPSHOT\n"
+"Report-Msgid-Bugs-To: nikts53@gmail.com\n"
+"POT-Creation-Date: 2016-06-20 14:53+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -230,15 +230,23 @@ msgstr "Compiler is not selected"
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
+#: settings/views.py:27
+msgid "settings.errors.invalidusernameregex"
+msgstr "Invalid username regex"
+
+#: settings/views.py:36
+msgid "settings.edit.success"
+msgstr "Settings updated"
+
 #: submissions/model.py:166
 msgid "common.outof"
 msgstr "out of"
 
-#: templates/base.html:69
+#: templates/base.html:95
 msgid "title.groups.new"
 msgstr "Create new group"
 
-#: templates/base.html:72 templates/contests/edit.html:60
+#: templates/base.html:98 templates/contests/edit.html:60
 #: templates/contests/edit.html:63 templates/contests/problems.html:55
 #: templates/contests/rawlist.html:2 templates/groups/lessons.html:12
 #: templates/lessons/edit.html:55 templates/lessons/edit.html:58
@@ -247,67 +255,71 @@ msgstr "Create new group"
 msgid "common.name"
 msgstr "Name"
 
-#: templates/base.html:78 templates/contests/base.html:79
+#: templates/base.html:104 templates/contests/base.html:79
 #: templates/problems/base.html:22
 msgid "common.cancel"
 msgstr "Cancel"
 
-#: templates/base.html:81 templates/contests/edit.html:126
+#: templates/base.html:107 templates/contests/edit.html:126
 #: templates/lessons/edit.html:289 templates/problems/edit.html:115
 #: templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Create"
 
-#: templates/base.html:109 templates/index.html:2
+#: templates/base.html:135 templates/index.html:2
 msgid "title.home"
 msgstr "Home"
 
-#: templates/base.html:112 templates/contests/list.html:2
+#: templates/base.html:138 templates/contests/list.html:2
 #: templates/groups/base.html:41
 msgid "title.contestlist"
 msgstr "Contests"
 
-#: templates/base.html:118 templates/contests/edit.html:103
+#: templates/base.html:144 templates/contests/edit.html:103
 #: templates/users/edit_profile.html:53
 msgid "title.groups"
 msgstr "Groups"
 
-#: templates/base.html:126 templates/users/edit_profile.html:73
+#: templates/base.html:152 templates/users/edit_profile.html:73
 msgid "groups.role.admin"
 msgstr "Administrator"
 
-#: templates/base.html:132 templates/users/edit_profile.html:68
+#: templates/base.html:158 templates/users/edit_profile.html:68
 msgid "groups.role.user"
 msgstr "Member"
 
-#: templates/base.html:150
+#: templates/base.html:176
 msgid "groups.new"
 msgstr "Create group"
 
-#: templates/base.html:169 templates/problems/checkers.html:9
+#: templates/base.html:195 templates/problems/checkers.html:9
 #: templates/submissions/list.html:49
 msgid "common.language"
 msgstr "Language"
 
-#: templates/base.html:188
+#: templates/base.html:214
 msgid "common.anonymous"
 msgstr "Anonymous"
 
-#: templates/base.html:193 templates/users/edit_profile.html:2
+#: templates/base.html:219 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Profile"
 
-#: templates/base.html:195
+#: templates/base.html:221 templates/settings/edit.html:2
+msgid "title.settings"
+msgstr "Server settings"
+
+#: templates/base.html:224
 msgid "title.logout"
 msgstr "Log Out"
 
-#: templates/base.html:197 templates/guest_view_denied.html:13
+#: templates/base.html:226 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Log In"
 
-#: templates/base.html:199 templates/guest_view_denied.html:18
+#: templates/base.html:228 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Sign Up"
@@ -390,7 +402,8 @@ msgid "common.error"
 msgstr "Error"
 
 #: templates/contests/edit.html:56 templates/lessons/edit.html:46
-#: templates/submissions/rawview.html:3 templates/users/edit_profile.html:18
+#: templates/settings/edit.html:7 templates/submissions/rawview.html:3
+#: templates/users/edit_profile.html:18
 msgid "common.general"
 msgstr "General"
 
@@ -408,7 +421,7 @@ msgstr "Unfreeze after finish"
 
 #: templates/contests/edit.html:124 templates/lessons/edit.html:287
 #: templates/problems/edit.html:113 templates/problems/tests.html:49
-#: templates/users/edit_profile.html:84
+#: templates/settings/edit.html:52 templates/users/edit_profile.html:84
 msgid "common.update"
 msgstr "Update"
 
@@ -707,6 +720,22 @@ msgstr "ms"
 #: templates/problems/view.html:5
 msgid "common.units.kilobytes"
 msgstr "KiB"
+
+#: templates/settings/edit.html:13 templates/settings/edit.html:17
+msgid "settings.usernamepattern"
+msgstr "Valid username regex"
+
+#: templates/settings/edit.html:21 templates/settings/edit.html:25
+msgid "settings.scoreboardcachetimeout"
+msgstr "Scoreboard update frequency, in seconds"
+
+#: templates/settings/edit.html:32
+msgid "settings.allowsignup"
+msgstr "Allow sign up"
+
+#: templates/settings/edit.html:41
+msgid "settings.allowguestview"
+msgstr "Allow unauthorized use"
 
 #: templates/submissions/list.html:25
 msgid "problems.submissions.recheck.all"

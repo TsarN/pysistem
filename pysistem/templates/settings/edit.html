@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ _('title.settings') }}{% endblock %}
+{% block content %}
+<form class="form-horizontal" action="{{ url_for('settings.edit') }}" method="POST">
+<div class="panel panel-default">
+    <div class="panel-heading">
+    {{ _('common.general') }}
+    </div>
+    <div class="panel-body">
+    <div class="row">
+
+        <label for="username_pattern" class="col-sm-4 control-label">
+            {{ _('settings.usernamepattern') }}
+        </label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="username_pattern" name="username_pattern"
+            placeholder="{{ _('settings.usernamepattern') }}" value="{{ g.SETTINGS.get('username_pattern') }}" />
+        </div>
+
+        <label for="scoreboard_cache_timeout" class="col-sm-4 control-label">
+            {{ _('settings.scoreboardcachetimeout') }}
+        </label>
+        <div class="col-sm-8">
+            <input type="number" min="0" class="form-control" id="scoreboard_cache_timeout" name="scoreboard_cache_timeout"
+            placeholder="{{ _('settings.scoreboardcachetimeout') }}" value="{{ g.SETTINGS.get('scoreboard_cache_timeout') }}" />
+        </div>
+
+        <div class="col-sm-offset-4 col-sm-8">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="allow_signup" {{ g.SETTINGS.get('allow_signup') and 'checked' }} />
+                    {{ _('settings.allowsignup') }}
+                </label>
+            </div>
+        </div>
+
+        <div class="col-sm-offset-4 col-sm-8">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="allow_guest_view" {{ g.SETTINGS.get('allow_guest_view') and 'checked' }} />
+                    {{ _('settings.allowguestview') }}
+                </label>
+            </div>
+        </div>
+
+    </div>
+    </div>
+</div>
+
+<div class="col-sm-4 col-sm-offset-4">
+    <button type="submit" class="btn btn-lg btn-primary btn-block">
+        {{ _('common.update') }}
+    </button>
+</div>
+</form>
+{% endblock %}
