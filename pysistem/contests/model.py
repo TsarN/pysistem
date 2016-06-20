@@ -57,9 +57,9 @@ class Contest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     rules = db.Column(db.String(8))
-    start = db.Column(db.DateTime, default=datetime.now)
-    end = db.Column(db.DateTime, default=datetime.now)
-    freeze = db.Column(db.DateTime, default=datetime.now)
+    start = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
+    freeze = db.Column(db.DateTime)
     unfreeze_after_end = db.Column(db.Boolean)
 
     problems = db.relationship('ContestProblemAssociation',

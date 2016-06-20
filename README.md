@@ -7,6 +7,7 @@ PySistem is contest management system written in Python 3, that uses Flask and S
  - Flask
  - Flask-Babel
  - Flask-SQLAlchemy with backend (like MySQL)
+ - SQLAlchemy-migrate
  - MsgPack-Python
  - SISTEM Backend (https://github.com/TsarN/sistem-backend)
 
@@ -36,7 +37,7 @@ This will configure current terminal for virtual enviroment
 ### Installing PySistem
 Install dependencies:
 
-    $ pip install Flask Flask-Babel Flask-SQLAlchemy msgpack-python gunicorn
+    $ pip install Flask Flask-Babel Flask-SQLAlchemy sqlalchemy-migrate msgpack-python gunicorn
 
 Simply copy `pysistem` folder from repository to newly created virtual enviroment
 
@@ -81,22 +82,21 @@ Check, if everything is OK:
     # /etc/init.d/nginx (re)start
 
 ### Post-installation configuration
+Change to virtualenv directory:
+    
+    $ cd /path/to/virtualenv
+
+Create default config:
+
+    $ python3 -m pysistem config:default
+
 Compile translations:
 
     $ pybabel compile -d /path/to/virtualenv/pysistem/translations
 
-Modify default secret key: change `pysistem/conf.py`:
-```python
-SECRET_KEY = 'YOUR_SECRET_KEY_HERE'
-```
+Modify default secret key:
 
-You can generate pretty secure secret keys using Python:
-
-    $ python
-    >>> import os
-    >>> os.urandom(24)
-    b'J]x\xbc`\xc6\xf4\xa8\xbdkB\x7f\xff\xd8\xeaY\x93\xc7\xe0\xfa\xd8\x07j\xfd'
-
+    $ python3 -m pysistem config:gensecret
 
 If you want to use MySQL as your database backend, change `pysistem/conf.py`:
 ```python
@@ -118,3 +118,8 @@ Then, navigate to your application in browser and create admin account.
  - Make sure that you are using the most recent SISTEM-Backend
  - Create /SANDBOX directory with 1777 rights
  - Add an interpretable language
+
+## Upgrading database
+After certain updates it may become neccessary to upgrade (migrate) database. To do this, type
+
+    $ python3 -m pysistem db:upgrade

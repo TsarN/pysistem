@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 import os
 
+# Work directory. Leave as is
+DIR = os.path.dirname(os.path.realpath(__file__))
+
 SECRET_KEY = b'\nB\xd3\xa7\x9f\xd6r\x03a&R\x85\x84\xea\x0c\xab\x1eU4\x18O\xad\xda\xed'
-# Set to False in production enviroments
-DEBUG = True
+DEBUG = False
 # Allowed languages
 LANGUAGES = {
     'en': 'English',
     'ru': 'Русский'
 }
 # Database to use
-SQLALCHEMY_DATABASE_URI = "sqlite:///sistem.db"
-SQLALCHEMY_TRACK_MODIFICATIONS = True
+SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(DIR, 'sistem.db')
+SQLALCHEMY_MIGRATE_REPO = os.path.join(DIR, 'db_repository')
 # For debugging
 #SQLALCHEMY_ECHO = True
-
-# Work directory. Leave as is
-DIR = os.path.dirname(os.path.realpath(__file__))
 
 # Auto-created directories. Leave as is
 CREATE_DIRS = (

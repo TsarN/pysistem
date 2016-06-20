@@ -111,8 +111,8 @@ class Lesson(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    start = db.Column(db.DateTime, default=datetime.now)
-    end = db.Column(db.DateTime, default=datetime.now)
+    start = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
 
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))

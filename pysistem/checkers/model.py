@@ -6,7 +6,9 @@ from pysistem.submissions.const import *
 import tempfile
 import os
 from subprocess import Popen, PIPE, run, STDOUT
-from pysistem.conf import DIR
+try:
+    from pysistem.conf import DIR
+except: pass
 
 class Checker(db.Model):
     """A submission runner

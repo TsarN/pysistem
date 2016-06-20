@@ -7,7 +7,9 @@ from pysistem.problems.model import Problem
 from pysistem.checkers.model import Checker
 import tempfile
 import os
-from pysistem.conf import DIR
+try:
+    from pysistem.conf import DIR
+except: pass
 from datetime import datetime
 from flask_babel import gettext
 from time import sleep
@@ -36,7 +38,7 @@ class Submission(db.Model):
     result = db.Column(db.Integer)
     compile_log = db.Column(db.Text)
     score = db.Column(db.Integer)
-    submitted = db.Column(db.DateTime, default=datetime.now)
+    submitted = db.Column(db.DateTime)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     compiler_id = db.Column(db.Integer, db.ForeignKey('compiler.id'))
@@ -64,6 +66,7 @@ class Submission(db.Model):
         self.compiler = compiler
         self.problem = problem
         self.score = 0
+        self.submitted = datetime.now()
 
     def __repr__(self):
         return '<Submission #%s>' % str(self.id)

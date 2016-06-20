@@ -10,7 +10,9 @@ from pysistem.submissions.model import Submission
 from pysistem.problems.model import Problem
 from pysistem.groups.model import Group
 
-from pysistem.conf import LANGUAGES
+try:
+    from pysistem.conf import LANGUAGES
+except: pass
 from flask_babel import gettext
 from datetime import time, date, datetime
 
