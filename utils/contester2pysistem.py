@@ -104,7 +104,7 @@ for child in root:
 
 info['version'] = 3
 
-to_write = msgpack.dumps(info)
+to_write = msgpack.dumps(info, use_bin_type=True)
 out = io.BytesIO()
 with gzip.GzipFile(fileobj=out, mode='wb') as f:
     f.write(to_write)

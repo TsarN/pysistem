@@ -144,7 +144,7 @@ class Problem(db.Model):
             }
             for test_group in self.test_groups],
             'version': EXPORTVER
-        })
+        }, use_bin_type=True)
 
         out = io.BytesIO()
         with gzip.GzipFile(fileobj=out, mode='wb') as f:
