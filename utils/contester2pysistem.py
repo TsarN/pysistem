@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import zipfile
-import pickle
+import msgpack
 import gzip
 import io
 import argparse
@@ -104,7 +104,7 @@ for child in root:
 
 info['version'] = 3
 
-to_write = pickle.dumps(info)
+to_write = msgpack.dumps(info)
 out = io.BytesIO()
 with gzip.GzipFile(fileobj=out, mode='wb') as f:
     f.write(to_write)

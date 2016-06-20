@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pysistem import db
 from pysistem.submissions.const import *
-import pickle
+import msgpack
 import gzip
 import io
 import hashlib
@@ -122,7 +122,7 @@ class Problem(db.Model):
 
     def export_gzip(self):
         """Returns binary data in gzip format that accepts Problem.import_gzip"""
-        to_write = pickle.dumps({
+        to_write = msgpack.dumps({
             'name': self.name,
             'time_limit': self.time_limit,
             'memory_limit': self.memory_limit,
@@ -160,7 +160,7 @@ class Problem(db.Model):
             f.write(data)
             f.seek(0)
             input_f = gzip.GzipFile(fileobj=f, mode='rb')
-            data = pickle.load(input_f)
+            data = msgpack.load(input_f, encoding="utf-8")
             version = data.get('version', 0)
             if version not in [1, 2, 3]:
                 return False
