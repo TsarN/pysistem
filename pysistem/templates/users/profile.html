@@ -18,7 +18,7 @@
 </p>
 {% if user.check_permissions() %}
 <div class="pull-right">
-<a href="#" class="btn btn-default btn-lg">
+<a href="{{ url_for('users.change_password', username=user.username) }}" class="btn btn-default btn-lg">
     {{ _('common.changepasswd') }}
 </a>
 <a href="{{ url_for('users.edit_profile', username=user.username) }}" class="btn btn-primary btn-lg">

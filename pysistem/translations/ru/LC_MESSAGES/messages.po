@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PySistem 0.2-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: nikts53@gmail.com\n"
-"POT-Creation-Date: 2016-06-20 14:53+0300\n"
+"POT-Creation-Date: 2016-06-20 16:51+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: ru\n"
@@ -127,23 +127,23 @@ msgstr "Автоматические оценки по числу решённы
 msgid "lessons.automarks.solved.atleast"
 msgstr "Минимальное количество задач"
 
-#: lessons/views.py:23
+#: lessons/views.py:24
 msgid "lessons.delete.success"
 msgstr "Занятие удалено"
 
-#: lessons/views.py:165
+#: lessons/views.py:168
 msgid "lessons.new.success"
 msgstr "Занятие добавлено"
 
-#: lessons/views.py:167
+#: lessons/views.py:170
 msgid "lessons.edit.success"
 msgstr "Занятие обновлено"
 
-#: lessons/views.py:170
+#: lessons/views.py:173
 msgid "lessons.edit.emptyname"
 msgstr "Пустое название занятия"
 
-#: lessons/views.py:172
+#: lessons/views.py:175
 msgid "lessons.edit.invaliddates"
 msgstr "Начало позже окончания"
 
@@ -231,11 +231,11 @@ msgstr "Выберите компилятор"
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: settings/views.py:27
+#: settings/views.py:28
 msgid "settings.errors.invalidusernameregex"
 msgstr "Неправильное регулярное выражение"
 
-#: settings/views.py:36
+#: settings/views.py:37
 msgid "settings.edit.success"
 msgstr "Настройки сохранены"
 
@@ -277,15 +277,15 @@ msgid "title.contestlist"
 msgstr "Турниры"
 
 #: templates/base.html:144 templates/contests/edit.html:103
-#: templates/users/edit_profile.html:53
+#: templates/users/edit_profile.html:42
 msgid "title.groups"
 msgstr "Группы"
 
-#: templates/base.html:152 templates/users/edit_profile.html:73
+#: templates/base.html:152 templates/users/edit_profile.html:62
 msgid "groups.role.admin"
 msgstr "Администратор"
 
-#: templates/base.html:158 templates/users/edit_profile.html:68
+#: templates/base.html:158 templates/users/edit_profile.html:57
 msgid "groups.role.user"
 msgstr "Участник"
 
@@ -397,14 +397,14 @@ msgid "contests.new"
 msgstr "Новый турнир"
 
 #: templates/contests/edit.html:42 templates/lessons/edit.html:39
-#: templates/problems/edit.html:31 templates/users/edit_profile.html:7
-#: templates/users/login.html:6 templates/users/signup.html:6
+#: templates/problems/edit.html:31 templates/users/login.html:6
+#: templates/users/signup.html:6
 msgid "common.error"
 msgstr "Ошибка"
 
 #: templates/contests/edit.html:56 templates/lessons/edit.html:46
 #: templates/settings/edit.html:7 templates/submissions/rawview.html:3
-#: templates/users/edit_profile.html:18
+#: templates/users/edit_profile.html:15
 msgid "common.general"
 msgstr "Основное"
 
@@ -422,7 +422,8 @@ msgstr "Разморозить после окончания"
 
 #: templates/contests/edit.html:124 templates/lessons/edit.html:287
 #: templates/problems/edit.html:113 templates/problems/tests.html:49
-#: templates/settings/edit.html:52 templates/users/edit_profile.html:84
+#: templates/settings/edit.html:52 templates/users/change_password.html:46
+#: templates/users/edit_profile.html:73
 msgid "common.update"
 msgstr "Обновить"
 
@@ -510,7 +511,6 @@ msgid "common.duration"
 msgstr "Продолжительность"
 
 #: templates/groups/users.html:7 templates/lessons/edit.html:83
-#: templates/users/edit_profile.html:22 templates/users/edit_profile.html:25
 #: templates/users/login.html:14 templates/users/signup.html:20
 msgid "common.username"
 msgstr "Имя пользователя"
@@ -802,22 +802,42 @@ msgstr "Комментарий чекера"
 msgid "title.submission"
 msgstr "Посылка"
 
-#: templates/users/edit_profile.html:29 templates/users/edit_profile.html:32
+#: templates/users/change_password.html:2
+#: templates/users/change_password.html:15
+msgid "title.changepassword"
+msgstr "Сменить пароль"
+
+#: templates/users/change_password.html:20
+#: templates/users/change_password.html:24
+msgid "users.changepassword.oldpassword"
+msgstr "Старый пароль"
+
+#: templates/users/change_password.html:28
+#: templates/users/change_password.html:32
+msgid "users.changepassword.newpassword"
+msgstr "Новый пароль"
+
+#: templates/users/change_password.html:35
+#: templates/users/change_password.html:39
+msgid "users.changepassword.newpasswordconfirm"
+msgstr "Подтверждение пароля"
+
+#: templates/users/edit_profile.html:18 templates/users/edit_profile.html:21
 #: templates/users/profile.html:11
 msgid "common.firstname"
 msgstr "Имя"
 
-#: templates/users/edit_profile.html:35 templates/users/edit_profile.html:38
+#: templates/users/edit_profile.html:24 templates/users/edit_profile.html:27
 #: templates/users/profile.html:14
 msgid "common.lastname"
 msgstr "Фамилия"
 
-#: templates/users/edit_profile.html:41 templates/users/edit_profile.html:44
+#: templates/users/edit_profile.html:30 templates/users/edit_profile.html:33
 #: templates/users/profile.html:17
 msgid "common.email"
 msgstr "E-Mail"
 
-#: templates/users/edit_profile.html:63
+#: templates/users/edit_profile.html:52
 msgid "groups.role.none"
 msgstr "Не входит"
 
@@ -905,10 +925,22 @@ msgstr "Такое имя нельзя использовать"
 msgid "auth.logout.success"
 msgstr "Вы вышли из системы"
 
-#: users/views.py:134
+#: users/views.py:108
+msgid "users.changepassword.incorrectoldpassword"
+msgstr "Старый пароль введён неверно"
+
+#: users/views.py:118
+msgid "users.changepassword.success"
+msgstr "Пароль сменён"
+
+#: users/views.py:120
+msgid "users.changepassword.shortpassword"
+msgstr "Новый пароль слишком короткий"
+
+#: users/views.py:122
+msgid "users.changepassword.mismatchedpasswords"
+msgstr "Пароли не совпадают"
+
+#: users/views.py:165
 msgid "profile.update.success"
 msgstr "Профиль пользователя был обновлён"
-
-#~ msgid "problems.submissions.viewchecklog"
-#~ msgstr "Посмотреть лог проверки"
-

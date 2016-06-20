@@ -3,9 +3,6 @@
 {% block content %}
 <div class="container">
 <div class="col-md-8 col-md-offset-2">
-{% if error %}
-<div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
-{% endif %}
 <h2 class="page-header text-center">
     <a href="{{ url_for('users.profile', username=user.username) }}" style="float: left; color: gray">
         <span class="glyphicon glyphicon-chevron-left"></span>
@@ -18,14 +15,6 @@
 {{ _('common.general') }}
 </div>
 <div class="panel-body">
-{% if g.user.is_admin() %}
-<label for="username" class="col-sm-4 control-label">{{ _('common.username') }}</label>
-<div class="col-sm-8">
-<input type="text" class="form-control" id="username" name="username"
-placeholder="{{ _('common.username') }}" value="{{ user.username or '' }}" />
-</div>
-{% endif %}
-
 <label for="first_name" class="col-sm-4 control-label">{{ _('common.firstname') }}</label>
 <div class="col-sm-8">
 <input type="text" class="form-control" id="first_name" name="first_name"

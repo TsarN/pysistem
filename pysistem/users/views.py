@@ -87,6 +87,42 @@ def profile(username=None):
         submissions=submissions, show_problem=True)
     return render_template('users/profile.html', user=user, rendered_subs=rendered_subs)
 
+@mod.route('/<username>/password', methods=['GET', 'POST'])
+@mod.route('/password', methods=['GET', 'POST'])
+def change_password(username=None):
+    """Change user's password"""
+    user = g.user
+    if username is not None:
+        user = User.query.filter( \
+                db.func.lower(User.username) == db.func.lower(username)).first()
+        if user is None:
+            return render_template('errors/404.html'), 404
+    if not user.check_permissions():
+        return render_template('errors/403.html'), 403
+
+    if request.method == 'POST':
+        if user.id == g.user.id:
+            old_password = request.form.get('old_password', '')
+            old_password_hash = User.signpasswd(user.username, old_password)
+            if user.password != old_password_hash:
+                flash('::danger ' + gettext('users.changepassword.incorrectoldpassword'))
+                return redirect(url_for('users.change_password', username=user.username))
+        new_password = request.form.get('new_password', '')
+        new_password_confirm = request.form.get('new_password_confirm', '')
+
+        if new_password == new_password_confirm:
+            if len(new_password) > 3:
+                new_password_hash = User.signpasswd(user.username, new_password)
+                user.password = new_password_hash
+                db.session.commit()
+                flash(gettext('users.changepassword.success'))
+            else:
+                flash('::danger ' + gettext('users.changepassword.shortpassword'))
+        else:
+            flash('::danger ' + gettext('users.changepassword.mismatchedpasswords'))
+        return redirect(url_for('users.change_password', username=user.username))
+    return render_template('users/change_password.html', user=user)
+
 @mod.route('/<username>/edit', methods=['GET', 'POST'])
 @mod.route('/edit', methods=['GET', 'POST'])
 def edit_profile(username=None):
@@ -98,7 +134,7 @@ def edit_profile(username=None):
         if user is None:
             return render_template('errors/404.html'), 404
     if not user.check_permissions():
-        return render_template(url_for('errors/403.html')), 403
+        return render_template('errors/403.html'), 403
 
     groups = Group.query.all()
 
@@ -125,11 +161,6 @@ def edit_profile(username=None):
                         assoc.user_id = user.id
                         assoc.group_id = group.id
                         db.session.add(assoc)
-                        
-                username = request.form.get('username', user.username)
-                if re.compile(g.SETTINGS.get('username_pattern', '.*')).match(username):
-                    if not User.exists(username):
-                        user.username = username
             db.session.commit()
             flash(gettext('profile.update.success'))
             return redirect(url_for('users.edit_profile', username=user.username))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PySistem 0.2-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: nikts53@gmail.com\n"
-"POT-Creation-Date: 2016-06-20 14:53+0300\n"
+"POT-Creation-Date: 2016-06-20 16:51+0300\n"
 "PO-Revision-Date: 2016-05-24 15:48+0300\n"
 "Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: en\n"
@@ -126,23 +126,23 @@ msgstr "Automarks by amount of solved problems"
 msgid "lessons.automarks.solved.atleast"
 msgstr "Minimum solved problems for match"
 
-#: lessons/views.py:23
+#: lessons/views.py:24
 msgid "lessons.delete.success"
 msgstr "Lesson deleted"
 
-#: lessons/views.py:165
+#: lessons/views.py:168
 msgid "lessons.new.success"
 msgstr "Lesson created"
 
-#: lessons/views.py:167
+#: lessons/views.py:170
 msgid "lessons.edit.success"
 msgstr "Lesson updated"
 
-#: lessons/views.py:170
+#: lessons/views.py:173
 msgid "lessons.edit.emptyname"
 msgstr "Empty lesson name"
 
-#: lessons/views.py:172
+#: lessons/views.py:175
 msgid "lessons.edit.invaliddates"
 msgstr "Start is later than end"
 
@@ -230,11 +230,11 @@ msgstr "Compiler is not selected"
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: settings/views.py:27
+#: settings/views.py:28
 msgid "settings.errors.invalidusernameregex"
 msgstr "Invalid username regex"
 
-#: settings/views.py:36
+#: settings/views.py:37
 msgid "settings.edit.success"
 msgstr "Settings updated"
 
@@ -276,15 +276,15 @@ msgid "title.contestlist"
 msgstr "Contests"
 
 #: templates/base.html:144 templates/contests/edit.html:103
-#: templates/users/edit_profile.html:53
+#: templates/users/edit_profile.html:42
 msgid "title.groups"
 msgstr "Groups"
 
-#: templates/base.html:152 templates/users/edit_profile.html:73
+#: templates/base.html:152 templates/users/edit_profile.html:62
 msgid "groups.role.admin"
 msgstr "Administrator"
 
-#: templates/base.html:158 templates/users/edit_profile.html:68
+#: templates/base.html:158 templates/users/edit_profile.html:57
 msgid "groups.role.user"
 msgstr "Member"
 
@@ -396,14 +396,14 @@ msgid "contests.new"
 msgstr "New contest"
 
 #: templates/contests/edit.html:42 templates/lessons/edit.html:39
-#: templates/problems/edit.html:31 templates/users/edit_profile.html:7
-#: templates/users/login.html:6 templates/users/signup.html:6
+#: templates/problems/edit.html:31 templates/users/login.html:6
+#: templates/users/signup.html:6
 msgid "common.error"
 msgstr "Error"
 
 #: templates/contests/edit.html:56 templates/lessons/edit.html:46
 #: templates/settings/edit.html:7 templates/submissions/rawview.html:3
-#: templates/users/edit_profile.html:18
+#: templates/users/edit_profile.html:15
 msgid "common.general"
 msgstr "General"
 
@@ -421,7 +421,8 @@ msgstr "Unfreeze after finish"
 
 #: templates/contests/edit.html:124 templates/lessons/edit.html:287
 #: templates/problems/edit.html:113 templates/problems/tests.html:49
-#: templates/settings/edit.html:52 templates/users/edit_profile.html:84
+#: templates/settings/edit.html:52 templates/users/change_password.html:46
+#: templates/users/edit_profile.html:73
 msgid "common.update"
 msgstr "Update"
 
@@ -509,7 +510,6 @@ msgid "common.duration"
 msgstr "Duration"
 
 #: templates/groups/users.html:7 templates/lessons/edit.html:83
-#: templates/users/edit_profile.html:22 templates/users/edit_profile.html:25
 #: templates/users/login.html:14 templates/users/signup.html:20
 msgid "common.username"
 msgstr "Username"
@@ -801,22 +801,42 @@ msgstr "Checker comment"
 msgid "title.submission"
 msgstr "Submission"
 
-#: templates/users/edit_profile.html:29 templates/users/edit_profile.html:32
+#: templates/users/change_password.html:2
+#: templates/users/change_password.html:15
+msgid "title.changepassword"
+msgstr "Change password"
+
+#: templates/users/change_password.html:20
+#: templates/users/change_password.html:24
+msgid "users.changepassword.oldpassword"
+msgstr "Old password"
+
+#: templates/users/change_password.html:28
+#: templates/users/change_password.html:32
+msgid "users.changepassword.newpassword"
+msgstr "New password"
+
+#: templates/users/change_password.html:35
+#: templates/users/change_password.html:39
+msgid "users.changepassword.newpasswordconfirm"
+msgstr "Password confirmation"
+
+#: templates/users/edit_profile.html:18 templates/users/edit_profile.html:21
 #: templates/users/profile.html:11
 msgid "common.firstname"
 msgstr "First name"
 
-#: templates/users/edit_profile.html:35 templates/users/edit_profile.html:38
+#: templates/users/edit_profile.html:24 templates/users/edit_profile.html:27
 #: templates/users/profile.html:14
 msgid "common.lastname"
 msgstr "Last name"
 
-#: templates/users/edit_profile.html:41 templates/users/edit_profile.html:44
+#: templates/users/edit_profile.html:30 templates/users/edit_profile.html:33
 #: templates/users/profile.html:17
 msgid "common.email"
 msgstr "E-Mail address"
 
-#: templates/users/edit_profile.html:63
+#: templates/users/edit_profile.html:52
 msgid "groups.role.none"
 msgstr "Excluded"
 
@@ -904,10 +924,22 @@ msgstr "Invalid username"
 msgid "auth.logout.success"
 msgstr "You were logged out"
 
-#: users/views.py:134
+#: users/views.py:108
+msgid "users.changepassword.incorrectoldpassword"
+msgstr "Old password is incorrect"
+
+#: users/views.py:118
+msgid "users.changepassword.success"
+msgstr "Password changed"
+
+#: users/views.py:120
+msgid "users.changepassword.shortpassword"
+msgstr "New password is too short"
+
+#: users/views.py:122
+msgid "users.changepassword.mismatchedpasswords"
+msgstr "New passwords do not match"
+
+#: users/views.py:165
 msgid "profile.update.success"
 msgstr "Profile was successfully updated"
-
-#~ msgid "problems.submissions.viewchecklog"
-#~ msgstr "View checking log"
-
