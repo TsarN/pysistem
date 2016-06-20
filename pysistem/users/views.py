@@ -89,7 +89,7 @@ def profile(username=None):
 
 @mod.route('/<username>/edit', methods=['GET', 'POST'])
 @mod.route('/edit', methods=['GET', 'POST'])
-def edit_profile(username):
+def edit_profile(username=None):
     """Edit user's profile"""
     user = g.user
     if username is not None:
