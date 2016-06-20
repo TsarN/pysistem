@@ -106,6 +106,10 @@ SQLALCHEMY_DATABASE_URI = "mysql+pymysql://user:password@localhost/db_name"
 Also, make sure that you have pymysql installed:
 
     $ pip install pymysql
+
+Create database:
+    
+    $ python3 -m pysistem db:create
     
 ### Start PySistem
 In your virtualhost terminal type
