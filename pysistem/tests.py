@@ -11,10 +11,17 @@ from pysistem.contests.model import Contest
 from pysistem.problems.model import Problem
 from pysistem.submissions.model import Submission
 from pysistem.submissions.const import *
+from pysistem.checkers.model import Checker
+from pysistem.test_pairs.model import TestPair, TestGroup
 from datetime import datetime
+from io import StringIO, BytesIO
+
+import warnings
+from sqlalchemy import exc as sa_exc
 
 class TestCase(unittest.TestCase):
     def setUp(self):
+        warnings.filterwarnings("ignore", category=sa_exc.SAWarning)
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
         app.config['SECRET_KEY'] = os.urandom(24)
@@ -214,7 +221,7 @@ class TestCase(unittest.TestCase):
         if not Compiler.query.filter(Compiler.lang == 'pas').first():
             self.skipTest('Pascal compiler not found')
 
-        valid =b''.join([b'\x1f\x8b\x08\x00j\x08iW\x02\xff\x8d\x92]K\x14Q\x18\xc7\xb3.',
+        valid = b''.join([b'\x1f\x8b\x08\x00j\x08iW\x02\xff\x8d\x92]K\x14Q\x18\xc7\xb3.',
                 b'\x82\x85\xfd\x0e\x0fK\xa5\xe22\xbbk\x98\xd1n\x1bk\xee\xc2\x86\xba',
                 b'\xe2\x9a\x12\x19\xcb\x99\x99\xc7uj\xde8\xe7\x8c(!\xa4\xf6\x06^',
                 b'\x84\xdet\x1b\x98\xef\x11!\x1a\x82\x12\xd1}0s\x99\x9f\xa0/\x11',
@@ -311,3 +318,203 @@ class TestCase(unittest.TestCase):
         self.assertEqual(submission2.status, STATUS_DONE)
         self.assertEqual(submission2.result, RESULT_WA)
         self.assertEqual(submission2.score, 1)
+
+    def test_checker_actions(self):
+        detect_compilers()
+        self.assertTrue(len(Compiler.query.all()))
+        problem = Problem(name='A+B', description='Add two numbers',
+            statement='Please do it', time_limit=1234, memory_limit=54321)
+        db.session.add(problem)
+        checker = Checker('Test checker', '', problem)
+        checker.compiler = Compiler.query.first()
+        db.session.add(checker)
+        db.session.commit()
+
+        self.assertTrue(checker)
+        rv = self.app.get('/problem/actchecker/%d' % checker.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/delchecker/%d' % checker.id)
+        self.assertEqual(rv.status_code, 403)
+
+        rv = self.app.get('/problem/actchecker/9001')
+        self.assertEqual(rv.status_code, 404)
+        rv = self.app.get('/problem/delchecker/9001')
+        self.assertEqual(rv.status_code, 404)
+
+        self.login('admin', 'admin')
+        rv = self.app.get('/problem/actchecker/%d' % checker.id)
+        self.assertNotEqual(checker.status, STATUS_ACT)
+
+        checker = Checker('Another checker', '', problem)
+        checker.compiler = Compiler.query.first()
+        checker.status = STATUS_DONE
+        db.session.add(checker)
+        db.session.commit()
+        id = checker.id
+
+        rv = self.app.get('/problem/actchecker/%d' % checker.id)
+        checker = Checker.query.get(id)
+        self.assertTrue(checker)
+        self.assertEqual(checker.status, STATUS_ACT)
+
+        rv = self.app.get('/problem/delchecker/%d' % id)
+        self.assertFalse(Checker.query.get(id))
+
+    def create_test_group(self, problem_id, score, score_per_test, check_all):
+        return self.app.post('/problem/%d/testgroup/new' % problem_id, data=dict(
+            score=score,
+            score_per_test=score_per_test,
+            check_all=check_all
+        ), follow_redirects=True)
+
+    def test_testpair_actions(self):
+        problem = Problem(name='A+B', description='Add two numbers',
+            statement='Please do it', time_limit=1234, memory_limit=54321)
+        db.session.add(problem)
+        db.session.commit()
+
+        self.assertFalse(TestGroup.query.filter(TestGroup.problem_id == problem.id).all())
+        rv = self.create_test_group(problem.id, 42, '13', 'on')
+        self.assertEqual(rv.status_code, 403)
+        self.login('admin', 'admin')
+        rv = self.create_test_group(9001, 42, 13, 'on')
+        self.assertEqual(rv.status_code, 404)
+        rv = self.create_test_group(problem.id, '42', 13, 'on')
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(len(TestGroup.query.filter(TestGroup.problem_id == problem.id).all()), 1)
+
+        test_group = TestGroup.query.filter(TestGroup.problem_id == problem.id).first()
+        self.assertFalse(test_group.test_pairs)
+        self.assertEqual(test_group.score, 42)
+        self.assertEqual(test_group.score_per_test, 13)
+        self.assertTrue(test_group.check_all)
+
+        # Testing ZIP uploads
+        zip1 = b''.join([b'PK\x03\x04\x14\x00\x00\x00\x00\x00xx\xd5HX\xad\xfa\xf2\x03\x00',
+            b'\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00input01.tx',
+            b't2 3PK\x03\x04\x14\x00\x00\x00\x00\x00|x\xd5HRO',
+            b'\xdf\x87\x03\x00\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00input0',
+            b'2.txt5 6PK\x01\x02\x14\x03\x14\x00\x00\x00\x00\x00',
+            b'xx\xd5HX\xad\xfa\xf2\x03\x00\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00',
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x80\x01\x00\x00\x00\x00input0',
+            b'1.txtPK\x01\x02\x14\x03\x14\x00\x00\x00\x00\x00|x\xd5',
+            b'HRO\xdf\x87\x03\x00\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00\x00\x00\x00',
+            b'\x00\x00\x00\x00\x00\x80\x01,\x00\x00\x00input02.t',
+            b'xtPK\x05\x06\x00\x00\x00\x00\x02\x00\x02\x00r\x00\x00\x00X\x00',
+            b'\x00\x00\x00\x00'])
+
+        zip2 = b''.join([b'PK\x03\x04\x14\x00\x00\x00\x00\x00\xa6x\xd5HX\xad\xfa\xf2\x03\x00',
+            b'\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00input01.tx',
+            b't2 3PK\x03\x04\x14\x00\x00\x00\x00\x00\xa7x\xd5HRO',
+            b'\xdf\x87\x03\x00\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00input0',
+            b'2.txt5 6PK\x03\x04\x14\x00\x00\x00\x00\x00\xa8x',
+            b'\xd5H\xae+\xb1\x84\x01\x00\x00\x00\x01\x00\x00\x00\r\x00\x00\x00pa',
+            b'ttern01.txt5PK\x03\x04\x14\x00\x00\x00',
+            b'\x00\x00\xaax\xd5Hw\x15Z\xd6\x02\x00\x00\x00\x02\x00\x00\x00\r\x00',
+            b'\x00\x00pattern02.txt11PK\x01',
+            b'\x02\x14\x03\x14\x00\x00\x00\x00\x00\xa6x\xd5HX\xad\xfa\xf2\x03\x00\x00',
+            b'\x00\x03\x00\x00\x00\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x01\x00',
+            b'\x00\x00\x00input01.txtPK\x01\x02\x14\x03',
+            b'\x14\x00\x00\x00\x00\x00\xa7x\xd5HRO\xdf\x87\x03\x00\x00\x00\x03\x00',
+            b'\x00\x00\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x01,\x00\x00\x00',
+            b'input02.txtPK\x01\x02\x14\x03\x14\x00\x00',
+            b'\x00\x00\x00\xa8x\xd5H\xae+\xb1\x84\x01\x00\x00\x00\x01\x00\x00\x00\r',
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x01X\x00\x00\x00pat',
+            b'tern01.txtPK\x01\x02\x14\x03\x14\x00\x00\x00',
+            b'\x00\x00\xaax\xd5Hw\x15Z\xd6\x02\x00\x00\x00\x02\x00\x00\x00\r\x00',
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x01\x84\x00\x00\x00patt',
+            b'ern02.txtPK\x05\x06\x00\x00\x00\x00\x04\x00\x04',
+            b'\x00\xe8\x00\x00\x00\xb1\x00\x00\x00\x00\x00'])
+
+        zip3 = b'INVALID'
+
+        self.logout()
+        rv = self.app.post('/problem/addtestzip/%d' % test_group.id, data=dict(
+            zip_file=(BytesIO(zip1), 'zip1.zip')
+        ), follow_redirects=True)
+        self.assertEqual(rv.status_code, 403)
+
+        self.login('admin', 'admin')
+        rv = self.app.post('/problem/addtestzip/%d' % test_group.id, data=dict(
+            zip_file=(BytesIO(zip1), 'zip1.zip')
+        ), follow_redirects=True)
+
+        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
+        self.assertEqual(len(test_pairs), 2)
+        self.assertIn(b'Tests added from ZIP file', rv.data)
+        self.assertEqual(test_pairs[0].input, '2 3')
+        self.assertEqual(test_pairs[1].input, '5 6')
+        self.assertEqual(test_pairs[0].pattern, '')
+        self.assertEqual(test_pairs[1].pattern, '')
+
+        rv = self.app.post('/problem/addtestzip/%d' % test_group.id, data=dict(
+            zip_file=(BytesIO(zip2), 'zip2.zip')
+        ), follow_redirects=True)
+
+        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
+        self.assertEqual(len(test_pairs), 4)
+        self.assertIn(b'Tests added from ZIP file', rv.data)
+        self.assertEqual(test_pairs[0].input, '2 3')
+        self.assertEqual(test_pairs[1].input, '5 6')
+        self.assertEqual(test_pairs[2].input, '2 3')
+        self.assertEqual(test_pairs[3].input, '5 6')
+        self.assertEqual(test_pairs[0].pattern, '')
+        self.assertEqual(test_pairs[1].pattern, '')
+        self.assertEqual(test_pairs[2].pattern, '5')
+        self.assertEqual(test_pairs[3].pattern, '11')
+
+        rv = self.app.post('/problem/addtestzip/%d' % test_group.id, data=dict(
+            zip_file=(BytesIO(zip3), 'zip3.zip')
+        ), follow_redirects=True)
+        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
+        self.assertEqual(len(test_pairs), 4)
+        self.assertIn(b'ZIP file is corrupted', rv.data)
+
+        rv = self.app.post('/problem/addtestzip/%d' % test_group.id, follow_redirects=True)
+        self.assertIn(b'No ZIP file', rv.data)
+
+        self.logout()
+        rv = self.app.post('/problem/addtest/%d' % test_group.id, data=dict(
+            input_file=(BytesIO(b'-3 -4'), "input.txt")
+        ), follow_redirects=True)
+        self.assertEqual(rv.status_code, 403)
+
+        rv = self.app.post('/problem/deltest/%d' % test_pairs[2].id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 403)
+
+        self.login('admin', 'admin')
+        rv = self.app.post('/problem/addtest/%d' % test_group.id, data=dict(
+            input_file=(BytesIO(b'-3 -4'), "input.txt")
+        ), follow_redirects=True)
+        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
+        self.assertEqual(len(test_pairs), 5)
+        self.assertEqual(test_pairs[4].input, '-3 -4')
+        self.assertEqual(test_pairs[4].pattern, '')
+
+        rv = self.app.post('/problem/deltest/9001', follow_redirects=True)
+        self.assertEqual(rv.status_code, 404)
+
+        rv = self.app.post('/problem/deltest/%d' % test_pairs[2].id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
+        self.assertEqual(len(test_pairs), 4)
+        self.assertEqual(test_pairs[0].input, '2 3')
+        self.assertEqual(test_pairs[1].input, '5 6')
+        self.assertEqual(test_pairs[2].input, '5 6')
+        self.assertEqual(test_pairs[3].input, '-3 -4')
+        self.assertEqual(test_pairs[0].pattern, '')
+        self.assertEqual(test_pairs[1].pattern, '')
+        self.assertEqual(test_pairs[2].pattern, '11')
+        self.assertEqual(test_pairs[3].pattern, '')
+
+        self.logout()
+        rv = self.app.post('/problem/deltestgroup/%d' % test_group.id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 403)
+
+        rv = self.app.post('/problem/deltestgroup/9001')
+        self.assertEqual(rv.status_code, 404)
+
+        self.login('admin', 'admin')
+        id = test_group.id
+        rv = self.app.post('/problem/deltestgroup/%d' % test_group.id, follow_redirects=True)
+        self.assertFalse(TestGroup.query.get(id))
