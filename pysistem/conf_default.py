@@ -34,3 +34,6 @@ CHECK_THREAD_TIME = 1
 
 # Do check submissions?
 LAUNCH_CHECK_THREAD = True
+
+# Maximum upload size
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024
