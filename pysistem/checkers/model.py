@@ -8,7 +8,10 @@ import os
 from subprocess import Popen, PIPE, run, STDOUT
 try:
     from pysistem.conf import DIR
-except: pass
+except:
+    try:
+        from pysistem.conf_default import DIR
+    except: pass
 
 class Checker(db.Model):
     """A submission runner

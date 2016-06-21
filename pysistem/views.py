@@ -12,7 +12,10 @@ from pysistem.groups.model import Group
 
 try:
     from pysistem.conf import LANGUAGES
-except: pass
+except:
+    try:
+        from pysistem.conf_default import LANGUAGES
+    except: pass
 from flask_babel import gettext
 from datetime import time, date, datetime
 

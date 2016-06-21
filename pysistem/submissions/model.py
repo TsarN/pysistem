@@ -9,7 +9,10 @@ import tempfile
 import os
 try:
     from pysistem.conf import DIR
-except: pass
+except:
+    try:
+        from pysistem.conf_default import DIR
+    except: pass
 from datetime import datetime
 from flask_babel import gettext
 from time import sleep

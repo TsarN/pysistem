@@ -189,7 +189,9 @@ class PySistemApplication(Flask):
 app = PySistemApplication(__name__)
 try:
     app.config.from_object(conf)
-except: pass
+except:
+    from pysistem import conf_default
+    app.config.from_object(conf_default)
 app.config['CONFIRM_CODE'] = ''.join(random.SystemRandom().choice( \
 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789' \
 ) for _ in range(12))
