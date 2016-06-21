@@ -3,6 +3,6 @@ python:
     - "3.5"
     - "3.5-dev"
     - "nightly"
-install: "pip install flask flask-babel flask-sqlalchemy sqlalchemy-migrate msgpack-python transliterate humanize"
+install: "pip install flask flask-babel flask-sqlalchemy flask-migrate msgpack-python transliterate humanize"
 before_script: "pybabel compile -d pysistem/translations"
-script: "python -m pysistem tests:run"
+script: "python -m pysistem run tests"

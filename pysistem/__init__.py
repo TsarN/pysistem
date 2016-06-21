@@ -8,168 +8,34 @@ import threading
 import atexit
 try:
     from pysistem import conf
-    from pysistem.conf import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO
+    from pysistem.conf import SQLALCHEMY_DATABASE_URI
 except: pass
 from pysistem.submissions.const import *
 import sys
 import imp
 
 from migrate.versioning import api
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+
+import traceback
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 
 class PySistemApplication(Flask):
-    def db_create(self=None):
-        print("Creating database")
-        db.create_all()
-        try:
-            if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
-                api.create(SQLALCHEMY_MIGRATE_REPO,
-                    'pysistem')
-
-                api.version_control(
-                    SQLALCHEMY_DATABASE_URI,
-                    SQLALCHEMY_MIGRATE_REPO)
-            else:
-                api.version_control(
-                    SQLALCHEMY_DATABASE_URI,
-                    SQLALCHEMY_MIGRATE_REPO,
-                    api.version(SQLALCHEMY_MIGRATE_REPO))
-        except: pass
-        print("Done")
-
-    def db_migrate(self=None, name=None):
-        version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        if type(name) is str:
-            name = name.lower()
-            name = name.replace(' ', '_')
-        name = ('_' + name) if type(name) is str else ''
-        migration = SQLALCHEMY_MIGRATE_REPO + ('/versions/%03d%s_migration.py' % (version + 1, name))
-        tmp_module = imp.new_module('old_model')
-        old_model = api.create_model(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-
-        exec(old_model, tmp_module.__dict__)
-        script = api.make_update_script_for_model(SQLALCHEMY_DATABASE_URI,
-            SQLALCHEMY_MIGRATE_REPO, tmp_module.meta, db.metadata)
-        open(migration, "wt").write(script)
-        api.upgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        print("New migration saved as", migration)
-        print("Current database version:", version)
-
-    def db_upgrade(self=None):
-        api.upgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        print("Current database version:", version)
-
-    def db_downgrade(self=None, revision=None):
-        version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        if not revision:
-            revision = version - 1
-        api.downgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO, revision)
-        version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-        print("Current database version:", version)
-
-    def config_default(self=None):
-        from shutil import copyfile
-        copyfile(os.path.join(basedir, 'conf_default.py'), os.path.join(basedir, 'conf.py'))
-        print("Default configuration copied")
-
-    def config_gensecret(self=None):
-        with open(os.path.join(basedir, 'conf.py'), "r") as f:
-            config = f.read()
-        import re
-        regex = re.compile('^[ \t\r\n]*SECRET_KEY')
-        replacement = 'SECRET_KEY = ' + str(os.urandom(24))
-        new_config = '\n'.join([replacement if regex.match(x) else x for x in config.split('\n')])
-
-        with open(os.path.join(basedir, 'conf.py'), "w") as f:
-            f.write(new_config)
-
-        print("Done")
-
-    def tests_run(self=None):
-        from pysistem.tests import TestCase
-        import unittest
-        suite = unittest.TestLoader().loadTestsFromTestCase(TestCase)
-        result = unittest.TextTestRunner(verbosity=2).run(suite)
-        sys.exit(len(result.failures))
-
-    def start_check_thread(self=None):
+    def start_check_thread(self=None, join=False):
         check_thread_init()
         atexit.register(check_thread_interrupt)
-
-    def console_interface(self=None):
-        actions = {
-            "wsgi:start": "Start WSGI server using Werkzeug",
-            "checker:start": "Start checker thread alone",
-            "db:create": "Create database",
-            "db:migrate": """
-                Create database migration.
-                Accepts string as database migration name
-            """,
-            "db:upgrade": "Upgrade database to latest version",
-            "db:downgrade": """
-                Downgrade database.
-                Accepts integer as database revision to downgrade to
-            """,
-            "config:default": "Create default configuration",
-            "config:gensecret": "Generate new secret key and save it into conf.py",
-            "tests:run": "Run tests"
-        }
-
-        action = sys.argv[1] if len(sys.argv) > 1 else ''
-        
-        if action not in actions.keys():
-            print("Usage: <action> [parameters]")
-            print()
-            print("Actions available:")
-            max_name_len = max([len(x) for x in actions.keys()])
-            for action in sorted(actions.keys()):
-                left_column = "  " + action.ljust(max_name_len) + "  "
-                description = actions[action].split("\n")
-                description = [x for x in description if x.strip()]
-                print(left_column, description[0].strip(), sep="")
-                for desc in description[1:]:
-                    print(" " * len(left_column), desc.strip(), sep="")
-            sys.exit(1)
-
-        if action == "wsgi:start":
-            self.run()
-        elif action == "checker:start":
-            self.start_check_thread()
+        print("Checker thread started")
+        if join:
             check_thread.join()
-        elif action == "db:create":
-            self.db_create()
-        elif action == "db:migrate":
-            name = sys.argv[2] if len(sys.argv) > 2 else None
-            self.db_migrate(name)
-        elif action == "db:upgrade":
-            self.db_upgrade()
-        elif action == "db:downgrade":
-            version = sys.argv[2] if len(sys.argv) > 2 else None
-            try:
-                version = int(version)
-            except:
-                print("Database revision must be an int")
-                sys.exit(1)
-            self.db_downgrade(version)
-        elif action == "config:default":
-            self.config_default()
-        elif action == "config:gensecret":
-            self.config_gensecret()
-        elif action == "tests:run":
-            self.tests_run()
-        else:
-            print("Not implemented")
-            sys.exit(1)
 
     def make_dirs(self=None):
         for d in app.config['CREATE_DIRS']:
             if not os.path.exists(os.path.join(app.config['STORAGE'], d)):
                 os.makedirs(os.path.join(app.config['STORAGE'], d))
 
-    def run(self):
+    def run(self, *args, **kwargs):
         self.make_dirs()
         
         from pysistem.users.model import User
@@ -184,7 +50,19 @@ class PySistemApplication(Flask):
         if app.config.get('LAUNCH_CHECK_THREAD', True):
             self.start_check_thread()
 
-        return Flask.run(self)
+        try:
+            Flask.run(self, *args, **kwargs)
+            check_thread_interrupt()
+            sys.exit(0)
+        except SystemExit as e:
+            check_thread_interrupt()
+            sys.exit(e.code)
+        except:
+            tb = traceback.format_exc()
+            check_thread_interrupt()
+            print(tb)
+            print("Exception occurred, exiting")
+            sys.exit(1)
 
 app = PySistemApplication(__name__)
 try:
@@ -199,6 +77,7 @@ app.config['VERSION'] = '0.2-SNAPSHOT'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 babel = Babel(app)
 from werkzeug.contrib.cache import SimpleCache
@@ -261,7 +140,10 @@ def redirect_url(default='index'):
            request.referrer or \
            url_for(default)
 
+manager = Manager(app, with_default_commands=False)
+
 from pysistem import views, models
 
 if __name__ == "__main__":
-    app.console_interface()
+    from pysistem.commands import *
+    manager.run()

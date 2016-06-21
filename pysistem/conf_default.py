@@ -16,7 +16,6 @@ LANGUAGES = {
 }
 # Database to use
 SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(DIR, 'sistem.db')
-SQLALCHEMY_MIGRATE_REPO = os.path.join(DIR, 'db_repository')
 # For debugging
 #SQLALCHEMY_ECHO = True
 

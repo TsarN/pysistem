@@ -9,7 +9,7 @@ PySistem is contest management system written in Python 3, that uses Flask and S
  - Flask
  - Flask-Babel
  - Flask-SQLAlchemy with backend (like MySQL)
- - SQLAlchemy-migrate
+ - Flask-Migrate
  - MsgPack-Python
  - SISTEM Backend (https://github.com/TsarN/sistem-backend)
 
@@ -39,7 +39,7 @@ This will configure current terminal for virtual enviroment
 ### Installing PySistem
 Install dependencies:
 
-    $ pip install Flask Flask-Babel Flask-SQLAlchemy sqlalchemy-migrate msgpack-python gunicorn
+    $ pip install Flask Flask-Babel Flask-SQLAlchemy Flask-Migrate msgpack-python gunicorn
 
 Simply copy `pysistem` folder from repository to newly created virtual enviroment
 
@@ -90,7 +90,7 @@ Change to virtualenv directory:
 
 Create default config:
 
-    $ python3 -m pysistem config:default
+    $ python3 -m pysistem config default
 
 Compile translations:
 
@@ -98,7 +98,7 @@ Compile translations:
 
 Modify default secret key:
 
-    $ python3 -m pysistem config:gensecret
+    $ python3 -m pysistem config gensecret
 
 If you want to use MySQL as your database backend, change `pysistem/conf.py`:
 ```python
@@ -111,12 +111,12 @@ Also, make sure that you have pymysql installed:
 
 Create database:
     
-    $ python3 -m pysistem db:create
+    $ python3 -m pysistem db upgrade
     
 ### Start PySistem
 In your virtualhost terminal type
 
-    $ gunicorn pysistem:app
+    $ python3 -m pysistem run gunicorn
     
 Then, navigate to your application in browser and create admin account.
 
@@ -128,4 +128,4 @@ Then, navigate to your application in browser and create admin account.
 ## Upgrading database
 After certain updates it may become neccessary to upgrade (migrate) database. To do this, type
 
-    $ python3 -m pysistem db:upgrade
+    $ python3 -m pysistem db upgrade
