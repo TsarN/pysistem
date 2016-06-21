@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/TsarN/pysistem.svg?branch=master)](https://travis-ci.org/TsarN/pysistem)
+
 # PySistem
 
 PySistem is contest management system written in Python 3, that uses Flask and SQLAlchemy
