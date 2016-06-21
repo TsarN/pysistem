@@ -42,7 +42,7 @@ def new():
     return render_template('problems/edit.html', problem=Problem(), contest_id=contest_id)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
-@mod.route('/new/post', methods=['POST'])
+@mod.route('/new', methods=['POST'])
 def edit(id=-1):
     """Create/Update problem"""
     error = None

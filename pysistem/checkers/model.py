@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pysistem import db
+from pysistem import app, db
 from pysistem.problems.model import Problem
 
 from pysistem.submissions.const import *
@@ -50,7 +50,8 @@ class Checker(db.Model):
 
     def get_exe_path(self):
         """Return the pathname of checker's binary file"""
-        return DIR + '/storage/checkers_bin/' + str(self.id)
+        STORAGE = app.config['STORAGE']
+        return STORAGE + '/checkers_bin/' + str(self.id)
 
     def get_ext(self):
         """Get checker source file extension"""

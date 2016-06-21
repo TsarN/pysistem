@@ -73,7 +73,8 @@ class Submission(db.Model):
 
     def get_exe_path(self):
         """Get submission's executable path"""
-        return DIR + '/storage/submissions_bin/' + str(self.id)
+        STORAGE = app.config['STORAGE']
+        return STORAGE + '/submissions_bin/' + str(self.id)
 
     def get_source_path(self):
         """Get submission's source path"""

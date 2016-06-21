@@ -89,7 +89,7 @@ def new():
         contest_rulesets=contest_rulesets, group=group)
 
 @mod.route('/<int:id>/edit', methods=['GET', 'POST'])
-@mod.route('/new/post', methods=['POST'])
+@mod.route('/new', methods=['POST'])
 def edit(id=-1):
     """Create/Update contest"""
     contest = Contest.query.get(id)

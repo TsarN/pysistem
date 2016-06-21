@@ -62,7 +62,7 @@ class PySistemApplication(Flask):
         version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
         print("Current database version:", version)
 
-    def db_downgrade(self, revision=None):
+    def db_downgrade(self=None, revision=None):
         version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
         if not revision:
             revision = version - 1
@@ -70,12 +70,12 @@ class PySistemApplication(Flask):
         version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
         print("Current database version:", version)
 
-    def config_default(self):
+    def config_default(self=None):
         from shutil import copyfile
         copyfile(os.path.join(basedir, 'conf_default.py'), os.path.join(basedir, 'conf.py'))
         print("Default configuration copied")
 
-    def config_gensecret(self):
+    def config_gensecret(self=None):
         with open(os.path.join(basedir, 'conf.py'), "r") as f:
             config = f.read()
         import re
@@ -87,6 +87,13 @@ class PySistemApplication(Flask):
             f.write(new_config)
 
         print("Done")
+
+    def tests_run(self=None):
+        from pysistem.tests import TestCase
+        import unittest
+        suite = unittest.TestLoader().loadTestsFromTestCase(TestCase)
+        result = unittest.TextTestRunner(verbosity=2).run(suite)
+        sys.exit(len(result.failures))
 
     def start_check_thread(self=None):
         check_thread_init()
@@ -107,7 +114,8 @@ class PySistemApplication(Flask):
                 Accepts integer as database revision to downgrade to
             """,
             "config:default": "Create default configuration",
-            "config:gensecret": "Generate new secret key and save it into conf.py"
+            "config:gensecret": "Generate new secret key and save it into conf.py",
+            "tests:run": "Run tests"
         }
 
         action = sys.argv[1] if len(sys.argv) > 1 else ''
@@ -150,15 +158,20 @@ class PySistemApplication(Flask):
             self.config_default()
         elif action == "config:gensecret":
             self.config_gensecret()
+        elif action == "tests:run":
+            self.tests_run()
         else:
             print("Not implemented")
             sys.exit(1)
 
-    def run(self):
-        for d in conf.CREATE_DIRS:
-            if not os.path.exists(conf.DIR + d):
-                os.makedirs(conf.DIR + d)
+    def make_dirs(self=None):
+        for d in app.config['CREATE_DIRS']:
+            if not os.path.exists(os.path.join(app.config['STORAGE'], d)):
+                os.makedirs(os.path.join(app.config['STORAGE'], d))
 
+    def run(self):
+        self.make_dirs()
+        
         from pysistem.users.model import User
         if User.query.count() == 0:
             print('---- SIGN UP CONFIRMATION CODE ----')
