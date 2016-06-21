@@ -21,14 +21,17 @@
             {{ _('settings.scoreboardcachetimeout') }}
         </label>
         <div class="col-sm-8">
-            <input type="number" min="0" class="form-control" id="scoreboard_cache_timeout" name="scoreboard_cache_timeout"
-            placeholder="{{ _('settings.scoreboardcachetimeout') }}" value="{{ g.SETTINGS.get('scoreboard_cache_timeout') }}" />
+            <input type="number" min="0" class="form-control" autocomplete="off"
+            id="scoreboard_cache_timeout" name="scoreboard_cache_timeout"
+            placeholder="{{ _('settings.scoreboardcachetimeout') }}"
+            value="{{ g.SETTINGS.get('scoreboard_cache_timeout') }}" />
         </div>
 
         <div class="col-sm-offset-4 col-sm-8">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="allow_signup" {{ g.SETTINGS.get('allow_signup') and 'checked' }} />
+                    <input type="checkbox" name="allow_signup" autocomplete="off"
+                    {{ g.SETTINGS.get('allow_signup') and 'checked' }} />
                     {{ _('settings.allowsignup') }}
                 </label>
             </div>
@@ -37,7 +40,8 @@
         <div class="col-sm-offset-4 col-sm-8">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="allow_guest_view" {{ g.SETTINGS.get('allow_guest_view') and 'checked' }} />
+                    <input type="checkbox" name="allow_guest_view" autocomplete="off"
+                    {{ g.SETTINGS.get('allow_guest_view') and 'checked' }} />
                     {{ _('settings.allowguestview') }}
                 </label>
             </div>

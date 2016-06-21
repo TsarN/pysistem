@@ -49,6 +49,7 @@ class Setting(db.Model):
 
     def val(self):
         """Get self value with auto-conversion"""
+        db.session.commit()
         if self.type == SETTING_INT:
             return self.value_int
         if self.type == SETTING_STRING:
@@ -59,6 +60,7 @@ class Setting(db.Model):
 
     def get(name, default=None):
         """Global function. Get value by name"""
+        db.session.commit()
         default = DEFAULT.get(name) or default
         setting = Setting.query.get(name)
         if setting is None:
@@ -70,6 +72,7 @@ class Setting(db.Model):
 
     def set(name, value):
         """Global function. Set value"""
+        db.session.commit()
         setting = Setting.query.get(name)
         if setting:
             if type(value) is int:
