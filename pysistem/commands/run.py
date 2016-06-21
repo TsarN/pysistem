@@ -2,6 +2,7 @@
 
 from pysistem import app, manager
 from flask_script import Manager, Command, Option
+from flask import _request_ctx_stack
 
 RunCommand = Manager(usage="Start PySistem services")
 
@@ -32,6 +33,38 @@ def tests(**kwargs):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCase)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     sys.exit(len(result.failures))
+
+@RunCommand.command
+def shell():
+    """Run interactive PySistem shell"""
+    import pysistem.models
+    modules = ('checkers', 'compilers', 'contests', 'problems', 'users',
+               'submissions', 'test_pairs', 'groups', 'lessons', 'settings')
+
+    context = dict(app=_request_ctx_stack.top.app)
+
+    for module in modules:
+        mod = getattr(__import__('pysistem.%s.model' % module), module).model
+        for obj in dir(mod):
+            if not obj.startswith('_'):
+                context[obj] = getattr(mod, obj)
+
+    # Try IPython
+    try:
+        try:
+            # 0.10.x
+            from IPython.Shell import IPShellEmbed
+            ipshell = IPShellEmbed()
+            ipshell(global_ns=dict(), local_ns=context, colors='Linux')
+        except ImportError:
+            # 0.12+
+            from IPython import embed
+            embed(user_ns=context, colors='Linux')
+        return
+    except ImportError:
+        pass
+
+    code.interact(local=context)
 
 try:
     from gunicorn import version_info
