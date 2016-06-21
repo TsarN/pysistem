@@ -5,4 +5,4 @@ python:
     - "nightly"
 install: "pip install flask flask-babel flask-sqlalchemy flask-migrate msgpack-python transliterate humanize"
 before_script: "pybabel compile -d pysistem/translations"
-script: "python -m pysistem run tests"
+script: "python manage.py run tests"
