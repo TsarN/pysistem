@@ -14,7 +14,6 @@ from pysistem.submissions.const import *
 import sys
 import imp
 
-from migrate.versioning import api
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
