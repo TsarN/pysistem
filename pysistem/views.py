@@ -30,7 +30,7 @@ def before_request():
     g.now = datetime.now()
     session['language'] = get_locale()
     g.locale = session['language']
-    g.user = User()
+    g.user = User.query.get(session.get('user_id', -1)) or User()
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
     g.raw_content = False
     g.SETTINGS = SETTINGS

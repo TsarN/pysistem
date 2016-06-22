@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
-from pysistem import db
-from pysistem.submissions.const import *
-import msgpack
+
+"""Problems model"""
+
 import gzip
 import io
 import hashlib
+
+import msgpack
+
+from pysistem import db
+from pysistem.submissions.const import RESULT_IE, RESULT_UNKNOWN, RESULT_OK
+from pysistem.submissions.const import STATUS_ACT, STATUS_DONE, STATUS_CHECKING
 from pysistem.compilers.model import Compiler
 
 EXPORTVER = 3
@@ -39,9 +45,10 @@ class Problem(db.Model):
     checkers = db.relationship('Checker', cascade='all,delete', backref='problem')
 
     contests = db.relationship('ContestProblemAssociation',
-        back_populates='problem')
+                               back_populates='problem')
 
-    def __init__(self, name=None, description=None, statement=None, time_limit=1000, memory_limit=65536):
+    def __init__(self, name=None, description=None, statement=None,
+                 time_limit=1000, memory_limit=65536):
         self.name = name
         self.description = description
         self.statement = statement
@@ -118,7 +125,6 @@ class Problem(db.Model):
             return attempted.get_str_result(color=color, score=score, only_color=only_color)
         else:
             return ""
-        
 
     def export_gzip(self):
         """Returns binary data in gzip format that accepts Problem.import_gzip"""
@@ -141,8 +147,7 @@ class Problem(db.Model):
                 "score": test_group.score,
                 "score_per_test": test_group.score_per_test,
                 "check_all": test_group.check_all
-            }
-            for test_group in self.test_groups],
+            }               for test_group in self.test_groups],
             'version': EXPORTVER
         }, use_bin_type=True)
 
@@ -179,9 +184,11 @@ class Problem(db.Model):
                 if version in [1, 2]:
                     compiler = Compiler.query.filter(Compiler.lang == checker['lang']).first()
                 else:
-                    compiler = Compiler.query.filter(Compiler.autodetect == checker['compiler']).first()
+                    compiler = Compiler.query.filter(
+                               Compiler.autodetect == checker['compiler']).first()
                     if not compiler:
-                        compiler = Compiler.query.filter(Compiler.lang == checker['compiler']).first()
+                        compiler = Compiler.query.filter(
+                                   Compiler.lang == checker['compiler']).first()
                 if compiler:
                     c.compiler_id = compiler.id
                 db.session.add(c)
@@ -216,13 +223,13 @@ class Problem(db.Model):
 
     def transliterate_name(self):
         """Transliterate this problem's name to English"""
-        fallback = 'problem' + str(self.id)
         try:
             from transliterate import detect_language, translit
             import unicodedata
             import re
-        except:
-            return fallback
+        except ImportError:
+            return 'problem' + str(self.id)
+
         language_code = detect_language(self.name)
         trans = self.name
         if language_code:
@@ -230,8 +237,8 @@ class Problem(db.Model):
         slug = unicodedata.normalize('NFKD', trans) \
                           .encode('ascii', 'ignore') \
                           .decode('ascii')
-        slug = re.sub('[^\w\s-]', '', slug).strip().lower()
-        return re.sub('[-\s]+', '-', slug) or fallback
+        slug = re.sub(r'[^\w\s-]', '', slug).strip().lower()
+        return re.sub(r'[-\s]+', '-', slug) or ('problem' + str(self.id))
 
     def get_max_score(self):
         """Get problem's maximum achievable score"""

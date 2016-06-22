@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
-from pysistem import db, app
-from flask import session, g
+
+"""User model"""
+
 import hashlib
-import base64
-import time
+
+from flask import session, g
 from flask_babel import gettext
-from pysistem.groups.model import Group, GroupUserAssociation, GroupContestAssociation
+
+from pysistem.groups.model import GroupUserAssociation, GroupContestAssociation
 from pysistem.problems.model import Problem
 from pysistem.contests.model import Contest
+from pysistem import db, app
 
 class User(db.Model):
     """Registred user - participant or admin
@@ -37,20 +40,8 @@ class User(db.Model):
     groups = db.relationship('GroupUserAssociation', back_populates='user')
     lessons = db.relationship('LessonUserAssociation', back_populates='user')
 
-    def __init__(self, username=None, password=None, first_name=None, last_name=None, email=None, role='user'):
-        if username is None:
-            id = session.get('user_id', None)
-            if id is not None:
-                q = User.query.filter(User.id == id).all()
-                if len(q) > 0:
-                    self.id = id
-                    self.username = q[0].username
-                    self.password = q[0].password
-                    self.first_name = q[0].first_name
-                    self.last_name = q[0].last_name
-                    self.email = q[0].email
-                    self.role = q[0].role
-                    return
+    def __init__(self, username=None, password=None, first_name=None,
+                 last_name=None, email=None, role='user'):
         self.username = username
         self.password = User.signpasswd(username, password)
         self.first_name = first_name
@@ -65,6 +56,7 @@ class User(db.Model):
         """Is this user a guest?"""
         return self.id is None
 
+    @staticmethod
     def auth(username, password):
         """Load user identified by 'username' and 'password'
         Returns:
@@ -81,11 +73,12 @@ class User(db.Model):
         else:
             return False, gettext('auth.login.invalidcredentials')
 
+    @staticmethod
     def signpasswd(username, password):
         """Generate password hash from username, password and application's secret key"""
         if password is None:
             return 'x'
-        if type(username) is not str or type(password) is not str: # pragma: no cover
+        if not isinstance(username, str) or not isinstance(password, str): # pragma: no cover
             raise TypeError("Two arguments required: (str, str)")
         hasher = hashlib.new('sha256')
         hasher.update(str.encode(password))
@@ -93,6 +86,7 @@ class User(db.Model):
         hasher.update(app.secret_key)
         return hasher.hexdigest()
 
+    @staticmethod
     def exists(username):
         """Check if user by this username exists"""
         user = User.query.filter(db.func.lower(User.username) == db.func.lower(username)).first()
@@ -133,55 +127,43 @@ class User(db.Model):
 
         group = kwargs.get('group')
         if group:
-            if type(group) is not int:
+            if not isinstance(group, int):
                 group_id = group.id
             else:
                 group_id = group
-            if group_id in admin_groups_ids:
-                return True
-            else:
-                return False
+            return group_id in admin_groups_ids
 
         contest = kwargs.get('contest')
         if contest:
-            if type(contest) is not int:
+            if not isinstance(contest, int):
                 contest_id = contest.id
             else:
                 contest_id = contest
-            if GroupContestAssociation.query.filter(db.and_( \
+            return bool(GroupContestAssociation.query.filter(db.and_( \
                 GroupContestAssociation.contest_id == contest_id, \
-                GroupContestAssociation.group_id.in_(admin_groups_ids))).first():
-                return True
-            else:
-                return False
+                GroupContestAssociation.group_id.in_(admin_groups_ids))).first())
 
         problem = kwargs.get('problem')
         if problem:
-            if type(problem) is not int:
+            if not isinstance(problem, int):
                 problem_id = problem.id
             else:
                 problem_id = problem
-            if Problem.query.filter(db.and_( \
+            return bool(Problem.query.filter(db.and_( \
                 Problem.id == problem_id, \
                 Problem.contests.any(Contest.groups.any( \
-                GroupContestAssociation.group_id.in_(admin_groups_ids))))).first():
-                return True
-            else:
-                return False
+                GroupContestAssociation.group_id.in_(admin_groups_ids))))).first())
 
         user = kwargs.get('user')
         if user:
-            if type(user) is not int:
+            if not isinstance(user, int):
                 user_id = user.id
             else:
                 user_id = user
-            if GroupContestAssociation.query.filter(db.and_( \
+            return bool(GroupContestAssociation.query.filter(db.and_( \
                 GroupUserAssociation.user_id == user_id, \
                 GroupUserAssociation.group_id.in_(admin_groups_ids) \
-                )).first():
-                return True
-            else:
-                return False
+                )).first())
 
         test_group = kwargs.get('test_group')
         if test_group:
@@ -197,7 +179,7 @@ class User(db.Model):
 
         submission = kwargs.get('submission')
         if submission:
-            if type(submission) is list:
+            if isinstance(submission, list):
                 submission = submission[0]
             return self.is_admin(user=submission.user)
 

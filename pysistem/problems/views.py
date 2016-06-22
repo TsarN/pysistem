@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db, redirect_url
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
+
+"""Problems views"""
+
+from zipfile import ZipFile
+
+from flask import render_template, g, flash, redirect, url_for, request, Blueprint, Response
+from flask_babel import gettext
+
+from pysistem import db, redirect_url
 from pysistem.problems.model import Problem
 from pysistem.problems.decorators import yield_problem, guard_problem
 from pysistem.test_pairs.decorators import yield_test_pair, yield_test_group
@@ -12,10 +19,7 @@ from pysistem.compilers.model import Compiler
 from pysistem.users.model import User
 from pysistem.contests.model import Contest, ContestProblemAssociation
 from pysistem.users.decorators import requires_login, requires_admin
-from flask_babel import gettext
-from werkzeug.utils import secure_filename
-from zipfile import ZipFile
-from pysistem.submissions.const import *
+from pysistem.submissions.const import STATUS_CWAIT
 
 mod = Blueprint('problems', __name__, url_prefix='/problem')
 
@@ -140,14 +144,15 @@ def export(problem_id, problem):
     """
     content = problem.export_gzip()
     response = Response(content, mimetype='application/gzip')
-    response.headers['Content-Disposition'] = 'attachment; filename=%s.pysistem.gz' % problem.transliterate_name()
+    response.headers['Content-Disposition'] = 'attachment; filename=%s.pysistem.gz' \
+                                              % problem.transliterate_name()
     return response
 
 @mod.route('/import', methods=['POST'])
 @requires_admin
 def import_():
     """Create new problem from gzip-encoded file
-    
+
     POST arguments:
     [contest_id] -- Contest's ID
 
@@ -188,7 +193,7 @@ def import_():
 @yield_problem()
 @requires_admin(problem="problem")
 def delete(problem_id, problem):
-    """Delete problem from database    
+    """Delete problem from database
 
     ROUTE arguments:
     problem_id -- Problem's ID
@@ -196,9 +201,9 @@ def delete(problem_id, problem):
     Permissions required:
     Problem Administrator
     """
-    for x in ContestProblemAssociation.query.filter( \
+    for assoc in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.problem_id == problem.id):
-        db.session.delete(x)
+        db.session.delete(assoc)
     db.session.delete(problem)
     db.session.commit()
     return redirect(url_for('index'))
@@ -207,7 +212,7 @@ def delete(problem_id, problem):
 @yield_problem()
 @requires_admin(problem="problem")
 def tests(problem_id, problem):
-    """View and edit problem's test pairs    
+    """View and edit problem's test pairs
 
     ROUTE arguments:
     problem_id -- Problem's ID
@@ -223,7 +228,7 @@ def tests(problem_id, problem):
 @yield_problem()
 @requires_admin(problem="problem")
 def update_test_group(problem_id, problem, group_id=None):
-    """Update/Create test pair group    
+    """Update/Create test pair group
 
     ROUTE arguments:
     problem_id -- Problem's ID
@@ -250,7 +255,7 @@ def update_test_group(problem_id, problem, group_id=None):
 @yield_test_group()
 @requires_admin(test_group="test_group")
 def delete_test_group(test_group_id, test_group):
-    """Delete test pair group   
+    """Delete test pair group
 
     ROUTE arguments:
     test_group_id -- Problem's ID
@@ -267,7 +272,7 @@ def delete_test_group(test_group_id, test_group):
 @yield_test_pair()
 @requires_admin(test_pair="test")
 def deltest(test_pair_id, test):
-    """Delete test pair  
+    """Delete test pair
 
     ROUTE arguments:
     test_pair_id -- TestPair's ID
@@ -284,7 +289,7 @@ def deltest(test_pair_id, test):
 @yield_test_group()
 @requires_admin(test_group="test_group")
 def addtest(test_group_id, test_group):
-    """Create new test in test group   
+    """Create new test in test group
 
     ROUTE arguments:
     test_group_id -- TestGroup's ID
@@ -321,7 +326,7 @@ def addtest(test_group_id, test_group):
 @yield_test_group()
 @requires_admin(test_group="test_group")
 def addtestzip(test_group_id, test_group):
-    """Create many tests in test group from ZIP file   
+    """Create many tests in test group from ZIP file
 
     ROUTE arguments:
     test_group_id -- TestGroup's ID
@@ -338,23 +343,23 @@ def addtestzip(test_group_id, test_group):
         flash('::warning ' + gettext('problems.addtestzip.inputmissing'))
         return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
     try:
-        assert(zip_file)
-        zf = ZipFile(zip_file.stream, mode="r")
-        input_names = sorted(list(filter(lambda x: x.find('input') != -1, zf.namelist())))
-        pattern_names = sorted(list(filter(lambda x: x.find('pattern') != -1, zf.namelist())))
+        assert zip_file
+        zipf = ZipFile(zip_file.stream, mode="r")
+        input_names = sorted([x for x in zipf.namelist() if 'input' in x])
+        pattern_names = sorted([x for x in zipf.namelist() if 'pattern' in x])
 
         for i in range(len(input_names)):
-            inp = zf.read(input_names[i]).decode()
+            inp = zipf.read(input_names[i]).decode()
             if len(pattern_names) <= i:
                 pat = ""
             else:
-                pat = zf.read(pattern_names[i]).decode()
+                pat = zipf.read(pattern_names[i]).decode()
 
             test_group.test_pairs.append(TestPair(inp, pat))
         db.session.commit()
         flash(gettext('problems.addtestzip.success'))
         return redirect(url_for('problems.tests'), problem_id=test_group.problem_id)
-    except: 
+    except:
         flash('::danger ' + gettext('problems.addtestzip.invalid'))
         return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
 
@@ -362,7 +367,7 @@ def addtestzip(test_group_id, test_group):
 @yield_problem()
 @requires_admin(problem="problem")
 def checkers(problem_id, problem):
-    """View and edit problem's checkers   
+    """View and edit problem's checkers
 
     ROUTE arguments:
     problem_id -- Problem's ID
@@ -373,7 +378,7 @@ def checkers(problem_id, problem):
     checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
     compilers = Compiler.query.all()
     return render_template('problems/checkers.html', problem=problem,
-        checkers=checkers, compilers=compilers)
+                           checkers=checkers, compilers=compilers)
 
 @mod.route('/<int:problem_id>/addchecker', methods=['POST'])
 @yield_problem()
@@ -435,7 +440,7 @@ def delchecker(checker_id, checker):
 @yield_checker()
 @requires_admin(checker="checker")
 def actchecker(checker_id, checker):
-    """Make chekcer active    
+    """Make chekcer active
 
     ROUTE arguments:
     checker_id -- Checker's ID
@@ -467,7 +472,7 @@ def checkercompilelog(checker_id, checker):
 @yield_problem()
 @guard_problem()
 def submissions(problem_id, problem, username=None):
-    """View user's submissions or submit new 
+    """View user's submissions or submit new
 
     ROUTE arguments:
     problem_id -- Problem's ID
@@ -527,6 +532,6 @@ def submissions(problem_id, problem, username=None):
         attempted_users = User.query.filter(User.submissions.any(
             Submission.problem_id == problem.id)).all()
 
-    return render_template('problems/submissions.html', \
-        problem=problem, compilers=compilers, rendered_subs=rendered_subs,
-        attempted_users=attempted_users, user=user)
+    return render_template('problems/submissions.html',
+                           problem=problem, compilers=compilers, rendered_subs=rendered_subs,
+                           attempted_users=attempted_users, user=user)

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db, redirect_url, cache
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
+
+"""Server settings views"""
+
+from pysistem import db
+from flask import render_template, g, flash, redirect, url_for, request, Blueprint
 from flask_babel import gettext
 from pysistem.users.decorators import requires_admin
 import re

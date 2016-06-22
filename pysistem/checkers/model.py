@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
+
+"""Checker models"""
+
+import tempfile
+import os
+from subprocess import Popen, PIPE, STDOUT
+
 from pysistem import app, db
 from pysistem.problems.model import Problem
 
-from pysistem.submissions.const import *
-import tempfile
-import os
-from subprocess import Popen, PIPE, run, STDOUT
+from pysistem.submissions.const import STR_RESULT, STR_STATUS, STATUS_CWAIT
+from pysistem.submissions.const import STATUS_WAIT, STATUS_COMPILEFAIL, STATUS_DONE
+from pysistem.submissions.const import STATUS_ACT, STATUS_CHECKING, STATUS_COMPILING
+from pysistem.submissions.const import RESULT_OK, RESULT_IE, RESULT_SV, RESULT_ML
+from pysistem.submissions.const import RESULT_TL, RESULT_RE, RESULT_WA, RESULT_PE
+
 try:
     from pysistem.conf import DIR
 except: # pragma: no cover
-    try:
-        from pysistem.conf_default import DIR
-    except: pass
+    from pysistem.conf_default import DIR
 
 class Checker(db.Model):
     """A submission runner
@@ -43,7 +50,7 @@ class Checker(db.Model):
         self.status = STATUS_CWAIT
         self.compile_log = ''
 
-        if type(problem) is int: # pragma: no cover
+        if isinstance(problem, int): # pragma: no cover
             problem = Problem.query.get(problem)
 
         self.problem = problem
@@ -78,8 +85,8 @@ class Checker(db.Model):
         self.status = STATUS_COMPILING
         db.session.commit()
 
-        with open(self.get_src_path(), "w") as f:
-            f.write(self.source)
+        with open(self.get_src_path(), "w") as file:
+            file.write(self.source)
 
         success, stdout = self.compiler.compile(self.get_src_path(), self.get_exe_path())
 
@@ -117,16 +124,15 @@ class Checker(db.Model):
         submission -- Submission object for checking
         test -- TestPair object for checking
 
-        Returns: 
+        Returns:
         Tuple: (Checker output, Submission output)
 
         """
         submission.current_test_id = test.id
-        cstdout, cstderr = (b'', b'')
-        result, stdout, stderr = submission.run(test.input,
-            submission.problem.time_limit, submission.problem.memory_limit,
-            commit_waiting=False)
-        
+        cstdout = b''
+        result, stdout, stderr = submission.run(test.input, submission.problem.time_limit,
+                                                submission.problem.memory_limit,
+                                                commit_waiting=False)
         subres = RESULT_OK
 
         if result & 8:
@@ -153,24 +159,24 @@ class Checker(db.Model):
             with open(input_path, 'w') as input_file, \
                  open(output_path, 'w') as output_file, \
                  open(pattern_path, 'w') as pattern_file:
-                 print(test.input, file=input_file)
-                 print(test.pattern, file=pattern_file)
-                 print(stdout.decode(), file=output_file)
+                print(test.input, file=input_file)
+                print(test.pattern, file=pattern_file)
+                print(stdout.decode(), file=output_file)
 
             cmd = [self.get_exe_path(), input_path, output_path, pattern_path]
-            p = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            cstdout, cstderr = p.communicate()
-            r = p.returncode
+            proc = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            cstdout, cstderr = proc.communicate()
+            returncode = proc.returncode
 
             os.remove(input_path)
             os.remove(output_path)
             os.remove(pattern_path)
 
-            if r in [0, 0xAC]:
+            if returncode in [0, 0xAC]:
                 subres = RESULT_OK
-            elif r in [1, 0xAB]:
+            elif returncode in [1, 0xAB]:
                 subres = RESULT_WA
-            elif r in [2, 0xAA]:
+            elif returncode in [2, 0xAA]:
                 subres = RESULT_PE
             else:
                 subres = RESULT_IE

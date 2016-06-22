@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+
+"""Database setting storage backend"""
+
 from pysistem import db
-from flask_babel import gettext
 
 SETTING_INT = 1
 SETTING_STRING = 2
@@ -32,13 +34,13 @@ class Setting(db.Model):
 
     def __init__(self, name, value=0):
         self.name = name
-        if type(value) is int:
+        if isinstance(value, int):
             self.type = SETTING_INT
             self.value_int = value
-        elif type(value) is bool:
+        elif isinstance(value, bool):
             self.type = SETTING_BOOL
             self.value_int = int(value)
-        elif type(value) is str:
+        elif isinstance(value, str):
             self.type = SETTING_STRING
             self.value_string = value
         else:
@@ -58,6 +60,7 @@ class Setting(db.Model):
             return bool(self.value_int)
         return None
 
+    @staticmethod
     def get(name, default=None):
         """Global function. Get value by name"""
         db.session.commit()
@@ -70,18 +73,19 @@ class Setting(db.Model):
             return default
         return value
 
+    @staticmethod
     def set(name, value):
         """Global function. Set value"""
         db.session.commit()
         setting = Setting.query.get(name)
         if setting:
-            if type(value) is int:
+            if isinstance(value, int):
                 setting.type = SETTING_INT
                 setting.value_int = value
-            elif type(value) is str:
+            elif isinstance(value, str):
                 setting.type = SETTING_STRING
                 setting.value_string = value
-            elif type(value) is bool:
+            elif isinstance(value, bool):
                 setting.type = SETTING_BOOL
                 setting.value_int = int(value)
             else:

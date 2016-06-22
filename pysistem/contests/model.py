@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from pysistem import db
+
+"""Contest models"""
+
 from datetime import datetime
+
 from flask import g
-from flask_babel import gettext
+
+from pysistem import db
 
 class ContestProblemAssociation(db.Model):
     """Helper class to associate contests and problems between each other
@@ -19,9 +23,9 @@ class ContestProblemAssociation(db.Model):
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'), primary_key=True)
     prefix = db.Column(db.String(8))
     contest = db.relationship('Contest',
-        back_populates='problems')
+                              back_populates='problems')
     problem = db.relationship('Problem',
-        back_populates='contests')
+                              back_populates='contests')
 
     def __init__(self, prefix=None):
         self.prefix = prefix or ''
@@ -63,11 +67,13 @@ class Contest(db.Model):
     unfreeze_after_end = db.Column(db.Boolean)
 
     problems = db.relationship('ContestProblemAssociation',
-        back_populates='contest', order_by='ContestProblemAssociation.prefix')
+                               back_populates='contest',
+                               order_by='ContestProblemAssociation.prefix')
     groups = db.relationship('GroupContestAssociation', back_populates='contest')
     lessons = db.relationship('Lesson', cascade='all,delete', backref='contest')
 
-    def __init__(self, name=None, rules='acm', start=None, end=None, freeze=None, unfreeze_after_end=False):
+    def __init__(self, name=None, rules='acm', start=None, end=None,
+                 freeze=None, unfreeze_after_end=False):
         self.name = name
         self.rules = rules if rules in contest_rulesets.keys() else 'acm'
         self.start = start
@@ -100,7 +106,7 @@ class Contest(db.Model):
 
     def rate_user(self, user, do_freeze=True):
         """Get user's score in contests"""
-        if do_freeze:   
+        if do_freeze:
             freeze = self.get_freeze_time()
         else:
             freeze = None
@@ -112,11 +118,11 @@ class Contest(db.Model):
         else:
             solved, penalty = 0, 0
             for problem in self.problems:
-                s = problem.user_succeed(user, freeze=freeze)
-                if s[0]:
+                succ = problem.user_succeed(user, freeze=freeze)
+                if succ[0]:
                     solved += 1
                     penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
-                    penalty += max(0, (s[1] - self.start).total_seconds() // 60)
+                    penalty += max(0, (succ[1] - self.start).total_seconds() // 60)
             return solved, int(penalty)
 
 contest_rulesets = {

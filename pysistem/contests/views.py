@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db, redirect_url, cache
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
+
+"""Contest views"""
+
+from datetime import datetime
+
+from flask import render_template, g, flash, redirect, url_for, request, Blueprint
 from flask_babel import gettext
+
+from pysistem import db, redirect_url, cache
 from pysistem.contests.model import Contest, ContestProblemAssociation, contest_rulesets
 from pysistem.users.model import User
 from pysistem.problems.model import Problem
-from pysistem.users.decorators import requires_login, requires_admin
+from pysistem.users.decorators import requires_admin
 from pysistem.contests.decorators import yield_contest
 from pysistem.problems.decorators import yield_problem
-from datetime import datetime
 from pysistem.groups.model import Group, GroupContestAssociation, GroupUserAssociation
 
 mod = Blueprint('contests', __name__, url_prefix='/contest')
@@ -78,7 +83,7 @@ def problemprefix(contest_id, problem_id, contest, problem):
         ContestProblemAssociation.contest_id == contest_id,
         ContestProblemAssociation.problem_id == problem_id)).first()
     assoc.prefix = request.values.get('prefix', assoc.prefix)
-    db.session.commit();
+    db.session.commit()
     if request.method == 'POST':
         return 'success'
     else:
@@ -100,7 +105,8 @@ def problems(contest_id, contest):
         addable_problems = \
         Problem.query.filter(~Problem.id.in_([x.id for x in contest.problems])).all()
         addable_problems = [x for x in addable_problems if g.user.is_admin(problem=x)]
-    return render_template('contests/problems.html', contest=contest, addable_problems=addable_problems)
+    return render_template('contests/problems.html', contest=contest,
+                           addable_problems=addable_problems)
 
 @mod.route('/new')
 @requires_admin
@@ -129,7 +135,7 @@ def new():
             return render_template('errors/403.html'), 403
 
     return render_template('contests/edit.html', contest=Contest(),
-        contest_rulesets=contest_rulesets, group=group)
+                           contest_rulesets=contest_rulesets, group=group)
 
 @mod.route('/<int:contest_id>/edit', methods=['GET', 'POST'])
 @mod.route('/new', methods=['POST'])
@@ -255,7 +261,8 @@ def edit(contest_id=-1):
     del contest_groups_map
 
     return render_template('contests/edit.html', contest=contest,
-        error=error, contest_rulesets=contest_rulesets, admin_groups=admin_groups)
+                           error=error, contest_rulesets=contest_rulesets,
+                           admin_groups=admin_groups)
 
 @mod.route('/<int:contest_id>/delete')
 @yield_contest()
@@ -317,7 +324,8 @@ def scoreboard(contest_id, contest):
                 solved_map[problem.id] = {
                     "succeed": succeed,
                     "time": format_time(time),
-                    "failed": problem.get_user_failed_attempts(user, freeze=contest.get_freeze_time())
+                    "failed": problem.get_user_failed_attempts(
+                              user, freeze=contest.get_freeze_time())
                 }
             if add_user:
                 users.append({
@@ -327,9 +335,9 @@ def scoreboard(contest_id, contest):
                     "is_solved": solved_map
                 })
         if contest.rules == 'acm':
-            users.sort(key=lambda x:(-x['score'][0], x['score'][1]))
+            users.sort(key=lambda x: (-x['score'][0], x['score'][1]))
         else:
-            users.sort(key=lambda x:(-x['score'][0]))
+            users.sort(key=lambda x: (-x['score'][0]))
 
         # Calculating fair places
         if users:
@@ -356,16 +364,16 @@ def scoreboard(contest_id, contest):
                     users[j]['place'] += '-' + str(user_len)
 
         rawscore = (render_template('contests/raw_scoreboard.html',
-            contest=contest, problems=problems, users=users), g.now)
+                                    contest=contest, problems=problems, users=users), g.now)
         cache.set(cache_name, rawscore, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
     if request.args.get('printing'):
         return render_template('contests/printing_scoreboard.html',
-            scoreboard=rawscore[0])
+                               scoreboard=rawscore[0])
     return render_template('contests/scoreboard.html',
-        scoreboard=rawscore[0], contest=contest, updated=rawscore[1])
+                           scoreboard=rawscore[0], contest=contest, updated=rawscore[1])
 
-@mod.route('/list')
-def list():
+@mod.route('/list', endpoint="list")
+def listcontests():
     """List active contests
 
     Permissions required:

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, db
 import subprocess
 import tempfile
 import hashlib
 import os
 import shlex
+
+from pysistem import app, db
 
 class Compiler(db.Model):
     """A submission runner backend
@@ -30,8 +31,8 @@ class Compiler(db.Model):
     autodetect = db.Column(db.String(16))
     executable = db.Column(db.String(80))
 
-    submissions = db.relationship('Submission', cascade = "all,delete", backref='compiler')
-    checkers = db.relationship('Checker', cascade = "all,delete", backref='compiler')
+    submissions = db.relationship('Submission', cascade="all,delete", backref='compiler')
+    checkers = db.relationship('Checker', cascade="all,delete", backref='compiler')
 
     def __init__(self, name=None, lang=None, cmd_compile=None, cmd_run=None):
         self.name = name
@@ -67,32 +68,33 @@ class Compiler(db.Model):
         stdin -- stdin contents to pass to program
 
         Returns:
-        Tuple: (Exit code: see runsbox(1), Program's stdout, Program's stderr: currently empty bytestring)
+        Tuple: (Exit code: see runsbox(1), Program's stdout, Program's stderr: b'')
         """
         hasher = hashlib.new('md5')
         hasher.update(str.encode(exe))
-        input_path = tempfile.gettempdir() + '/pysistem_runner_input_' + str(self.id) + hasher.hexdigest()
+        dig = hasher.hexdigest()
+        input_path = tempfile.gettempdir() + '/pysistem_runner_input_%d%s' % (self.id, dig)
 
         with open(input_path, 'w') as input_file:
             input_file.write(stdin)
 
-        output_path = tempfile.gettempdir() + '/pysistem_runner_output_' + str(self.id) + hasher.hexdigest()
+        output_path = tempfile.gettempdir() + '/pysistem_runner_output_%d%s' % (self.id, dig)
 
         cmd = shlex.split(self.cmd_run.replace('%exe%', exe).replace('%src%', src_path))
         cmd = ['runsbox', str(time_limit), str(memory_limit), input_path, output_path] + cmd
 
         if os.path.exists('/SANDBOX'): # pragma: no cover
-            p = subprocess.Popen(cmd, cwd='/SANDBOX')
+            proc = subprocess.Popen(cmd, cwd='/SANDBOX')
         else:  # pragma: no cover
-            p = subprocess.Popen(cmd)
-        p.wait()
+            proc = subprocess.Popen(cmd)
+        proc.wait()
         stdout = b''
         with open(output_path, "rb") as output_file:
             stdout = output_file.read()
-        
+
         os.remove(input_path)
         os.remove(output_path)
-        return (p.returncode, stdout, b'')
+        return (proc.returncode, stdout, b'')
 
     def is_available(self):
         """Check if compiler is available on this machine"""
@@ -100,10 +102,7 @@ class Compiler(db.Model):
         path = os.environ['PATH']
         if app.config.get('PATH_EXTRA'): # pragma: no cover
             path = path + os.pathsep + os.pathsep.join(app.config.get('PATH_EXTRA'))
-        if (find_executable(self.executable, path=path)):
-            return True
-        else:  # pragma: no cover
-            return False
+        return bool(find_executable(self.executable, path=path))
 
 detectable_compilers = {
     "gcc": {
@@ -125,8 +124,10 @@ detectable_compilers = {
         "executable": "fpc",
         "lang": "pas",
         "find_version": "%s -iV",
-        "build": "cd `dirname __src__`; mkdir -p __src___WORK && __compiler__ -Mdelphi __src__ -FE__src___WORK \
-        && cp __src___WORK/`basename __src__ .pas` __exe__; X=$?; rm -rf __src___WORK; exit $X"
+        "build": """cd `dirname __src__`; mkdir -p __src___WORK &&
+        __compiler__ -Mdelphi __src__ -FE__src___WORK &&
+        cp __src___WORK/`basename __src__ .pas` __exe__;
+        X=$?; rm -rf __src___WORK; exit $X"""
     },
     "python2.6": {
         "name": "Python %s",
@@ -198,19 +199,20 @@ def detect_compilers():
                     .replace("__src__", "%src%") \
                     .replace("__exe__", "%exe%")
             if compiler.get('find_version'):
-                p = subprocess.Popen(compiler['find_version'] % executable,
-                    shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                ver = p.communicate()[0].decode().strip(' \t\n\r')
+                proc = subprocess.Popen(compiler['find_version'] % executable,
+                                     shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                ver = proc.communicate()[0].decode().strip(' \t\n\r')
             else:
                 ver = "" # pragma: no cover
 
             name = compiler['name'] % ver
-            c = Compiler.query.filter(Compiler.autodetect == compilerid).first() or Compiler()
-            c.name = name
-            c.lang = compiler.get('lang')
-            c.cmd_compile = build
-            c.cmd_run = run
-            c.autodetect = compilerid
-            c.executable = compiler['executable']
-            db.session.add(c)
+            comp = Compiler.query.filter(Compiler.autodetect == compilerid) \
+                                     .first() or Compiler()
+            comp.name = name
+            comp.lang = compiler.get('lang')
+            comp.cmd_compile = build
+            comp.cmd_run = run
+            comp.autodetect = compilerid
+            comp.executable = compiler['executable']
+            db.session.add(comp)
     db.session.commit()

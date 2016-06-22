@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
+
+"""User views"""
+
 import re
+
+from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
+from flask_babel import gettext
+
+from pysistem import app, db
 from pysistem.users.model import User
 from pysistem.submissions.model import Submission
 from pysistem.users.decorators import requires_guest, requires_login
-from flask_babel import gettext
 from pysistem.groups.model import Group, GroupUserAssociation
 
 mod = Blueprint('users', __name__, url_prefix='/user')
@@ -85,7 +90,7 @@ def profile(username=None):
     submissions = Submission.query.filter(
         Submission.user_id == user.id).all()
     rendered_subs = render_template('submissions/list.html',
-        submissions=submissions, show_problem=True)
+                                    submissions=submissions, show_problem=True)
     return render_template('users/profile.html', user=user, rendered_subs=rendered_subs)
 
 @mod.route('/<username>/password', methods=['GET', 'POST'])
@@ -148,15 +153,15 @@ def edit_profile(username=None):
             if g.user.is_admin():
                 for group in groups:
                     radio = request.form.get('group-%d' % group.id, "none")
-                    ch = (radio == "none")
+                    checked = (radio == "none")
                     role = 'admin' if (radio == 'admin') else 'user'
                     assoc = GroupUserAssociation.query.filter(db.and_( \
                         GroupUserAssociation.user_id == user.id, \
                         GroupUserAssociation.group_id == group.id \
                         )).first()
-                    if assoc and ch:
+                    if assoc and checked:
                         db.session.delete(assoc)
-                    if not ch:
+                    if not checked:
                         assoc = assoc or GroupUserAssociation()
                         assoc.role = role
                         assoc.user_id = user.id
