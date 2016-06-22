@@ -19,7 +19,16 @@ mod = Blueprint('contests', __name__, url_prefix='/contest')
 @requires_admin(contest="contest")
 @requires_admin(problem="problem")
 def linkwith(contest_id, problem_id, contest, problem):
-    """Add problem to contest"""
+    """Add problem to contest
+
+    ROUTE arguments:
+    contest_id -- Contest's ID
+    problem_id -- Problem's ID
+
+    Permissions required:
+    Contest Administrator
+    Problem Administrator
+    """
     assoc = ContestProblemAssociation()
     assoc.contest = contest
     assoc.problem = problem
@@ -32,7 +41,15 @@ def linkwith(contest_id, problem_id, contest, problem):
 @requires_admin(contest="contest")
 @yield_problem(field='problem_id')
 def unlinkwith(contest_id, problem_id, contest, problem):
-    """Remove problem from contest"""
+    """Remove problem from contest
+
+    ROUTE arguments:
+    contest_id -- Contest's ID
+    problem_id -- Problem's ID
+
+    Permissions required:
+    Contest Administrator
+    """
     assoc = ContestProblemAssociation.query.filter(db.and_(
         ContestProblemAssociation.contest_id == contest_id,
         ContestProblemAssociation.problem_id == problem_id)).first()
@@ -42,10 +59,21 @@ def unlinkwith(contest_id, problem_id, contest, problem):
 
 @mod.route('/<int:contest_id>/problemprefix/<int:problem_id>', methods=['GET', 'POST'])
 @yield_contest()
-@requires_admin(contest="id")
+@requires_admin(contest="contest_id")
 @yield_problem(field="problem_id")
 def problemprefix(contest_id, problem_id, contest, problem):
-    """Update problem prefix in contest"""
+    """Update problem prefix in contest
+
+    ROUTE arguments:
+    contest_id -- Contest's ID
+    problem_id -- Problem's ID
+
+    GET/POST arguments:
+    prefix -- Problem's new prefix
+
+    Permissions required:
+    Contest Administrator
+    """
     assoc = ContestProblemAssociation.query.filter(db.and_(
         ContestProblemAssociation.contest_id == contest_id,
         ContestProblemAssociation.problem_id == problem_id)).first()
@@ -59,7 +87,14 @@ def problemprefix(contest_id, problem_id, contest, problem):
 @mod.route('/<int:contest_id>')
 @yield_contest()
 def problems(contest_id, contest):
-    """Show contest's problems"""
+    """Show contest's problems
+
+    ROUTE arguments:
+    contest_id -- Contest's ID
+
+    Permissions required:
+    None
+    """
     addable_problems = Problem.query.all()
     if g.user.is_admin(contest=contest) and (len(contest.problems) > 0):
         addable_problems = \
@@ -70,7 +105,15 @@ def problems(contest_id, contest):
 @mod.route('/new')
 @requires_admin
 def new():
-    """Create new contest"""
+    """Create new contest
+
+    GET arguments:
+    [group_id] -- group to add contest to
+
+    Permissions required:
+    Server Administrator (if not GET.group_id)
+    Group Administrator (if GET.group_id)
+    """
     group_id = request.args.get('group_id')
     try:
         group_id = int(group_id)
@@ -91,7 +134,18 @@ def new():
 @mod.route('/<int:contest_id>/edit', methods=['GET', 'POST'])
 @mod.route('/new', methods=['POST'])
 def edit(contest_id=-1):
-    """Create/Update contest"""
+    """Create/Update contest
+
+    ROUTE arguments:
+    [contest_id] -- Contest's ID
+
+    Permissions required (Update):
+    Contest Administrator
+
+    Permissions required (Create):
+    Server Administrator (if not group_id)
+    Group Administrator (if group_id)
+    """
     contest = Contest.query.get(contest_id)
     error = None
 
@@ -207,7 +261,14 @@ def edit(contest_id=-1):
 @yield_contest()
 @requires_admin(contest="contest")
 def delete(contest_id, contest):
-    """Delete contest"""
+    """Delete contest
+
+    ROUTE arguments:
+    contest_id -- Contest's ID
+
+    Permissions required:
+    Contest Administrator
+    """
     for x in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.contest_id == contest.id):
         db.session.delete(x)
@@ -230,7 +291,14 @@ def format_time(mins):
 @mod.route('/<int:contest_id>/scoreboard')
 @yield_contest()
 def scoreboard(contest_id, contest):
-    """Return scoreboard"""
+    """Show scoreboard
+
+    ROUTE arguments:
+    contest_id -- Contest's ID
+
+    Permissions required:
+    None
+    """
     cache_name = '/contests/scoreboard/%d/%r' % (contest.id, g.user.is_admin(contest=contest))
     rawscore = cache.get(cache_name)
     if rawscore is None:
@@ -298,7 +366,11 @@ def scoreboard(contest_id, contest):
 
 @mod.route('/list')
 def list():
-    """List active contests"""
+    """List active contests
+
+    Permissions required:
+    None
+    """
     contests = Contest.query.all()
     raw = render_template('contests/rawlist.html', contests=contests)
     return render_template('contests/list.html', rawlist=raw)

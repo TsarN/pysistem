@@ -14,7 +14,11 @@ mod = Blueprint('locale', __name__, url_prefix='/locale')
 
 @mod.route('/set/<lang>', endpoint='set')
 def setlocale(lang):
-    """Set current user's locale to lang"""
+    """Set current user's locale to lang
+
+    Permissions required:
+    None
+    """
     for i in LANGUAGES.keys():
         if lang == i:
             session['language'] = lang
