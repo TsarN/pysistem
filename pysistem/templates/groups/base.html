@@ -23,7 +23,7 @@
 {% block group_nav %}
 <h2 class="text-center page-header" id="group-header">
     <span id="group-name-span">{{ group.name }}</span>
-    <form style="display: inline" id="rename-form" action="{{ url_for('groups.rename', id=group.id) }}" method="POST">
+    <form style="display: inline" id="rename-form" action="{{ url_for('groups.rename', group_id=group.id) }}" method="POST">
     <input autocomplete="off" id="group-name-edit" name="name" value="{{ group.name }}" style="display: none" />
     </form>
     <a href="#" id="rename-group">
@@ -38,14 +38,14 @@
 </h2>
 <ul class="nav nav-tabs">
     <li role="presentation" class="{% block group_nav_link_contests %}{% endblock %}">
-        <a href="{{ url_for('groups.contests', id=group.id) }}">{{ _('title.contestlist') }}</a>
+        <a href="{{ url_for('groups.contests', group_id=group.id) }}">{{ _('title.contestlist') }}</a>
     </li>
     {% if g.user.is_admin(group=group) %}
     <li role="presentation" class="{% block group_nav_link_users %}{% endblock %}">
-        <a href="{{ url_for('groups.users', id=group.id) }}">{{ _('title.users') }}</a>
+        <a href="{{ url_for('groups.users', group_id=group.id) }}">{{ _('title.users') }}</a>
     </li>
     <li role="presentation" class="{% block group_nav_link_lessons %}{% endblock %}">
-        <a href="{{ url_for('groups.lessons', id=group.id) }}">{{ _('title.lessons') }}</a>
+        <a href="{{ url_for('groups.lessons', group_id=group.id) }}">{{ _('title.lessons') }}</a>
     </li>
     {% endif %}
 </ul>

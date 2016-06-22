@@ -1,32 +1,29 @@
 # -*- coding: utf-8 -*-
+
+"""PySistem views loader"""
+
+from datetime import time, datetime
 from werkzeug.routing import BaseConverter
-from pysistem import app, babel, db
-from flask import render_template, session, g, flash, redirect, url_for, request
-import re
+from flask import render_template, session, g, redirect, url_for, request
 
 from pysistem.users.model import User
-from pysistem.contests.model import Contest
-from pysistem.submissions.model import Submission
-from pysistem.problems.model import Problem
 from pysistem.groups.model import Group
-
 try:
     from pysistem.conf import LANGUAGES
-except:
-    try:
-        from pysistem.conf_default import LANGUAGES
-    except: pass
-from flask_babel import gettext
-from datetime import time, date, datetime
-
+except ImportError:
+    from pysistem.conf_default import LANGUAGES
+    
+from pysistem import app, babel
 from pysistem.settings.model import Setting as SETTINGS
 
 @babel.localeselector
 def get_locale():
+    """Get current locale. Required for proper Babel operation"""
     return session.get('language') or request.accept_languages.best_match(LANGUAGES.keys())
 
 @app.before_request
 def before_request():
+    """Process before request"""
     if request.path.startswith('/static/'):
         return
     g.is_first_time = (User.query.count() == 0)
@@ -75,6 +72,7 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(*args, **kwargs):
+    """Delete context globals on teardown"""
     try:
         del g.is_first_time
         del g.now
@@ -85,13 +83,16 @@ def teardown_request(*args, **kwargs):
         del g.disable_navbar
         del g.user_groups
         del g.locale
-    except: pass
+    except AttributeError:
+        pass
 
-def pad_zero(x, min_len=2):
-    return '0' * (max(0, min_len - len(str(x)))) + str(x)
+def pad_zero(number, min_len=2):
+    """Pad number with zeroes to at least min_len"""
+    return '0' * (max(0, min_len - len(str(number)))) + str(number)
 
 @app.template_filter('timeonly')
 def timeonly_filter(seconds, enable_seconds=True, cycle=False):
+    """Display time in seconds in format hh+:mm:ss"""
     hours = int(seconds // 3600)
     if cycle:
         hours %= 24
@@ -103,18 +104,21 @@ def timeonly_filter(seconds, enable_seconds=True, cycle=False):
         return pad_zero(hours) + ':' + pad_zero(minutes)
 
 @app.template_filter('shortstr')
-def shortstr_filter(s, length=5):
-    if len(s) > length:
-        return s[:length] + '...'
+def shortstr_filter(string, length=5):
+    """If string is longer than maximum length, shorten it and add ... to end"""
+    if len(string) > length:
+        return string[:length] + '...'
     else:
-        return s
+        return string
 
 @app.template_filter('dtp')
 def dtp_filter(date):
+    """Format date for Bootstrap-Datetimepicker"""
     return date.strftime("%Y-%m-%d %H:%M")
 
 @app.template_filter('naturaldate')
 def naturaldate_filter(date):
+    """Try to use Humanize to show natural date"""
     try:
         import humanize
         if session.get('language') != "en":
@@ -125,11 +129,12 @@ def naturaldate_filter(date):
         today = datetime.combine(date.today(), time(0))
         seconds = int((date-today).total_seconds())
         return date_str + ' ' + timeonly_filter(seconds, enable_seconds=False, cycle=True)
-    except: pass
-    return dtp_filter(date)
+    except ImportError:
+        return dtp_filter(date)
 
 @app.template_filter('duration')
 def duration_filter(delta):
+    """Try to use humanize to show natural delta"""
     try:
         import humanize
         if session.get('language') != "en":
@@ -137,25 +142,27 @@ def duration_filter(delta):
         else:
             humanize.i18n.deactivate()
         return humanize.naturaldelta(delta)
-    except: pass
-    return timeonly_filter(delta.total_seconds())
+    except ImportError:
+        return timeonly_filter(delta.total_seconds())
 
 @app.template_filter('ids')
 def ids_filter(obj):
+    """Convert list of SQLAlchemy objects to list of their ids"""
     return [x.id for x in obj]
 
 @app.template_filter('limittext')
-def limittext_filter(text, x=25, y=10, compacted=None):
+def limittext_filter(text, width=25, height=10, compacted=None):
     splitted = text.split('\n')
-    cols = max(map(lambda x: len(x), splitted))
+    cols = max([len(line) for line in splitted])
     rows = len(splitted)
-    if (cols > x) or (rows > y):
+    if (cols > width) or (rows > height):
         return compacted
     else:
         return text
 
 @app.template_filter('naturaltime')
-def naturaltime_filter(time=False):
+def naturaltime_filter(date=False):
+    """Try to use humanize to format date naturally"""
     now = datetime.now()
     try:
         import humanize
@@ -163,58 +170,22 @@ def naturaltime_filter(time=False):
             humanize.i18n.activate(session.get('language'))
         else:
             humanize.i18n.deactivate()
-        return humanize.naturaltime(time)
-    except: pass
-    # http://stackoverflow.com/a/1551394
-
-    if type(time) is int:
-        diff = now - datetime.fromtimestamp(time)
-    elif isinstance(time,datetime):
-        diff = now - time
-    elif not time:
-        diff = now - now
-    second_diff = int(diff.seconds)
-    day_diff = int(diff.days)
-
-    if day_diff < 0:
-        return ''
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return gettext('naturaltime.justnow')
-        if second_diff < 60:
-            return str(second_diff) + " " + gettext('naturaltime.secondsago')
-        if second_diff < 120:
-            return gettext('naturaltime.minuteago')
-        if second_diff < 3600:
-            return str(second_diff // 60) + " " + gettext('naturaltime.minutesago')
-        if second_diff < 7200:
-            return gettext('naturaltime.hourago')
-        if second_diff < 86400:
-            return str(second_diff // 3600) + " " + gettext('naturaltime.hoursago')
-    if day_diff == 1:
-        return gettext('naturaltime.yesterday')
-    if day_diff < 7:
-        return str(day_diff) + " " + gettext('naturaltime.daysago')
-    if day_diff < 14:
-        return gettext('naturaltime.weekago')
-    if day_diff < 31:
-        return str(day_diff // 7) + " " + gettext('naturaltime.weeksago')
-    if day_diff < 60:
-        return gettext('naturaltime.monthago')
-    if day_diff < 365:
-        return str(day_diff // 30) + " " + gettext('naturaltime.monthsago')
-    return str(day_diff // 365) + " " + gettext('naturaltime.yearsago')
+        return humanize.naturaltime(date)
+    except ImportError:
+        return dtp_filter(date)
 
 @app.route('/')
 def index():
+    """Main page"""
     return render_template('index.html')
 
 @app.errorhandler(404)
-def err_notfound(e):
+def err_notfound(exception):
+    """HTTP 404 Not Found handler"""
     return render_template('errors/404.html'), 404
 
 class StrListConverter(BaseConverter):
+    """Converter that accepts comma-separated list of strings"""
     regex = r'[^,]+(?:,[^,]+)*,?'
 
     def to_python(self, value):
@@ -226,6 +197,7 @@ class StrListConverter(BaseConverter):
 app.url_map.converters['str_list'] = StrListConverter
 
 class IntListConverter(BaseConverter):
+    """Converter that accepts comma-separated list of ints"""
     regex = r'\d+(?:,\d+)*,?'
 
     def to_python(self, value):

@@ -13,12 +13,12 @@ from pysistem.groups.model import Group, GroupContestAssociation, GroupUserAssoc
 
 mod = Blueprint('contests', __name__, url_prefix='/contest')
 
-@mod.route('/<int:id>/linkwith/<int:problem_id>')
+@mod.route('/<int:contest_id>/linkwith/<int:problem_id>')
 @yield_contest()
 @yield_problem(field='problem_id')
 @requires_admin(contest="contest")
 @requires_admin(problem="problem")
-def linkwith(id, problem_id, contest, problem):
+def linkwith(contest_id, problem_id, contest, problem):
     """Add problem to contest"""
     assoc = ContestProblemAssociation()
     assoc.contest = contest
@@ -27,27 +27,27 @@ def linkwith(id, problem_id, contest, problem):
     db.session.commit()
     return redirect(redirect_url())
 
-@mod.route('/<int:id>/unlinkwith/<int:problem_id>')
+@mod.route('/<int:contest_id>/unlinkwith/<int:problem_id>')
 @yield_contest()
 @requires_admin(contest="contest")
 @yield_problem(field='problem_id')
-def unlinkwith(id, problem_id, contest, problem):
+def unlinkwith(contest_id, problem_id, contest, problem):
     """Remove problem from contest"""
     assoc = ContestProblemAssociation.query.filter(db.and_(
-        ContestProblemAssociation.contest_id == id,
+        ContestProblemAssociation.contest_id == contest_id,
         ContestProblemAssociation.problem_id == problem_id)).first()
     db.session.delete(assoc)
     db.session.commit()
     return redirect(redirect_url())
 
-@mod.route('/<int:id>/problemprefix/<int:problem_id>', methods=['GET', 'POST'])
+@mod.route('/<int:contest_id>/problemprefix/<int:problem_id>', methods=['GET', 'POST'])
 @yield_contest()
 @requires_admin(contest="id")
 @yield_problem(field="problem_id")
-def problemprefix(id, problem_id, contest, problem):
+def problemprefix(contest_id, problem_id, contest, problem):
     """Update problem prefix in contest"""
     assoc = ContestProblemAssociation.query.filter(db.and_(
-        ContestProblemAssociation.contest_id == id,
+        ContestProblemAssociation.contest_id == contest_id,
         ContestProblemAssociation.problem_id == problem_id)).first()
     assoc.prefix = request.values.get('prefix', assoc.prefix)
     db.session.commit();
@@ -56,9 +56,9 @@ def problemprefix(id, problem_id, contest, problem):
     else:
         return redirect(redirect_url())
 
-@mod.route('/<int:id>')
+@mod.route('/<int:contest_id>')
 @yield_contest()
-def problems(id, contest):
+def problems(contest_id, contest):
     """Show contest's problems"""
     addable_problems = Problem.query.all()
     if g.user.is_admin(contest=contest) and (len(contest.problems) > 0):
@@ -88,11 +88,11 @@ def new():
     return render_template('contests/edit.html', contest=Contest(),
         contest_rulesets=contest_rulesets, group=group)
 
-@mod.route('/<int:id>/edit', methods=['GET', 'POST'])
+@mod.route('/<int:contest_id>/edit', methods=['GET', 'POST'])
 @mod.route('/new', methods=['POST'])
-def edit(id=-1):
+def edit(contest_id=-1):
     """Create/Update contest"""
-    contest = Contest.query.get(id)
+    contest = Contest.query.get(contest_id)
     error = None
 
     if contest:
@@ -176,10 +176,10 @@ def edit(id=-1):
                     db.session.commit()
                     if is_new:
                         flash(gettext('contests.new.success'))
-                        return redirect(url_for('contests.problems', id=contest.id))
+                        return redirect(url_for('contests.problems', contest_id=contest.id))
                     else:
                         flash(gettext('contests.edit.success'))
-                        return redirect(url_for('contests.edit', id=contest.id))
+                        return redirect(url_for('contests.edit', contest_id=contest.id))
                 else:
                     error = gettext('contests.edit.atleastonegroup')
             else:
@@ -203,10 +203,10 @@ def edit(id=-1):
     return render_template('contests/edit.html', contest=contest,
         error=error, contest_rulesets=contest_rulesets, admin_groups=admin_groups)
 
-@mod.route('/<int:id>/delete')
+@mod.route('/<int:contest_id>/delete')
 @yield_contest()
 @requires_admin(contest="contest")
-def delete(id, contest):
+def delete(contest_id, contest):
     """Delete contest"""
     for x in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.contest_id == contest.id):
@@ -227,9 +227,9 @@ def format_time(mins):
     return ("0" * (hour < 10) + str(hour)) + ':' + \
            ("0" * (mins < 10) + str(mins))
 
-@mod.route('/<int:id>/scoreboard')
+@mod.route('/<int:contest_id>/scoreboard')
 @yield_contest()
-def scoreboard(id, contest):
+def scoreboard(contest_id, contest):
     """Return scoreboard"""
     cache_name = '/contests/scoreboard/%d/%r' % (contest.id, g.user.is_admin(contest=contest))
     rawscore = cache.get(cache_name)

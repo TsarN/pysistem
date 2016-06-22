@@ -28,7 +28,7 @@
 {{ scoreboard|safe }}
 </table>
 <div style="float: right">
-<a href="{{ url_for('contests.scoreboard', id=contest.id, printing=1) }}">
+<a href="{{ url_for('contests.scoreboard', contest_id=contest.id, printing=1) }}">
 {{ _('contests.scoreboard.printing') }}
 </a>
 </div>

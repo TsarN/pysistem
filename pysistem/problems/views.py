@@ -19,10 +19,10 @@ from pysistem.submissions.const import *
 
 mod = Blueprint('problems', __name__, url_prefix='/problem')
 
-@mod.route('/<int:id>')
+@mod.route('/<int:problem_id>')
 @yield_problem()
 @guard_problem()
-def view(id, problem):
+def view(problem_id, problem):
     """View problem's statement"""
     return render_template('problems/view.html', problem=problem)
 
@@ -41,12 +41,12 @@ def new():
             return render_template('errors/403.html'), 403
     return render_template('problems/edit.html', problem=Problem(), contest_id=contest_id)
 
-@mod.route('/<int:id>/edit', methods=['GET', 'POST'])
+@mod.route('/<int:problem_id>/edit', methods=['GET', 'POST'])
 @mod.route('/new', methods=['POST'])
-def edit(id=-1):
+def edit(problem_id=-1):
     """Create/Update problem"""
     error = None
-    problem = Problem.query.get(id)
+    problem = Problem.query.get(problem_id)
     if request.method == 'POST':
         problem = problem or Problem()
         is_new = problem.id is None
@@ -91,11 +91,11 @@ def edit(id=-1):
             if is_new:
                 flash(gettext('problems.new.success'))
                 if redirect_to_contest:
-                    return redirect(url_for('contests.problems', id=redirect_to_contest))
-                return redirect(url_for('problems.view', id=problem.id))
+                    return redirect(url_for('contests.problems', contest_id=redirect_to_contest))
+                return redirect(url_for('problems.view', problem_id=problem.id))
             else:
                 flash(gettext('problems.edit.success'))
-                return redirect(url_for('problems.edit', id=problem.id))
+                return redirect(url_for('problems.edit', problem_id=problem.id))
         else:
             error = gettext('problems.edit.emptyname')  
     else:
@@ -105,10 +105,10 @@ def edit(id=-1):
             return render_template('errors/403.html'), 403
     return render_template('problems/edit.html', problem=problem, error=error)
 
-@mod.route('/<int:id>/export')
+@mod.route('/<int:problem_id>/export')
 @yield_problem()
 @requires_admin(problem="problem")
-def export(id, problem):
+def export(problem_id, problem):
     """Export problem to gzip-encoded file"""
     content = problem.export_gzip()
     response = Response(content, mimetype='application/gzip')
@@ -143,15 +143,15 @@ def import_():
                     redirect_to_contest = contest.id
             db.session.commit()
             if redirect_to_contest:
-                return redirect(url_for('contests.problems', id=redirect_to_contest))
-            return redirect(url_for('problems.view', id=problem.id))
+                return redirect(url_for('contests.problems', contest_id=redirect_to_contest))
+            return redirect(url_for('problems.view', problem_id=problem.id))
     flash('::danger ' + gettext('problems.import.error'))
     return redirect(url_for('problems.new'))
 
-@mod.route('/<int:id>/delete')
+@mod.route('/<int:problem_id>/delete')
 @yield_problem()
 @requires_admin(problem="problem")
-def delete(id, problem):
+def delete(problem_id, problem):
     """Delete problem from database"""
     for x in ContestProblemAssociation.query.filter( \
         ContestProblemAssociation.problem_id == problem.id):
@@ -160,19 +160,19 @@ def delete(id, problem):
     db.session.commit()
     return redirect(url_for('index'))
 
-@mod.route('/<int:id>/tests')
+@mod.route('/<int:problem_id>/tests')
 @yield_problem()
 @requires_admin(problem="problem")
-def tests(id, problem):
+def tests(problem_id, problem):
     """View and edit problem's test pairs"""
     test_groups = TestGroup.query.filter(TestGroup.problem_id == problem.id).all()
     return render_template('problems/tests.html', problem=problem, test_groups=test_groups)
 
-@mod.route('/<int:id>/testgroup/new', methods=['POST'])
-@mod.route('/<int:id>/testgroup/<int:group_id>', methods=['POST'])
+@mod.route('/<int:problem_id>/testgroup/new', methods=['POST'])
+@mod.route('/<int:problem_id>/testgroup/<int:group_id>', methods=['POST'])
 @yield_problem()
 @requires_admin(problem="problem")
-def update_test_group(id, problem, group_id=None):
+def update_test_group(problem_id, problem, group_id=None):
     """Update/Create test pair group"""
     test_group = (TestGroup.query.get(group_id) if group_id else None) or TestGroup()
     is_new = test_group.id is None
@@ -188,42 +188,42 @@ def update_test_group(id, problem, group_id=None):
     db.session.commit()
     return redirect(redirect_url())
 
-@mod.route('/deltestgroup/<int:id>', methods=['GET', 'POST'])
+@mod.route('/deltestgroup/<int:test_group_id>', methods=['GET', 'POST'])
 @yield_test_group()
 @requires_admin(test_group="test_group")
-def delete_test_group(id, test_group):
+def delete_test_group(test_group_id, test_group):
     """Delete test pair group"""
     db.session.delete(test_group)
     db.session.commit()
     flash(gettext('problems.deltestgroup.success'))
     return redirect(redirect_url())
 
-@mod.route('/deltest/<int:id>', methods=['GET', 'POST'])
+@mod.route('/deltest/<int:test_pair_id>', methods=['GET', 'POST'])
 @yield_test_pair()
 @requires_admin(test_pair="test")
-def deltest(id, test):
+def deltest(test_pair_id, test):
     """Delete test pair"""
     db.session.delete(test)
     db.session.commit()
     flash(gettext('problems.deltest.success'))
     return redirect(redirect_url())
 
-@mod.route('/addtest/<int:id>', methods=['POST'])
+@mod.route('/addtest/<int:test_group_id>', methods=['POST'])
 @yield_test_group()
 @requires_admin(test_group="test_group")
-def addtest(id, test_group):
+def addtest(test_group_id, test_group):
     """Create new test in test group"""
     input_str = ''
     pattern_str = ''
 
     if 'input_file' not in request.files:
         flash('::warning ' + gettext('problems.addtest.inputmissing'))
-        return redirect(url_for('problems.tests', id=test_group.problem_id))
+        return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
 
     input_file = request.files['input_file']
     if input_file.filename == '':
         flash('::warning ' + gettext('problems.addtest.inputmissing'))
-        return redirect(url_for('problems.tests', id=test_group.problem_id))
+        return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
 
     if input_file:
         input_str = input_file.stream.read().decode()
@@ -236,21 +236,21 @@ def addtest(id, test_group):
     test_pair = TestPair(input_str, pattern_str)
     test_group.test_pairs.append(test_pair)
     db.session.commit()
-    return redirect(url_for('problems.tests', id=test_group.problem_id))
+    return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
 
-@mod.route('/addtestzip/<int:id>', methods=['POST'])
+@mod.route('/addtestzip/<int:test_group_id>', methods=['POST'])
 @yield_test_group()
 @requires_admin(test_group="test_group")
-def addtestzip(id, test_group):
+def addtestzip(test_group_id, test_group):
     """Create many tests in test group from ZIP file"""
     if 'zip_file' not in request.files:
         flash('::warning ' + gettext('problems.addtestzip.inputmissing'))
-        return redirect(url_for('problems.tests', id=test_group.problem_id))
+        return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
 
     zip_file = request.files['zip_file']
     if zip_file.filename == '':
         flash('::warning ' + gettext('problems.addtestzip.inputmissing'))
-        return redirect(url_for('problems.tests', id=test_group.problem_id))
+        return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
     try:
         assert(zip_file)
         zf = ZipFile(zip_file.stream, mode="r")
@@ -267,36 +267,36 @@ def addtestzip(id, test_group):
             test_group.test_pairs.append(TestPair(inp, pat))
         db.session.commit()
         flash(gettext('problems.addtestzip.success'))
-        return redirect(url_for('problems.tests'), id=test_group.problem_id)
+        return redirect(url_for('problems.tests'), problem_id=test_group.problem_id)
     except: 
         flash('::danger ' + gettext('problems.addtestzip.invalid'))
-        return redirect(url_for('problems.tests', id=test_group.problem_id))
+        return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
 
-@mod.route('/<int:id>/checkers')
+@mod.route('/<int:problem_id>/checkers')
 @yield_problem()
 @requires_admin(problem="problem")
-def checkers(id, problem):
+def checkers(problem_id, problem):
     """View and edit problem's checkers"""
     checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
     compilers = Compiler.query.all()
     return render_template('problems/checkers.html', problem=problem,
         checkers=checkers, compilers=compilers)
 
-@mod.route('/<int:id>/addchecker', methods=['POST'])
+@mod.route('/<int:problem_id>/addchecker', methods=['POST'])
 @yield_problem()
 @requires_admin(problem="problem")
-def addchecker(id, problem):
+def addchecker(problem_id, problem):
     """Add new checker"""
     source = ''
 
     if 'source_file' not in request.files:
         flash('::warning ' + gettext('problems.addchecker.sourcemissing'))
-        return redirect(url_for('problems.checkers', id=id))
+        return redirect(url_for('problems.checkers', problem_id=problem_id))
 
     source_file = request.files['source_file']
     if source_file.filename == '':
         flash('::warning ' + gettext('problems.addchecker.sourcemissing'))
-        return redirect(url_for('problems.checkers', id=id))
+        return redirect(url_for('problems.checkers', problem_id=problem_id))
 
     if source_file:
         source = source_file.stream.read().decode()
@@ -312,40 +312,40 @@ def addchecker(id, problem):
     db.session.add(checker)
     db.session.commit()
     checker.compile()
-    return redirect(url_for('problems.checkers', id=id))
+    return redirect(url_for('problems.checkers', problem_id=problem_id))
 
-@mod.route('/delchecker/<int:id>', methods=['GET', 'POST'])
+@mod.route('/delchecker/<int:checker_id>', methods=['GET', 'POST'])
 @yield_checker()
 @requires_admin(checker="checker")
-def delchecker(id, checker):
+def delchecker(checker_id, checker):
     """Delete checker"""
     db.session.delete(checker)
     db.session.commit()
     flash(gettext('problems.delchecker.success'))
     return redirect(redirect_url())
 
-@mod.route('/actchecker/<int:id>', methods=['GET', 'POST'])
+@mod.route('/actchecker/<int:checker_id>', methods=['GET', 'POST'])
 @yield_checker()
 @requires_admin(checker="checker")
-def actchecker(id, checker):
+def actchecker(checker_id, checker):
     """Make chekcer active"""
     checker.set_act()
     flash(gettext('problems.actchecker.success'))
     return redirect(redirect_url())
 
-@mod.route('/checkercompilelog/<int:id>')
+@mod.route('/checkercompilelog/<int:checker_id>')
 @yield_checker()
 @requires_admin(checker="checker")
-def checkercompilelog(id, checker):
+def checkercompilelog(checker_id, checker):
     """Return checker's compilation log"""
     return Response(checker.compile_log, mimetype='text/plain')
 
-@mod.route('/<int:id>/submissions', methods=['GET', 'POST'])
-@mod.route('/<int:id>/submissions/user/<username>')
+@mod.route('/<int:problem_id>/submissions', methods=['GET', 'POST'])
+@mod.route('/<int:problem_id>/submissions/user/<username>')
 @requires_login
 @yield_problem()
 @guard_problem()
-def submissions(id, problem, username=None):
+def submissions(problem_id, problem, username=None):
     """View user's submissions or submit new"""
     user = g.user
     if username is not None:
@@ -361,12 +361,12 @@ def submissions(id, problem, username=None):
 
         if 'source_file' not in request.files:
             flash('::warning ' + gettext('problems.submit.sourcemissing'))
-            return redirect(url_for('problems.submissions', id=id))
+            return redirect(url_for('problems.submissions', problem_id=problem_id))
 
         source_file = request.files['source_file']
         if source_file.filename == '':
             flash('::warning ' + gettext('problems.submit.sourcemissing'))
-            return redirect(url_for('problems.submissions', id=id))
+            return redirect(url_for('problems.submissions', problem_id=problem_id))
 
         if source_file:
             source = source_file.stream.read().decode()
@@ -375,7 +375,7 @@ def submissions(id, problem, username=None):
         compiler = Compiler.query.get(int(compiler_id))
         if compiler is None:
             flash('::warning ' + gettext('problems.submit.selectcompiler'))
-            return redirect(url_for('problems.submissions', id=id))
+            return redirect(url_for('problems.submissions', problem_id=problem_id))
 
         sub = Submission(source, g.user.id, compiler.id, problem.id)
         sub.status = STATUS_CWAIT
@@ -383,7 +383,7 @@ def submissions(id, problem, username=None):
         db.session.add(sub)
         db.session.commit()
         flash(gettext('problems.submit.success'))
-        return redirect(url_for('problems.submissions', id=id))
+        return redirect(url_for('problems.submissions', problem_id=problem_id))
 
     submissions = Submission.query.filter(db.and_(
         Submission.problem_id == problem.id, Submission.user_id == user.id)).all()
@@ -392,7 +392,7 @@ def submissions(id, problem, username=None):
     rendered_subs = render_template('submissions/list.html', submissions=submissions)
 
     attempted_users = None
-    if g.user.is_admin(problem=id):
+    if g.user.is_admin(problem=problem_id):
         attempted_users = User.query.filter(User.submissions.any(
             Submission.problem_id == problem.id)).all()
 

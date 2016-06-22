@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+"""Meta module for ensuring all Models are imported"""
+
 import pysistem.checkers.model
 import pysistem.compilers.model
 import pysistem.contests.model

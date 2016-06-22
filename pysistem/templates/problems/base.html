@@ -21,7 +21,7 @@
             class="btn btn-default">
                 {{ _('common.cancel') }}
             </a>
-            <a href="{{ url_for('problems.delete', id=problem.id) }}"
+            <a href="{{ url_for('problems.delete', problem_id=problem.id) }}"
             class="btn btn-danger">
                 {{ _('common.delete') }}
             </a>
@@ -33,21 +33,21 @@
 {% endif %}
 <ul class="nav nav-tabs">
     <li role="presentation" class="{% block problem_navbar_link_view %}{% endblock %}">
-        <a href="{{ url_for('problems.view', id=problem.id) }}">{{ _('common.statement') }}</a>
+        <a href="{{ url_for('problems.view', problem_id=problem.id) }}">{{ _('common.statement') }}</a>
     </li>
     {% if g.user.id %}
     <li role="presentation" class="{% block problem_navbar_link_submissions %}{% endblock %}">
-        <a href="{{ url_for('problems.submissions', id=problem.id) }}">{{ _('title.problem.submissions') }}</a>
+        <a href="{{ url_for('problems.submissions', problem_id=problem.id) }}">{{ _('title.problem.submissions') }}</a>
     </li>
     {% if g.user.is_admin(problem=problem) %}
     <li role="presentation" class="{% block problem_navbar_link_edit %}{% endblock %}">
-        <a href="{{ url_for('problems.edit', id=problem.id) }}">{{ _('title.problem.edit') }}</a>
+        <a href="{{ url_for('problems.edit', problem_id=problem.id) }}">{{ _('title.problem.edit') }}</a>
     </li>
     <li role="presentation" class="{% block problem_navbar_link_tests %}{% endblock %}">
-        <a href="{{ url_for('problems.tests', id=problem.id) }}">{{ _('title.problem.testpairs') }}</a>
+        <a href="{{ url_for('problems.tests', problem_id=problem.id) }}">{{ _('title.problem.testpairs') }}</a>
     </li>
     <li role="presentation" class="{% block problem_navbar_link_checkers %}{% endblock %}">
-        <a href="{{ url_for('problems.checkers', id=problem.id) }}">{{ _('title.problem.checkers') }}</a>
+        <a href="{{ url_for('problems.checkers', problem_id=problem.id) }}">{{ _('title.problem.checkers') }}</a>
     </li>
     <li role="presentation" class="dropdown">
         <a id="problem-more-dropdown" class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -56,12 +56,12 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="problem-more-dropdown">
             <li>
-                <a href="{{ url_for('problems.export', id=problem.id) }}" target="_blank">
+                <a href="{{ url_for('problems.export', problem_id=problem.id) }}" target="_blank">
                     {{ _('problems.export') }}
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('problems.delete', id=problem.id) }}" id="delbtn">
+                <a href="{{ url_for('problems.delete', problem_id=problem.id) }}" id="delbtn">
                     {{ _('common.delete') }}
                 </a>
                 <script type="text/javascript">

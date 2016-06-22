@@ -39,7 +39,7 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
 <div class="alert alert-danger text-center"><b>{{ _('common.error') }}: </b>{{ error }}</div>
 {% endif %}
 
-<form action="{{ url_for('lessons.edit', id=lesson.id) if lesson.id else url_for('lessons.edit', group_id=group.id) }}" method="POST" class="form-horizontal">
+<form action="{{ url_for('lessons.edit', lesson_id=lesson.id) if lesson.id else url_for('lessons.edit', group_id=group.id) }}" method="POST" class="form-horizontal">
 
 <div class="panel panel-default">
     <div class="panel-heading">

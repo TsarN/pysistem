@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pysistem import db
-from pysistem.problems.model import Problem
+
+"""TestPair and TestGroup models"""
 
 class TestPair(db.Model):
     """Test case for checking solutions. Part of test group
@@ -48,7 +49,7 @@ class TestGroup(db.Model):
     score_per_test = db.Column(db.Integer)
     check_all = db.Column(db.Boolean)
 
-    test_pairs = db.relationship('TestPair', cascade = "all,delete", backref='test_group')
+    test_pairs = db.relationship('TestPair', cascade="all,delete", backref='test_group')
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
 
     def __init__(self, problem=None):

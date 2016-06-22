@@ -60,12 +60,12 @@
         {% for problem in addable_problems %}
         <tr>
             <td>{{ problem.id }}</td>
-            <td><a href="{{ url_for('problems.view', id=problem.id) }}" target="_blank">
+            <td><a href="{{ url_for('problems.view', problem_id=problem.id) }}" target="_blank">
                 {{ problem.name }}
             </a></td>
             <td>{{ problem.description or '' }}</td>
             <td>
-                <a href="{{ url_for('contests.linkwith', id=contest.id, problem_id=problem.id) }}"
+                <a href="{{ url_for('contests.linkwith', contest_id=contest.id, problem_id=problem.id) }}"
                 id="modal-addproblem-problem{{ problem.id }}" class="btn btn-primary" style="float: right">
                     <span class="glyphicon glyphicon-plus"></span>
                 </a>
@@ -85,7 +85,7 @@
 <tr class="{{ problem.user_status(g.user, only_color=True) }}" data-id="{{ problem.id }}">
     <td>
         {% if g.user.is_admin(contest=contest) %}
-        <a href="{{ url_for('contests.unlinkwith', id=contest.id, problem_id=problem.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>
+        <a href="{{ url_for('contests.unlinkwith', contest_id=contest.id, problem_id=problem.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>
         {% endif %}
         <b>
             {% if g.user.is_admin(contest=contest) %}
@@ -94,7 +94,7 @@
                 {{ problem.prefix }}.
             {% endif %}
         </b>
-        <a href="{{ url_for('problems.view', id=problem.id) }}">
+        <a href="{{ url_for('problems.view', problem_id=problem.id) }}">
             {{ problem.name }}
         </a>
     </td>

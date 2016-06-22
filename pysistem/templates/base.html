@@ -159,7 +159,7 @@
                         {% endif %}
                         {% for group in g.user_groups.get(role) %}
                         <li>
-                            <a href="{{ url_for('groups.contests', id=group.id) }}">
+                            <a href="{{ url_for('groups.contests', group_id=group.id) }}">
                                 {{ group.name }}
                             </a>
                         </li>

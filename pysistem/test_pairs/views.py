@@ -1,22 +1,34 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db, redirect_url
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
+from flask import Blueprint, Response
 from pysistem.users.decorators import requires_admin
-from pysistem.test_pairs.model import TestPair
 from pysistem.test_pairs.decorators import yield_test_pair
 
 mod = Blueprint('test_pairs', __name__, url_prefix='/testpair')
 
-@mod.route('/<int:id>/input')
+@mod.route('/<int:test_pair_id>/input')
 @yield_test_pair()
 @requires_admin(test_pair="test")
-def view_input(id, test):
-    """Download test pair input file"""
+def view_input(test_pair_id, test):
+    """Download test pair input file
+
+    ROUTE arguments:
+    test_pair_id -- TestPair's ID
+
+    Permissions required:
+    TestPair Administrator
+    """
     return Response(test.input, mimetype='text/plain')
 
-@mod.route('/<int:id>/pattern')
+@mod.route('/<int:test_pair_id>/pattern')
 @yield_test_pair()
 @requires_admin(test_pair="test")
-def view_pattern(id, test):
-    """Download test pair pattern file"""
+def view_pattern(test_pair_id, test):
+    """Download test pair pattern file
+
+    ROUTE arguments:
+    test_pair_id -- TestPair's ID
+
+    Permissions required:
+    TestPair Administrator
+    """
     return Response(test.pattern, mimetype='text/plain')

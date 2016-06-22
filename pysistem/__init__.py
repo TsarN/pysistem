@@ -1,28 +1,35 @@
 # -*- coding: utf-8 -*-
+"""Contest management system"""
 import os
-from flask import Flask, g, request, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_babel import Babel
+import sys
 import random
 import threading
 import atexit
-try:
-    from pysistem import conf
-    from pysistem.conf import SQLALCHEMY_DATABASE_URI
-except: pass
-from pysistem.submissions.const import *
-import sys
-import imp
+import traceback
 
+from flask import Flask, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_babel import Babel
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from werkzeug.contrib.cache import SimpleCache
+try:
+    from pysistem import conf
+except ImportError:
+    from pysistem import conf_default
 
-import traceback
+from pysistem.submissions.const import STATUS_CWAIT, STATUS_WAIT
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 
 class PySistemApplication(Flask):
+    """Main PySistem WSGI Application"""
     def start_check_thread(self=None, join=False):
+        """Start checking thread
+
+        Arguments:
+        join -- Do Thread.join()?
+        """
         check_thread_init()
         atexit.register(check_thread_interrupt)
         print("Checker thread started")
@@ -30,14 +37,16 @@ class PySistemApplication(Flask):
             check_thread.join()
 
     def make_dirs(self=None):
-        for d in app.config['CREATE_DIRS']:
-            if not os.path.exists(os.path.join(app.config['STORAGE'], d)):
-                os.makedirs(os.path.join(app.config['STORAGE'], d))
+        """Create required directories"""
+        self = self or app
+        for directory in app.config['CREATE_DIRS']:
+            if not os.path.exists(os.path.join(self.config['STORAGE'], directory)):
+                os.makedirs(os.path.join(self.config['STORAGE'], directory))
 
     def run(self, *args, **kwargs):
-        self.make_dirs()
-        
+        """Start Werkzeug WSGI server"""
         from pysistem.users.model import User
+        self.make_dirs()
         if User.query.count() == 0:
             print('---- SIGN UP CONFIRMATION CODE ----')
             print(app.config['CONFIRM_CODE'])
@@ -45,7 +54,7 @@ class PySistemApplication(Flask):
 
             from pysistem.compilers.model import detect_compilers
             detect_compilers()
-            
+
         if app.config.get('LAUNCH_CHECK_THREAD', True):
             self.start_check_thread()
 
@@ -53,21 +62,20 @@ class PySistemApplication(Flask):
             Flask.run(self, *args, **kwargs)
             check_thread_interrupt()
             sys.exit(0)
-        except SystemExit as e:
+        except SystemExit as exception:
             check_thread_interrupt()
-            sys.exit(e.code)
+            sys.exit(exception.code)
         except:
-            tb = traceback.format_exc()
+            trace = traceback.format_exc()
             check_thread_interrupt()
-            print(tb)
+            print(trace)
             print("Exception occurred, exiting")
             sys.exit(1)
 
 app = PySistemApplication(__name__)
 try:
     app.config.from_object(conf)
-except:
-    from pysistem import conf_default
+except NameError:
     app.config.from_object(conf_default)
 app.config['CONFIRM_CODE'] = ''.join(random.SystemRandom().choice( \
 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789' \
@@ -79,7 +87,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 babel = Babel(app)
-from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
 
 CHECK_THREAD_TIME = app.config.get('CHECK_THREAD_TIME', 1)
@@ -88,12 +95,11 @@ check_thread = threading.Thread()
 common_data = {}
 
 def check_thread_interrupt():
-    global check_thread
+    """Stop checking thread"""
     check_thread.cancel()
 
 def check_thread_wake():
     """Check submissions"""
-    global common_data
     global check_thread
     with data_lock:
         Session = common_data['Session']
@@ -118,6 +124,7 @@ def check_thread_wake():
     check_thread.start()
 
 def check_thread_init():
+    """Initialize checking thread"""
     global check_thread
     global common_data
     from pysistem.submissions.model import Submission
@@ -144,5 +151,5 @@ manager = Manager(app, with_default_commands=False)
 from pysistem import views, models
 
 if __name__ == "__main__":
-    from pysistem.commands import *
+    import pysistem.commands
     manager.run()

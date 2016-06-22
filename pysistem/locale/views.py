@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, redirect_url
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint
+from flask import session, flash, redirect, Blueprint
+from flask_babel import gettext
+from pysistem import redirect_url
+
 try:
     from pysistem.conf import LANGUAGES
-except: pass
-from flask_babel import gettext
+except ImportError:
+    LANGUAGES = {
+        'en': 'Default'
+    }
 
 mod = Blueprint('locale', __name__, url_prefix='/locale')
 
-@mod.route('/set/<lang>')
-def set(lang):
+@mod.route('/set/<lang>', endpoint='set')
+def setlocale(lang):
     """Set current user's locale to lang"""
     for i in LANGUAGES.keys():
         if lang == i:

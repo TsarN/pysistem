@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+"""Submission constants"""
+
 STATUS_CWAIT = 0 # Waiting for compilation > WAITING...
 STATUS_COMPILING = 1 # Compiling           > COMPILING...
 STATUS_COMPILEFAIL = 2 # Failed to compile > COMPILATION ERROR

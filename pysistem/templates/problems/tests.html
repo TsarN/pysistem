@@ -7,7 +7,7 @@
 <div class="panel-heading">
 {% if test_group %}
 {{ _('problems.testgroup') }} #{{ loop.index0 }}
-<a href="{{ url_for('problems.delete_test_group', id=test_group.id) }}" class="pull-right"
+<a href="{{ url_for('problems.delete_test_group', test_group_id=test_group.id) }}" class="pull-right"
     data-toggle="tooltip" data-placement="right" title="{{ _('common.delete') }}">
     <span class="glyphicon glyphicon-trash text-danger"></span>
 </a>
@@ -18,9 +18,9 @@
 <div class="panel-body">
 <form method="POST" class="form-horizontal"
 {% if test_group %}
-    action="{{ url_for('problems.update_test_group', id=problem.id, group_id=test_group.id) }}"
+    action="{{ url_for('problems.update_test_group', problem_id=problem.id, group_id=test_group.id) }}"
 {% else %}
-    action="{{ url_for('problems.update_test_group', id=problem.id) }}"
+    action="{{ url_for('problems.update_test_group', problem_id=problem.id) }}"
 {% endif %}>
 <div class="form-group">
     <label for="group-score" class="col-sm-6 control-label">{{ _('problems.testgroups.score') }}</label>
@@ -53,7 +53,7 @@
 {% if test_group %}
 <table class="table">
 <thead>
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtestzip', id=test_group.id) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtestzip', test_group_id=test_group.id) }}">
 <tr>
     <td>
         <span class="glyphicon glyphicon-plus text-success"></span>
@@ -78,7 +78,7 @@
 </tr>
 </thead>
 <tbody>
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtest', id=test_group.id) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addtest', test_group_id=test_group.id) }}">
 <tr>
     <td>
         <span class="glyphicon glyphicon-plus text-success"></span>
@@ -97,7 +97,7 @@
 {% for test in test_group.test_pairs %}
 <tr>
     <td>
-        <a href="{{ url_for('problems.deltest', id=test.id) }}"
+        <a href="{{ url_for('problems.deltest', test_pair_id=test.id) }}"
         data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"
         ><span class="glyphicon glyphicon-trash text-danger"></span></a>
         {{ loop.index }}
@@ -107,7 +107,7 @@
             <pre>{{ test.input }}</pre>
         {% else %}
             <i>{{ _('common.filetoolarge') }}</i><br />
-            <a target="_blank" href="{{ url_for('test_pairs.view_input', id=test.id) }}">{{ _('common.viewfile') }}</a>
+            <a target="_blank" href="{{ url_for('test_pairs.view_input', test_pair_id=test.id) }}">{{ _('common.viewfile') }}</a>
         {% endif %}
     </td>
     <td>
@@ -115,7 +115,7 @@
             <pre>{{ test.pattern }}</pre>
         {% else %}
             <i>{{ _('common.filetoolarge') }}</i><br />
-            <a target="_blank" href="{{ url_for('test_pairs.view_pattern', id=test.id) }}">{{ _('common.viewfile') }}</a>
+            <a target="_blank" href="{{ url_for('test_pairs.view_pattern', test_pair_id=test.id) }}">{{ _('common.viewfile') }}</a>
         {% endif %}
     </td>
 </tr>

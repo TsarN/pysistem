@@ -58,7 +58,7 @@
 {% endif %}
 <form method="POST" action="
     {% if problem.id %}
-        {{ url_for('problems.edit', id=problem.id) }}
+        {{ url_for('problems.edit', problem_id=problem.id) }}
     {% else %}
         {{ url_for('problems.edit', contest_id=contest_id) }}
     {% endif %}

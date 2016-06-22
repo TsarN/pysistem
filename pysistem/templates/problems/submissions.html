@@ -4,7 +4,7 @@
 
 <h3>{{ _('problems.submissions.new') }}</h3>
 
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.submissions', id=problem.id) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.submissions', problem_id=problem.id) }}">
 <label for="compiler">{{ _('common.compiler') }}</label>
 <select name="compiler" class="form-control" id="compiler">
 {% for compiler in compilers %}
@@ -39,7 +39,7 @@
         {{ problem.user_status(nuser, color=False)|safe }}
     </td>
     <td>
-        <a href="{{ url_for('problems.submissions', username=nuser.username, id=problem.id) }}">
+        <a href="{{ url_for('problems.submissions', username=nuser.username, problem_id=problem.id) }}">
             {{ _('title.problem.submissions') }} »
         </a>
     </td>

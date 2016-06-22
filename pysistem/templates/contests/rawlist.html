@@ -8,7 +8,7 @@
 {% for contest in contests %}
 <tr>
     <td>
-        <a href="{{ url_for('contests.problems', id=contest.id) }}">
+        <a href="{{ url_for('contests.problems', contest_id=contest.id) }}">
         {% if (g.now >= contest.start) and (g.now <= contest.end) %}
         <b>{{ contest.name }}</b>
         {% else %}
@@ -41,7 +41,7 @@
         </span>
     </td>
     <td>
-        <a href="{{ url_for('contests.scoreboard', id=contest.id) }}">
+        <a href="{{ url_for('contests.scoreboard', contest_id=contest.id) }}">
         {{ _('contests.scoreboard') }}&nbsp;»
         </a>
     </td>

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""PySistem configuration file"""
+
 import os
 
 # Work directory. Leave as is

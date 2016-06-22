@@ -43,7 +43,7 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
 {% endif %}
 <form method="POST" action="
     {% if contest.id %}
-        {{ url_for('contests.edit', id=contest.id) }}
+        {{ url_for('contests.edit', contest_id=contest.id) }}
     {% else %}
         {{ url_for('contests.edit') }}
     {% endif %}

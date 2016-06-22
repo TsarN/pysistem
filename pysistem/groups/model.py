@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+
+"""Group models"""
+
+from datetime import datetime
+
 from pysistem import db
 from pysistem.lessons.model import Lesson
-from datetime import datetime
 
 class GroupUserAssociation(db.Model):
     """Helper class to associate groups and users between each other
@@ -22,7 +26,7 @@ class GroupUserAssociation(db.Model):
     user = db.relationship('User', back_populates='groups')
     def __init__(self, role=None):
         self.role = role
-        
+
     def __repr__(self):
         if self.user and self.group:
             return '<Group=%r User=%r>' % (self.group.name, self.user.username)
@@ -48,7 +52,6 @@ class GroupContestAssociation(db.Model):
     group = db.relationship('Group', back_populates='contests')
     contest = db.relationship('Contest', back_populates='groups')
 
-    def __init__(self): pass
     def __repr__(self):
         if self.contest and self.group:
             return '<Group=%r Contest=%r>' % (self.group.name, self.contest.name)
@@ -87,6 +90,7 @@ class Group(db.Model):
         return '<Group %r>' % self.name
 
     def get_current_lessons(self):
+        """Return currently ongoing Lessons"""
         now = datetime.now()
         return Lesson.query.filter(db.and_(Lesson.group_id == self.id, \
                Lesson.start <= now, Lesson.end >= now)).all()

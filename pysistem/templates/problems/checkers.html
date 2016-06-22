@@ -11,7 +11,7 @@
 </tr>
 </thead>
 <tbody>
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addchecker', id=problem.id) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('problems.addchecker', problem_id=problem.id) }}">
 <tr>
     <td>
         <span class="glyphicon glyphicon-plus text-success"></span>
@@ -37,19 +37,19 @@
 {% for checker in checkers[::-1] %}
 <tr>
     <td style="white-space: nowrap;">
-        <a href="{{ url_for('problems.delchecker', id=checker.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>&nbsp;{{ loop.revindex }}
+        <a href="{{ url_for('problems.delchecker', checker_id=checker.id) }}" data-toggle="tooltip" data-placement="left" title="{{ _('common.delete') }}"><span class="glyphicon glyphicon-trash text-danger"></span></a>&nbsp;{{ loop.revindex }}
     </td>
     <td>
         {% if checker.status == 7 %}
             <b>ACT</b>
         {% elif checker.status == 6 %}
-            <a href="{{ url_for('problems.actchecker', id=checker.id) }}"><b>ACT</b></a>
+            <a href="{{ url_for('problems.actchecker', checker_id=checker.id) }}"><b>ACT</b></a>
         {% endif %}
         {{ checker.name }}<br />
         {{ checker.get_result()|safe }}
         {% if checker.status == 2 %}
             <br />
-            <a target="_blank" href="{{ url_for('problems.checkercompilelog', id=checker.id) }}">
+            <a target="_blank" href="{{ url_for('problems.checkercompilelog', checker_id=checker.id) }}">
                 {{ _('problems.submissions.viewcompilelog') }}
             </a>
         {% endif %}

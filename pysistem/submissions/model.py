@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
+
+"""Submissions models"""
+
+import tempfile
+import os
+from datetime import datetime
+
+from flask_babel import gettext
+
 from pysistem import db, app, cache
-from pysistem.submissions.const import *
+from pysistem.submissions.const import RESULT_UNKNOWN, RESULT_OK, STATUS_DONE, STR_STATUS
+from pysistem.submissions.const import STATUS_WAIT, STATUS_COMPILEFAIL, STATUS_ACT, STR_RESULT
+from pysistem.submissions.const import STATUS_COMPILING, STATUS_CHECKING, STATUS_CWAIT
 from pysistem.users.model import User
 from pysistem.compilers.model import Compiler
 from pysistem.problems.model import Problem
 from pysistem.checkers.model import Checker
-import tempfile
-import os
-try:
-    from pysistem.conf import DIR
-except: # pragma: no cover
-    try:
-        from pysistem.conf_default import DIR
-    except: pass
-from datetime import datetime
-from flask_babel import gettext
-from time import sleep
 
 class Submission(db.Model):
     """An attempt to solve a problem
@@ -56,13 +56,13 @@ class Submission(db.Model):
         self.result = RESULT_UNKNOWN
         self.current_test_id = 0
 
-        if type(user) is int: # pragma: no cover
+        if isinstance(user, int): # pragma: no cover
             user = User.query.get(user)
 
-        if type(compiler) is int: # pragma: no cover
+        if isinstance(compiler, int): # pragma: no cover
             compiler = Compiler.query.get(compiler)
 
-        if type(problem) is int: # pragma: no cover
+        if isinstance(problem, int): # pragma: no cover
             problem = Problem.query.get(problem)
 
         self.user = user
@@ -76,15 +76,16 @@ class Submission(db.Model):
 
     def get_exe_path(self):
         """Get submission's executable path"""
-        STORAGE = app.config['STORAGE']
-        return STORAGE + '/submissions_bin/' + str(self.id)
+        storage_dir = app.config['STORAGE']
+        return storage_dir + '/submissions_bin/' + str(self.id)
 
     def get_source_path(self):
         """Get submission's source path"""
         if os.path.exists('/SANDBOX'):
             return '/SANDBOX/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
         else: # pragma: no cover
-            return tempfile.gettempdir() + '/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
+            return tempfile.gettempdir() + '/pysistem_submission_' \
+                   + str(self.id) + '.' + self.compiler.lang
 
     def compile(self):
         """Compile submission
@@ -101,7 +102,8 @@ class Submission(db.Model):
 
         try:
             os.remove(self.get_exe_path())
-        except: pass # pragma: no cover
+        except: # pragma: no cover
+            pass
 
         result, output = self.compiler.compile(source_path, self.get_exe_path())
         if result:
@@ -115,7 +117,8 @@ class Submission(db.Model):
 
         try:
             os.remove(source_path)
-        except: pass
+        except: # pragma: no cover
+            pass
 
         return result, output
 
@@ -129,7 +132,7 @@ class Submission(db.Model):
         commit_waiting -- commit 'Waiting state' to database?
 
         Returns:
-        Tuple: (Exit code: see runsbox(1), Program's stdout, Program's stderr: currently empty bytestring)
+        Tuple: (Exit code: see runsbox(1), Program's stdout, Program's stderr: b'')
 
         """
         self.status = STATUS_CHECKING
@@ -201,7 +204,8 @@ class Submission(db.Model):
             cache.delete("/submission/view/%d/%r" % (self.id, False))
         except: pass
         checker = Checker.query \
-            .filter(db.and_(Checker.problem_id == self.problem_id, Checker.status == STATUS_ACT)).first()
+            .filter(db.and_(Checker.problem_id == self.problem_id,
+                            Checker.status == STATUS_ACT)).first()
 
         if checker is None:
             return -1

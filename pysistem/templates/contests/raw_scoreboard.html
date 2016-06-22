@@ -5,7 +5,7 @@
     {% for problem in problems %}
     <th>
         <div class="text-center">
-            <a class="problem-link" title="{{ problem.name }}" href="{{ url_for('problems.view', id=problem.id) }}">
+            <a class="problem-link" title="{{ problem.name }}" href="{{ url_for('problems.view', problem_id=problem.id) }}">
             {{ problem.prefix }}<br />
             {{ problem.name }}
             </a>
@@ -32,7 +32,7 @@
     {% for x in (('a', 'sub1', True), ('span', 'sub1', False), ('span', 'sub2', False)) %}
     {% if (x[1] == 'sub2') or (g.user.is_admin(contest=contest) == x[2]) %}
     <{{ x[0] }} class="{{ x[1] }}"
-    {% if x[0] == 'a' %}href="{{ url_for('problems.submissions', id=problem.id, username=user['username']) }}"{% endif %}>
+    {% if x[0] == 'a' %}href="{{ url_for('problems.submissions', problem_id=problem.id, username=user['username']) }}"{% endif %}>
     {% if contest.rules == 'acm' %}
     <div class="text-center">
     <b>

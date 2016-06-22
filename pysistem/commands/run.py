@@ -1,19 +1,28 @@
 # -*- coding: utf-8 -*-
 
-from pysistem import app, manager
+"""Commands for running PySistem"""
+
 from flask_script import Manager, Command, Option
 from flask import _request_ctx_stack
+
+try:
+    from gunicorn import version_info
+    enable_gunicorn = True
+except ImportError:
+    enable_gunicorn = False
+
+from pysistem import app, manager
 
 RunCommand = Manager(usage="Start PySistem services")
 
 @RunCommand.option('-h', '--host', dest='host', default='127.0.0.1', help="Server host")
 @RunCommand.option('-p', '--port', dest='port', default=5000, help="Server port")
 @RunCommand.option('--threaded', dest='threaded', action='store_true',
-    default=False, help="Should the process handle each request in separate thread?")
+                   default=False, help="Handle each request in separate thread")
 @RunCommand.option('-d', '--debug', dest='use_debugger', action='store_true', 
-    default=None, help='enable the Werkzeug debugger (DO NOT use in production code)')
+                   default=None, help='enable the Werkzeug debugger')
 @RunCommand.option('-D', '--no-debug', dest='use_debugger', action='store_false', 
-    default=None, help='disable the Werkzeug debugger')
+                   default=None, help='disable the Werkzeug debugger')
 
 def wsgi(**kwargs):
     """Run the app within Werkzeug"""
@@ -38,6 +47,7 @@ def tests(**kwargs):
 def shell():
     """Run interactive PySistem shell"""
     import pysistem.models
+    import code
     modules = ('checkers', 'compilers', 'contests', 'problems', 'users',
                'submissions', 'test_pairs', 'groups', 'lessons', 'settings')
 
@@ -66,9 +76,7 @@ def shell():
 
     code.interact(local=context)
 
-try:
-    from gunicorn import version_info
-
+if enable_gunicorn:
     class GunicornServer(Command):
         """Run the app within Gunicorn"""
 
@@ -76,6 +84,7 @@ try:
             self.port = port
             self.host = host
             self.workers = workers
+            Command.__init__(self)
 
         def get_options(self):
             return (
@@ -94,7 +103,7 @@ try:
                        default=self.workers)
             )
 
-        def run(self, host, port, workers):
+        def run(self, host=None, port=None, workers=None):
             if version_info < (0, 9, 0):
                 from gunicorn.arbiter import Arbiter
                 from gunicorn.config import Config
@@ -107,7 +116,7 @@ try:
                     def init(self, parser, opts, args):
                         return {
                             'bind': '{0}:{1}'.format(host, port),
-                            'workers': workers 
+                            'workers': workers
                         }
 
                     def load(self):
@@ -116,6 +125,5 @@ try:
                 FlaskApplication().run()
 
     RunCommand.add_command('gunicorn', GunicornServer)
-except: pass
 
 manager.add_command('run', RunCommand)

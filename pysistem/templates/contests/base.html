@@ -79,7 +79,7 @@
             class="btn btn-default">
                 {{ _('common.cancel') }}
             </a>
-            <a href="{{ url_for('contests.delete', id=contest.id) }}"
+            <a href="{{ url_for('contests.delete', contest_id=contest.id) }}"
             class="btn btn-danger">
                 {{ _('common.delete') }}
             </a>
@@ -93,17 +93,17 @@
 <div class="col-sm-3" id="contest-sidebar">
     <ul class="nav nav-pills nav-stacked">
         <li role="presentation" class="{% block contest_nav_link_problems %}{% endblock %}">
-            <a href="{{ url_for('contests.problems', id=contest.id) }}">{{ _('contests.problems') }}</a>
+            <a href="{{ url_for('contests.problems', contest_id=contest.id) }}">{{ _('contests.problems') }}</a>
         </li>
         <li role="presentation" class="{% block contest_nav_link_scoreboard %}{% endblock %}">
-            <a href="{{ url_for('contests.scoreboard', id=contest.id) }}">{{ _('contests.scoreboard') }}</a>
+            <a href="{{ url_for('contests.scoreboard', contest_id=contest.id) }}">{{ _('contests.scoreboard') }}</a>
         </li>
         {% if g.user.is_admin(contest=contest) %}
         <li role="presentation" class="{% block contest_nav_link_edit %}{% endblock %}">
-            <a href="{{ url_for('contests.edit', id=contest.id) }}">{{ _('contests.edit') }}</a>
+            <a href="{{ url_for('contests.edit', contest_id=contest.id) }}">{{ _('contests.edit') }}</a>
         </li>
         <li role="presentation">
-            <a href="{{ url_for('contests.delete', id=contest.id) }}" id="delbtn">{{ _('common.delete') }}</a>
+            <a href="{{ url_for('contests.delete', contest_id=contest.id) }}" id="delbtn">{{ _('common.delete') }}</a>
         </li>
         <script type="text/javascript">
             $("#delbtn").click(function() {

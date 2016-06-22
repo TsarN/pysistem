@@ -22,8 +22,8 @@
     <tr>
     {% endif %}
         <td>
-            <a href="{{ url_for('lessons.delete', id=lesson.id) }}" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
-            <a href="{{ url_for('lessons.edit', id=lesson.id) }}">
+            <a href="{{ url_for('lessons.delete', lesson_id=lesson.id) }}" class="text-danger"><span class="glyphicon glyphicon-trash"></span></a>
+            <a href="{{ url_for('lessons.edit', lesson_id=lesson.id) }}">
                 {{ lesson.name }}
             </a>
         </td>

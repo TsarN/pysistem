@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
-from pysistem import db
-from datetime import datetime
-from pysistem.lessons.const import *
-from flask_babel import gettext
+
+"""Lessons model"""
+
 import re
 
-def parseInt(sin):
-    # https://gist.github.com/lsauer/6088767
-    m = re.search(r'^(\d+)[.,]?\d*?', str(sin))
-    return int(m.groups()[-1]) if m and not callable(sin) else None
+from flask_babel import gettext
 
-def babel_translations():
+from pysistem import db
+from pysistem.lessons.const import AUTO_MARK_SCORE, AUTO_MARK_PLACE, AUTO_MARK_SOLVED
+
+def parse_int(sin):
+    """Javascript-like parseInt"""
+    # https://gist.github.com/lsauer/6088767
+    search = re.search(r'^(\d+)[.,]?\d*?', str(sin))
+    return int(search.groups()[-1]) if search and not callable(sin) else None
+
+def babel_translations(): # pragma: no cover
     gettext("lessons.automarks.score")
     gettext("lessons.automarks.score.atleast")
     gettext("lessons.automarks.place")
@@ -56,7 +61,7 @@ class LessonUserAssociation(db.Model):
 
     def int_mark(self):
         """Turn string mark into int"""
-        return parseInt(self.mark)
+        return parse_int(self.mark)
 
 
 class AutoMark(db.Model):
@@ -64,7 +69,7 @@ class AutoMark(db.Model):
 
     Fields:
     id -- unique auto mark id
-    type -- type of auto mark, as in pysistem.lessons.const 
+    type -- type of auto mark, as in pysistem.lessons.const
 
     Relationships:
     lesson, lesson_id -- attached lesson
@@ -80,7 +85,7 @@ class AutoMark(db.Model):
     def __init__(self, type=AUTO_MARK_SCORE, required=0, mark=None, points=0):
         if type == "score":
             type = AUTO_MARK_SCORE
-        if type == "place": 
+        if type == "place":
             type = AUTO_MARK_PLACE
         if type == "solved":
             type = AUTO_MARK_SOLVED
@@ -118,8 +123,8 @@ class Lesson(db.Model):
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))
 
     users = db.relationship('LessonUserAssociation', back_populates='lesson')
-    auto_marks = db.relationship('AutoMark', cascade = "all,delete",
-        backref='lesson', order_by=AutoMark.required.desc())
+    auto_marks = db.relationship('AutoMark', cascade="all,delete",
+                                 backref='lesson', order_by=AutoMark.required.desc())
 
     def __init__(self, name=None, start=None, end=None):
         self.name = name
@@ -142,7 +147,7 @@ class Lesson(db.Model):
         if params > 1:
             results = []
             for key in valid_keys:
-                results.append(get_automarks(**dict(((key, kwargs[key]),))))
+                results.append(self.get_automarks(**dict(((key, kwargs[key]),))))
             return max(results, key=lambda x: x[1])
         auto_marks = AutoMark.query.filter(db.and_( \
             AutoMark.lesson_id == self.id, \

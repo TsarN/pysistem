@@ -1,21 +1,26 @@
 # -*- coding: utf-8 -*-
-from pysistem import app, babel, db, redirect_url, cache
-from flask import render_template, session, g, flash, redirect, url_for, request, Blueprint, Response
+
+"""Submission views"""
+
+from pysistem import db, redirect_url, cache
+from flask import render_template, g, redirect, Blueprint, Response
 from pysistem.submissions.model import Submission, SubmissionLog
 from pysistem.users.decorators import requires_admin
 from pysistem.submissions.decorators import yield_submission
 from pysistem.test_pairs.model import TestGroup
-from pysistem.submissions.const import *
+from pysistem.submissions.const import STATUS_DONE, STATUS_CWAIT, STATUS_ACT
+from pysistem.submissions.const import RESULT_OK, RESULT_UNKNOWN, RESULT_RJ
 
 mod = Blueprint('submissions', __name__, url_prefix='/submission')
 
-@mod.route('/<int:id>')
+@mod.route('/<int:submission_id>')
 @yield_submission()
-def view(id, submission):
+def view(submission_id, submission):
     """View submission info"""
+    from pysistem.test_pairs.model import TestPair
     if not g.user.is_admin(submission=submission) and (submission.user_id != g.user.id):
         return render_template('errors/403.html'), 403
-    cache_name = '/submission/view/%d/%r' % (id, g.user.is_admin(submission=submission))
+    cache_name = '/submission/view/%d/%r' % (submission_id, g.user.is_admin(submission=submission))
     rawview = cache.get(cache_name)
     if rawview is None:
         submission_logs = SubmissionLog.query.filter( \
@@ -35,9 +40,8 @@ def view(id, submission):
                 "score": sub.test_pair.test_group.score_per_test if sub.result == RESULT_OK else 0
             })
         if submission.current_test_id > 0:
-            try:
-                from pysistem.test_pairs.model import TestPair
-                test_pair = TestPair.query.get(submission.current_test_id)
+            test_pair = TestPair.query.get(submission.current_test_id)
+            if test_pair and (test_pair.test_group_id in logs):
                 logs[test_pair.test_group_id].append({
                     "result": RESULT_UNKNOWN,
                     "log": "",
@@ -47,52 +51,52 @@ def view(id, submission):
                     "id": test_pair.id,
                     "score": 0
                 })
-            except: pass
-        for x in logs:
-            logs[x].sort(key=lambda q: q['id'])
+        for log in logs:
+            logs[log].sort(key=lambda q: q['id'])
 
         logs_list = []
         for x in sorted(logs.keys()):
             logs_list.append({
                 "tests": logs[x],
                 "groupscore": TestGroup.query.get(x).score if \
-                all(map(lambda y: y['result'] == RESULT_OK, logs[x])) \
+                all([y['result'] == RESULT_OK for y in logs[x]]) \
                 else 0,
                 "totalscore": (TestGroup.query.get(x).score if \
-                all(map(lambda y: y['result'] == RESULT_OK, logs[x])) \
-                else 0) + sum(map(lambda y: y['score'], logs[x]))
+                all([y['result'] == RESULT_OK for y in logs[x]]) \
+                else 0) + sum([y['score'] for y in logs[x]])
             })
 
         rendered_sub = render_template('submissions/list.html', submissions=[submission],
-            show_user=True, show_problem=True, disable_all_actions=True, hide_source=True)
+                                       show_user=True, show_problem=True,
+                                       disable_all_actions=True, hide_source=True)
 
         rawview = render_template('submissions/rawview.html', submission=submission,
-            logs=logs_list, rendered_sub=rendered_sub)
+                                  logs=logs_list, rendered_sub=rendered_sub)
         if submission.status in [STATUS_DONE, STATUS_ACT]:
             cache.set(cache_name, rawview)
-    return render_template('submissions/view.html', rawview=rawview, id=submission.id)
+    return render_template('submissions/view.html', rawview=rawview, submission_id=submission.id)
 
-@mod.route('/<int:id>/source')
+@mod.route('/<int:submission_id>/source')
 @yield_submission()
-def source(id, submission):
+def source(submission_id, submission):
     """Download submission's source"""
     if not g.user.is_admin(submission=submission) and (submission.user_id != g.user.id):
         return render_template('errors/403.html'), 403
     return Response(submission.source, mimetype='text/plain')
 
-@mod.route('/<int:id>/compilelog')
+@mod.route('/<int:submission_id>/compilelog')
 @yield_submission()
-def compilelog(id, submission):
+def compilelog(submission_id, submission):
     """Download submission's compilation log"""
     if not g.user.is_admin(submission=submission) and \
         ((submission.user_id != g.user.id) or not submission.is_compile_failed()):
         return render_template('errors/403.html'), 403
     return Response(submission.compile_log, mimetype='text/plain')
 
-@mod.route('/<int:id>/recheck')
+@mod.route('/<int:submission_id>/recheck')
 @yield_submission()
 @requires_admin(submission="submission")
-def recheck(id, submission):
+def recheck(submission_id, submission):
     """Recheck a submission"""
     submission.status = STATUS_CWAIT
     submission.current_test_id = 0
@@ -100,10 +104,10 @@ def recheck(id, submission):
     db.session.commit()
     return redirect(redirect_url())
 
-@mod.route('/<int:id>/reject')
+@mod.route('/<int:submission_id>/reject')
 @yield_submission()
 @requires_admin(submission="submission")
-def reject(id, submission):
+def reject(submission_id, submission):
     """Reject a submission"""
     submission.result = RESULT_RJ
     submission.status = STATUS_DONE
@@ -111,10 +115,10 @@ def reject(id, submission):
     db.session.commit()
     return redirect(redirect_url())
 
-@mod.route('/<int:id>/delete')
+@mod.route('/<int:submission_id>/delete')
 @yield_submission()
 @requires_admin(submission="submission")
-def delete(id, submission):
+def delete(submission_id, submission):
     """Delete a submission"""
     db.session.delete(submission)
     db.session.commit()

@@ -74,7 +74,7 @@
     </td>
     {% if show_problem %}
     <td>
-        <a target="_blank" href="{{ url_for('problems.view', id=submission.problem.id) }}">
+        <a target="_blank" href="{{ url_for('problems.view', problem_id=submission.problem.id) }}">
             {{ submission.problem.name }}
         </a>
     </td>
@@ -92,25 +92,25 @@
             <span class="caret caret-big pull-right"></span>
         </a>
         <p id="subactions-{{ submission.id }}" style="display: none">
-        <a target="_blank" href="{{ url_for('submissions.view', id=submission.id) }}">
+        <a target="_blank" href="{{ url_for('submissions.view', submission_id=submission.id) }}">
             {{ _('problems.submissions.view') }}
         </a><br />
         {% if g.user.is_admin(submission=submission) or submission.is_compile_failed() %}
-        <a target="_blank" href="{{ url_for('submissions.compilelog', id=submission.id) }}">
+        <a target="_blank" href="{{ url_for('submissions.compilelog', submission_id=submission.id) }}">
             {{ _('problems.submissions.viewcompilelog') }}
         </a>
         {% endif %}
         {% if g.user.is_admin(submission=submission) %}
         <br />
-        <a href="{{ url_for('submissions.recheck', id=submission.id) }}">
+        <a href="{{ url_for('submissions.recheck', submission_id=submission.id) }}">
             {{ _('problems.submissions.recheck') }}
         </a><br />
         {% if submission.result != 8 %}
-        <a href="{{ url_for('submissions.reject', id=submission.id) }}">
+        <a href="{{ url_for('submissions.reject', submission_id=submission.id) }}">
             {{ _('problems.submissions.reject') }}
         </a><br />
         {% endif %}
-        <a href="{{ url_for('submissions.delete', id=submission.id) }}">
+        <a href="{{ url_for('submissions.delete', submission_id=submission.id) }}">
             {{ _('problems.submissions.delete') }}
         </a>
         </p>
