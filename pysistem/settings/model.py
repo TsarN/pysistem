@@ -47,7 +47,7 @@ class Setting(db.Model):
             self.type = SETTING_EMPTY
 
     def __repr__(self):
-        return '<Setting %r>' % self.name
+        return '<Setting %r=%r>' % (self.name, self.val())
 
     def val(self):
         """Get self value with auto-conversion"""

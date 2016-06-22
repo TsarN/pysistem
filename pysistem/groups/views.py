@@ -75,7 +75,7 @@ def create():
         flash(gettext('groups.create.success'))
     return redirect(redirect_url())
 
-@mod.route('/rename/<int:group_id>', methods=['POST'])
+@mod.route('/<int:group_id>/rename', methods=['POST'])
 @yield_group()
 @requires_admin(group="group")
 def rename(group_id, group):

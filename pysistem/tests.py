@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import os
+from io import BytesIO
+from datetime import datetime, timedelta
+import warnings
+
+from sqlalchemy import exc as sa_exc
+
 from pysistem import app, db
 from pysistem.users.model import User
-import os
 from pysistem.compilers.model import Compiler, detect_compilers
 from pysistem.contests.model import Contest
 from pysistem.problems.model import Problem
 from pysistem.submissions.model import Submission
-
 from pysistem.submissions.const import STATUS_ACT, STATUS_WAIT, STATUS_DONE
 from pysistem.submissions.const import STATUS_COMPILEFAIL, RESULT_OK, RESULT_WA
 from pysistem.submissions.const import RESULT_PE, RESULT_UNKNOWN
-
 from pysistem.checkers.model import Checker
 from pysistem.test_pairs.model import TestPair, TestGroup
-from datetime import datetime, timedelta
-from io import BytesIO
-
-import warnings
-from sqlalchemy import exc as sa_exc
+from pysistem.settings.model import Setting
+from pysistem.groups.model import Group, GroupUserAssociation, GroupContestAssociation
 
 class TestCase(unittest.TestCase):
     def setUp(self):
@@ -38,8 +39,6 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-
-    # ------ AUTH ------
 
     def test_login_avail(self):
         request = self.app.get('/user/login', follow_redirects=True)
@@ -94,8 +93,6 @@ class TestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 302)
         request = self.app.get('/')
         self.assertIn(b'You were registred', request.data)
-
-    # ------ CONTESTS ------
 
     def contest_create(self, name, start, freeze, end, ruleset, unfreeze_after_end):
         return self.app.post('/contest/new', data=dict(
@@ -161,8 +158,6 @@ class TestCase(unittest.TestCase):
         self.login('admin', 'admin')
         request = self.contest_delete(id)
         self.assertFalse(Contest.query.get(id))
-
-    # ------ PROBLEMS ------
 
     def problem_create(self, name, description, statement, time_limit, memory_limit):
         return self.app.post('/problem/new', data=dict(
@@ -467,7 +462,7 @@ class TestCase(unittest.TestCase):
         db.session.add(user)
         db.session.commit()
         request = self.app.get('/')
-        self.assertNotIn(b'Serequester settings', request.data)
+        self.assertNotIn(b'Server settings', request.data)
         request = self.app.get('/submission/%d/compilelog' % submission1.id)
         self.assertEqual(request.status_code, 403)
         request = self.app.get('/submission/%d/source' % submission1.id)
@@ -848,3 +843,157 @@ class TestCase(unittest.TestCase):
         request = self.app.get('/problem/%d' % problem1.id)
         self.assertEqual(request.status_code, 200)
         self.assertIn(b'Just do it', request.data)
+
+        request = self.app.get('/contest/%d/problemprefix/%d' % (contest.id, problem1.id),
+            data=dict(prefix='A'), follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+
+        self.login('admin', 'admin')
+        request = self.app.get('/contest/%d/problemprefix/%d' % (contest.id, problem1.id),
+            data=dict(prefix='A'), follow_redirects=True)
+        self.assertEqual(request.status_code, 404)
+
+        request = self.app.get('/contest/%d/linkwith/%d' % (contest.id, problem1.id), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        request = self.app.get('/contest/%d/linkwith/%d' % (contest.id, problem2.id), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+
+        request = self.app.get('/contest/%d/problemprefix/%d' % (contest.id, problem1.id),
+            data=dict(prefix='A'), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        request = self.app.get('/contest/%d/problemprefix/%d' % (contest.id, problem2.id),
+            data=dict(prefix='B'), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+
+        request = self.app.get('/contest/%d' % contest.id)
+        self.assertIn(b'A+B', request.data)
+        self.assertIn(b'1 to N', request.data)
+
+        self.assertLess(request.data.find(b'A+B'), request.data.find(b'1 to N'))
+
+        request = self.app.get('/contest/%d/problemprefix/%d' % (contest.id, problem1.id),
+            data=dict(prefix='B'), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        request = self.app.get('/contest/%d/problemprefix/%d' % (contest.id, problem2.id),
+            data=dict(prefix='A'), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+
+        request = self.app.get('/contest/%d' % contest.id)
+        self.assertIn(b'A+B', request.data)
+        self.assertIn(b'1 to N', request.data)
+
+        self.assertGreater(request.data.find(b'A+B'), request.data.find(b'1 to N'))
+
+    def test_settings(self):
+        request = self.app.get('/settings', follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.login('admin', 'admin')
+
+        self.assertTrue(Setting.get('allow_guest_view'))
+        self.assertTrue(Setting.get('allow_signup'))
+        self.assertEqual(Setting.get('username_pattern'), '^[A-Za-z0-9_]{3,15}$')
+        self.assertEqual(Setting.get('scoreboard_cache_timeout'), 60)
+
+        request = self.app.post('/settings/', data=dict(
+            allow_guest_view="",
+            allow_signup="checked",
+            scoreboard_cache_timeout=42,
+            username_pattern="^[a-z]+$"
+        ), follow_redirects=True)
+
+        self.assertEqual(request.status_code, 200)
+        self.assertNotIn(b'Invalid username regex', request.data)
+        self.assertIn(b'^[a-z]+$', request.data)
+
+        request = self.app.post('/settings/', data=dict(
+            allow_guest_view="on",
+            allow_signup="on",
+            scoreboard_cache_timeout=60,
+            username_pattern=":("
+        ), follow_redirects=True)
+
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Invalid username regex', request.data)
+        self.assertNotIn(b':(', request.data)
+
+        self.logout()
+        request = self.app.get('/')
+        self.assertNotIn(b'Anonymous', request.data)
+
+    def test_groups(self):
+        request = self.app.post('/group/create', data=dict(
+            name="groupname"
+        ))
+        self.assertEqual(request.status_code, 403)
+        self.login('admin', 'admin')
+        request = self.app.post('/group/create', data=dict(
+            name="groupname"
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+
+        request = self.app.post('/group/create', data=dict(
+            name=""
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Group name is empty', request.data)
+
+        group = Group.query.filter(Group.name == 'groupname').first()
+        self.assertTrue(group)
+        self.assertEqual(group.name, 'groupname')
+        self.logout()
+
+        request = self.app.post('/group/%d/rename' % group.id, data=dict(
+            name="newname"
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        db.session.expire(group)
+        self.assertEqual(group.name, 'groupname')
+
+        self.login('admin', 'admin')
+        request = self.app.post('/group/%d/rename' % group.id, data=dict(
+            name="newname"
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        db.session.expire(group)
+        self.assertEqual(group.name, 'newname')
+
+        request = self.app.post('/group/%d/rename' % group.id, data=dict(
+            name=""
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Group name is empty', request.data)
+
+    def test_group_permissions(self):
+        group = Group(name='groupname')
+        db.session.add(group)
+        teacher = User(username='teacher', password='teacher', role='user')
+        db.session.add(teacher)
+        db.session.commit()
+
+        assoc = GroupUserAssociation(role='admin')
+        assoc.group_id = group.id
+        assoc.user_id = teacher.id
+        db.session.add(assoc)
+        db.session.commit()
+
+        request = self.app.get('/contest/new')
+        self.assertEqual(request.status_code, 403)
+        request = self.app.get('/contest/new?group_id=%d' % group.id)
+        self.assertEqual(request.status_code, 403)
+        self.login('teacher', 'teacher')
+        request = self.app.get('/contest/new?group_id=%d' % group.id)
+        self.assertEqual(request.status_code, 200)
+        request = self.app.post('/contest/new', data=dict(
+                name='TestContest',
+                start='2012-06-18 00:00',
+                freeze='2016-02-15 00:00',
+                end='2016-02-15 00:00',
+                ruleset='roi',
+                unfreeze_after_end=True,
+                group_id=group.id
+            ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        db.session.expire(group)
+        self.assertTrue(len(group.contests))
+        self.assertEqual(group.contests[0].name, 'TestContest')
+        self.assertTrue(teacher.is_admin(contest=group.contests[0]))

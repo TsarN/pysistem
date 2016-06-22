@@ -357,11 +357,12 @@ def addtestzip(test_group_id, test_group):
 
             test_group.test_pairs.append(TestPair(inp, pat))
         db.session.commit()
-        flash(gettext('problems.addtestzip.success'))
-        return redirect(url_for('problems.tests'), problem_id=test_group.problem_id)
     except:
         flash('::danger ' + gettext('problems.addtestzip.invalid'))
         return redirect(url_for('problems.tests', problem_id=test_group.problem_id))
+    flash(gettext('problems.addtestzip.success'))
+    return redirect(url_for('problems.tests'), problem_id=test_group.problem_id)
+        
 
 @mod.route('/<int:problem_id>/checkers')
 @yield_problem()

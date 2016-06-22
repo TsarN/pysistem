@@ -82,6 +82,8 @@ def problemprefix(contest_id, problem_id, contest, problem):
     assoc = ContestProblemAssociation.query.filter(db.and_(
         ContestProblemAssociation.contest_id == contest_id,
         ContestProblemAssociation.problem_id == problem_id)).first()
+    if not assoc:
+        return render_template('errors/404.html'), 404
     assoc.prefix = request.values.get('prefix', assoc.prefix)
     db.session.commit()
     if request.method == 'POST':
@@ -109,7 +111,6 @@ def problems(contest_id, contest):
                            addable_problems=addable_problems)
 
 @mod.route('/new')
-@requires_admin
 def new():
     """Create new contest
 
@@ -121,9 +122,6 @@ def new():
     Group Administrator (if GET.group_id)
     """
     group_id = request.args.get('group_id')
-    try:
-        group_id = int(group_id)
-    except: pass
     group = None
     if not group_id and not g.user.is_admin():
         return render_template('errors/403.html'), 403
@@ -131,7 +129,7 @@ def new():
         group = Group.query.get(group_id)
         if not group:
             return render_template('errors/404.html'), 404
-        if not g.user.is_admin(group=group_id):
+        if not g.user.is_admin(group=group):
             return render_template('errors/403.html'), 403
 
     return render_template('contests/edit.html', contest=Contest(),
@@ -170,80 +168,84 @@ def edit(contest_id=-1):
         contest = contest or Contest()
         is_new = contest.id is None
         name = request.form.get('name', '')
-        start = datetime.strptime(request.form.get('start', g.now_formatted), "%Y-%m-%d %H:%M")
-        end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
-        freeze = datetime.strptime(request.form.get('freeze', g.now_formatted), "%Y-%m-%d %H:%M")
-        unfreeze_after_end = bool(request.form.get('unfreeze_after_end', False))
-        rules = request.form.get('ruleset', 'acm')
-
-        group_test = any([g.user.is_admin()] + \
-            [bool(request.form.get('group-%d' % group.id, False)) \
-            for group in admin_groups])
-
-        group_id = request.form.get('group_id')
         try:
-            group_id = int(group_id)
-        except: pass
-        group = None
-        if is_new:
-            if not group_id and not g.user.is_admin():
-                return render_template('errors/403.html'), 403
-            elif group_id:
-                group = Group.query.get(group_id)
-                if not group:
-                    return render_template('errors/404.html'), 404
-                if not g.user.is_admin(group=group_id):
+            start = datetime.strptime(request.form.get('start', g.now_formatted), "%Y-%m-%d %H:%M")
+            end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
+            freeze = datetime.strptime(request.form.get('freeze', g.now_formatted), "%Y-%m-%d %H:%M")
+        except ValueError:
+            error = gettext('error.invaliddateformat')
+        if not error:
+            unfreeze_after_end = bool(request.form.get('unfreeze_after_end', False))
+            rules = request.form.get('ruleset', 'acm')
+
+            group_test = any([g.user.is_admin()] + \
+                [bool(request.form.get('group-%d' % group.id, False)) \
+                for group in admin_groups])
+
+            group_id = request.form.get('group_id')
+            try:
+                group_id = int(group_id)
+            except: pass
+            group = None
+            if is_new:
+                if not group_id and not g.user.is_admin():
                     return render_template('errors/403.html'), 403
-                group_test = True
+                elif group_id:
+                    group = Group.query.get(group_id)
+                    if not group:
+                        return render_template('errors/404.html'), 404
+                    if not g.user.is_admin(group=group_id):
+                        return render_template('errors/403.html'), 403
+                    group_test = True
 
-        if (start > freeze) or (freeze > end) or (start > end) or not \
-            (start and end and freeze):
-            error = gettext('contests.edit.invaliddates')
-        else:
-            if len(name.strip(' \t\n\r')) > 0:
-                if group_test:
-                    contest.name = name
-                    contest.start = start
-                    contest.end = end
-                    contest.freeze = freeze
-                    contest.unfreeze_after_end = unfreeze_after_end
-                    contest.rules = rules if rules in contest_rulesets.keys() else 'acm'
-
-                    if is_new:
-                        db.session.add(contest)
-                        if group:
-                            assoc = GroupContestAssociation()
-                            assoc.group_id = group.id
-                            assoc.contest = contest
-                            db.session.add(assoc)
-
-                    for group in admin_groups:
-                        ch = bool(request.form.get('group-%d' % group.id, False))
-                        assoc = None
-                        if not is_new:
-                            assoc = GroupContestAssociation.query.filter(db.and_( \
-                                GroupContestAssociation.contest_id == contest.id, \
-                                GroupContestAssociation.group_id == group.id      \
-                                )).first()
-                        if assoc and not ch:
-                            db.session.delete(assoc)
-                        if not assoc and ch:
-                            assoc = GroupContestAssociation()
-                            assoc.contest_id = contest.id
-                            assoc.group_id = group.id
-                            db.session.add(assoc)
-
-                    db.session.commit()
-                    if is_new:
-                        flash(gettext('contests.new.success'))
-                        return redirect(url_for('contests.problems', contest_id=contest.id))
-                    else:
-                        flash(gettext('contests.edit.success'))
-                        return redirect(url_for('contests.edit', contest_id=contest.id))
-                else:
-                    error = gettext('contests.edit.atleastonegroup')
+            if (start > freeze) or (freeze > end) or (start > end) or not \
+                (start and end and freeze):
+                error = gettext('contests.edit.invaliddates')
             else:
-                error = gettext('contests.edit.emptyname')
+                if len(name.strip(' \t\n\r')) > 0:
+                    if group_test:
+                        contest.name = name
+                        contest.start = start
+                        contest.end = end
+                        contest.freeze = freeze
+                        contest.unfreeze_after_end = unfreeze_after_end
+                        contest.rules = rules if rules in contest_rulesets.keys() else 'acm'
+
+                        if is_new:
+                            db.session.add(contest)
+                            if group:
+                                assoc = GroupContestAssociation()
+                                assoc.group_id = group.id
+                                assoc.contest = contest
+                                db.session.add(assoc)
+
+                        for group in admin_groups:
+                            ch = bool(request.form.get('group-%d' % group.id, False))
+                            assoc = None
+                            if not is_new:
+                                assoc = GroupContestAssociation.query.filter(db.and_( \
+                                    GroupContestAssociation.contest_id == contest.id, \
+                                    GroupContestAssociation.group_id == group.id      \
+                                    )).first()
+                            if assoc and not ch:
+                                db.session.delete(assoc)
+                            if not assoc and ch:
+                                assoc = GroupContestAssociation()
+                                assoc.contest_id = contest.id
+                                assoc.group_id = group.id
+                                db.session.add(assoc)
+
+                        db.session.commit()
+                        if is_new:
+                            flash(gettext('contests.new.success'))
+                            return redirect(url_for('contests.problems', contest_id=contest.id))
+                        else:
+                            flash(gettext('contests.edit.success'))
+                            return redirect(url_for('contests.edit', contest_id=contest.id))
+                    else:
+                        error = gettext('contests.edit.atleastonegroup')
+                else:
+                    error = gettext('contests.edit.emptyname')
 
     if contest is None:
         return render_template('errors/404.html'), 404
