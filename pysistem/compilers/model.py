@@ -81,9 +81,9 @@ class Compiler(db.Model):
         cmd = shlex.split(self.cmd_run.replace('%exe%', exe).replace('%src%', src_path))
         cmd = ['runsbox', str(time_limit), str(memory_limit), input_path, output_path] + cmd
 
-        if os.path.exists('/SANDBOX'):
+        if os.path.exists('/SANDBOX'): # pragma: no cover
             p = subprocess.Popen(cmd, cwd='/SANDBOX')
-        else:
+        else:  # pragma: no cover
             p = subprocess.Popen(cmd)
         p.wait()
         stdout = b''
@@ -98,11 +98,11 @@ class Compiler(db.Model):
         """Check if compiler is available on this machine"""
         from distutils.spawn import find_executable
         path = os.environ['PATH']
-        if app.config.get('PATH_EXTRA'):
+        if app.config.get('PATH_EXTRA'): # pragma: no cover
             path = path + os.pathsep + os.pathsep.join(app.config.get('PATH_EXTRA'))
         if (find_executable(self.executable, path=path)):
             return True
-        else:
+        else:  # pragma: no cover
             return False
 
 detectable_compilers = {
@@ -183,7 +183,7 @@ def detect_compilers():
     """Detect and insert to database available compilers"""
     from distutils.spawn import find_executable
     path = os.environ['PATH']
-    if app.config.get('PATH_EXTRA'):
+    if app.config.get('PATH_EXTRA'): # pragma: no cover
         path = path + os.pathsep + os.pathsep.join(app.config.get('PATH_EXTRA'))
     for compilerid in detectable_compilers:
         compiler = detectable_compilers[compilerid]
@@ -202,7 +202,7 @@ def detect_compilers():
                     shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 ver = p.communicate()[0].decode().strip(' \t\n\r')
             else:
-                ver = ""
+                ver = "" # pragma: no cover
 
             name = compiler['name'] % ver
             c = Compiler.query.filter(Compiler.autodetect == compilerid).first() or Compiler()

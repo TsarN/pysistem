@@ -33,7 +33,7 @@ def guard_problem(field='problem'):
             problem = kwargs.get(field)
             if problem is None:
                 return render_template('errors/404.html'), 404
-            if (len(problem.contests) > 0) and g.user.is_admin(problem=problem):
+            if (len(problem.contests) > 0) and not g.user.is_admin(problem=problem):
                 for assoc in problem.contests:
                     if g.now >= assoc.contest.start:
                         return f(*args, **kwargs)

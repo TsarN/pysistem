@@ -12,3 +12,6 @@ pysistem/conf.py
 *.o
 *.ppu
 logs
+.coverage
+htmlcov
+*.swp

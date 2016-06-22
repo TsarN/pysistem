@@ -73,6 +73,7 @@ def logout():
 
 @mod.route('/<username>')
 @mod.route('/')
+@requires_login
 def profile(username=None):
     """View user's profile"""
     user = g.user

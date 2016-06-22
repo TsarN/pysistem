@@ -8,7 +8,7 @@ import os
 from subprocess import Popen, PIPE, run, STDOUT
 try:
     from pysistem.conf import DIR
-except:
+except: # pragma: no cover
     try:
         from pysistem.conf_default import DIR
     except: pass
@@ -43,7 +43,7 @@ class Checker(db.Model):
         self.status = STATUS_CWAIT
         self.compile_log = ''
 
-        if type(problem) is int:
+        if type(problem) is int: # pragma: no cover
             problem = Problem.query.get(problem)
 
         self.problem = problem
@@ -68,11 +68,11 @@ class Checker(db.Model):
             return '<span class="text-success">%s</span>' % STR_RESULT[RESULT_OK]
         if self.status in [STATUS_COMPILEFAIL]:
             return '<span class="text-danger">%s</span>' % STR_STATUS[STATUS_COMPILEFAIL]
-        return STR_STATUS[self.status]
+        return STR_STATUS[self.status] # pragma: no cover
 
     def compile(self):
         """Compile checker, must be called before using checker on every checking machine"""
-        if self.status not in [STATUS_CWAIT, STATUS_COMPILEFAIL, STATUS_WAIT]:
+        if self.status not in [STATUS_CWAIT, STATUS_COMPILEFAIL, STATUS_WAIT]: # pragma: no cover
             return False, b'', b''
 
         self.status = STATUS_COMPILING

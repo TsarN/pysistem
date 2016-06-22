@@ -13,7 +13,7 @@ from pysistem.submissions.model import Submission
 from pysistem.submissions.const import *
 from pysistem.checkers.model import Checker
 from pysistem.test_pairs.model import TestPair, TestGroup
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import StringIO, BytesIO
 
 import warnings
@@ -29,7 +29,8 @@ class TestCase(unittest.TestCase):
         app.make_dirs()
         self.app = app.test_client()
         db.create_all()
-        db.session.add(User(username='admin', password='admin', role='admin'))
+        db.session.add(User(username='admin', password='admin', role='admin', email='admin@admin.com'))
+        db.session.add(User(username='default', password='default', role='user', email='default@default.com'))
         db.session.commit()
 
     def tearDown(self):
@@ -218,7 +219,7 @@ class TestCase(unittest.TestCase):
     def test_problem_import_submissions(self):
         detect_compilers()
 
-        if not Compiler.query.filter(Compiler.lang == 'pas').first():
+        if not Compiler.query.filter(Compiler.lang == 'pas').first(): # pragma: no cover
             self.skipTest('Pascal compiler not found')
 
         valid = b''.join([b'\x1f\x8b\x08\x00j\x08iW\x02\xff\x8d\x92]K\x14Q\x18\xc7\xb3.',
@@ -291,6 +292,22 @@ class TestCase(unittest.TestCase):
         end.
         '''
 
+        pe_solver_src = '''
+        program aplusb;
+        begin
+            writeln('1 2 3');
+            writeln('4 5');
+        end.
+        '''
+
+        invalid_checker_src = '''
+        program checker;
+        begin
+            writeln(stderr, 'ok')
+            writeln('No semicolon: Python style!')
+        end.
+        '''
+
         submission1 = Submission(valid_solver_src,
             user=User.query.filter(User.username == 'admin').first(),
             compiler=Compiler.query.filter(Compiler.lang == 'pas').first(),
@@ -318,6 +335,141 @@ class TestCase(unittest.TestCase):
         self.assertEqual(submission2.status, STATUS_DONE)
         self.assertEqual(submission2.result, RESULT_WA)
         self.assertEqual(submission2.score, 1)
+
+        submission4 = Submission(pe_solver_src,
+            user=User.query.filter(User.username == 'admin').first(),
+            compiler=Compiler.query.filter(Compiler.lang == 'pas').first(),
+            problem=problem1)
+
+        db.session.add(submission4)
+        db.session.commit()
+        submission4.compile()
+        self.assertEqual(submission4.status, STATUS_WAIT)
+        submission4.check()
+        self.assertEqual(submission4.status, STATUS_DONE)
+        self.assertEqual(submission4.result, RESULT_PE)
+        self.assertEqual(submission4.score, 0)
+
+        submission3 = Submission(valid_solver_src,
+            user=User.query.filter(User.username == 'default').first(),
+            compiler=Compiler.query.filter(Compiler.lang == 'pas').first(),
+            problem=problem1)
+
+        db.session.add(submission3)
+        db.session.commit()
+        submission3.compile()
+        self.assertEqual(submission3.status, STATUS_WAIT)
+        submission3.check()
+        self.assertEqual(submission3.status, STATUS_DONE)
+        self.assertEqual(submission3.result, RESULT_OK)
+        self.assertEqual(submission3.score, 7)
+
+        submission5 = Submission(invalid_checker_src,
+            user=User.query.filter(User.username == 'default').first(),
+            compiler=Compiler.query.filter(Compiler.lang == 'pas').first(),
+            problem=problem1)
+
+        db.session.add(submission5)
+        db.session.commit()
+        submission5.compile()
+        self.assertEqual(submission5.status, STATUS_COMPILEFAIL)
+        self.assertEqual(submission5.result, RESULT_UNKNOWN)
+        self.assertEqual(submission5.score, 0)
+
+        self.login('default', 'default')
+        rv = self.app.get('/problem/%d/submissions/user/admin' % problem1.id)
+        self.assertEqual(rv.status_code, 403)
+
+        rv = self.app.get('/problem/%d/submissions' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Submissions of user default', rv.data)
+        self.assertIn(b'<td>%d</td>' % submission3.id, rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission1.id, rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission2.id, rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission4.id, rv.data)
+
+        rvx = self.app.get('/problem/%d/submissions/user/default' % problem1.id)
+        self.assertEqual(rvx.status_code, 200)
+        self.assertEqual(rvx.data, rv.data)
+
+        self.logout()
+        self.login('admin', 'admin')
+        rv = self.app.get('/problem/%d/submissions/user/default' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Submissions of user default', rv.data)
+        self.assertIn(b'<td>%d</td>' % submission3.id, rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission1.id, rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission2.id, rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission4.id, rv.data)
+
+        rv = self.app.get('/problem/%d/submissions/user/admin' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Submissions of user admin', rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission3.id, rv.data)
+        self.assertIn(b'<td>%d</td>' % submission1.id, rv.data)
+        self.assertIn(b'<td>%d</td>' % submission2.id, rv.data)
+        self.assertIn(b'<td>%d</td>' % submission4.id, rv.data)
+
+        rv = self.app.get('/problem/%d/submissions' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Submissions of user admin', rv.data)
+        self.assertNotIn(b'<td>%d</td>' % submission3.id, rv.data)
+        self.assertIn(b'<td>%d</td>' % submission1.id, rv.data)
+        self.assertIn(b'<td>%d</td>' % submission2.id, rv.data)
+        self.assertIn(b'<td>%d</td>' % submission4.id, rv.data)
+
+        rv = self.app.get('/problem/%d/checkers' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'<span class="text-success">Accepted</span>', rv.data)
+        self.assertNotIn(b'<span class="text-danger">Compilation Error</span>', rv.data)
+        self.assertNotIn(b'View compilation log', rv.data)
+
+        checker2 = Checker(name='Invalid checker', source=invalid_checker_src, problem=problem1)
+        checker2.compiler = Compiler.query.filter(Compiler.lang == 'pas').first()
+        db.session.add(checker2)
+        db.session.commit()
+        checker2.compile()
+
+        rv = self.app.get('/problem/%d/checkers' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'<span class="text-success">Accepted</span>', rv.data)
+        self.assertIn(b'<span class="text-danger">Compilation Error</span>', rv.data)
+        self.assertIn(b'View compilation log', rv.data)
+        self.assertIn(b'Invalid checker', rv.data)
+
+        rv = self.app.get('/submission/%d' % submission1.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/submission/%d/source' % submission1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.data.decode(), submission1.source)
+        rv = self.app.get('/submission/%d/compilelog' % submission1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.data, submission1.compile_log)
+        user = User.query.filter(User.username == 'admin').first()
+        self.assertTrue(user)
+        user.role = 'user'
+        db.session.add(user)
+        db.session.commit()
+        rv = self.app.get('/')
+        self.assertNotIn(b'Server settings', rv.data)
+        rv = self.app.get('/submission/%d/compilelog' % submission1.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/submission/%d/source' % submission1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.data.decode(), submission1.source)
+        user.role == 'admin'
+        db.session.commit()
+        self.logout()
+        rv = self.app.get('/submission/%d/compilelog' % submission1.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/submission/%d/source' % submission1.id)
+        self.assertEqual(rv.status_code, 403)
+
+        self.login('admin', 'admin')
+        rv = self.app.get('/submission/9001/compilelog')
+        self.assertEqual(rv.status_code, 404)
+        rv = self.app.get('/submission/9001/source')
+        self.assertEqual(rv.status_code, 404)
 
     def test_checker_actions(self):
         detect_compilers()
@@ -366,6 +518,58 @@ class TestCase(unittest.TestCase):
             score_per_test=score_per_test,
             check_all=check_all
         ), follow_redirects=True)
+
+    def test_problem_pages(self):
+        problem = Problem(name='Сложить А и Б', description='Сложить два числа',
+            statement='Вы всё уже знаете', time_limit=1234, memory_limit=54321)
+        db.session.add(problem)
+        db.session.commit()
+
+        rv = self.app.get('/problem/%d' % problem.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d/submissions' % problem.id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Please log in to view this page', rv.data)
+        rv = self.app.get('/problem/%d/checkers' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d/tests' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d/export' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d/delete' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+
+        self.login('default', 'default')
+        rv = self.app.get('/problem/%d' % problem.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d/submissions' % problem.id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertNotIn(b'Please log in to view this page', rv.data)
+        rv = self.app.get('/problem/%d/checkers' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d/tests' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d/export' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d/delete' % problem.id)
+        self.assertEqual(rv.status_code, 403)
+
+        self.logout()
+        self.login('admin', 'admin')
+        rv = self.app.get('/problem/%d' % problem.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d/submissions' % problem.id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertNotIn(b'Please log in to view this page', rv.data)
+        rv = self.app.get('/problem/%d/checkers' % problem.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d/tests' % problem.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d/export' % problem.id)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d/delete' % problem.id, follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertFalse(Problem.query.filter(Problem.name == 'A+B').first())
 
     def test_testpair_actions(self):
         problem = Problem(name='A+B', description='Add two numbers',
@@ -507,7 +711,24 @@ class TestCase(unittest.TestCase):
         self.assertEqual(test_pairs[2].pattern, '11')
         self.assertEqual(test_pairs[3].pattern, '')
 
+        for test_pair in test_pairs:
+            rv = self.app.get('/testpair/%d/input' % test_pair.id)
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.data.decode(), test_pair.input)
+            rv = self.app.get('/testpair/%d/pattern' % test_pair.id)
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.data.decode(), test_pair.pattern)
+
         self.logout()
+
+        for test_pair in test_pairs:
+            rv = self.app.get('/testpair/%d/input' % test_pair.id)
+            self.assertEqual(rv.status_code, 403)
+            self.assertNotEqual(rv.data.decode(), test_pair.input)
+            rv = self.app.get('/testpair/%d/pattern' % test_pair.id)
+            self.assertEqual(rv.status_code, 403)
+            self.assertNotEqual(rv.data.decode(), test_pair.pattern)
+
         rv = self.app.post('/problem/deltestgroup/%d' % test_group.id, follow_redirects=True)
         self.assertEqual(rv.status_code, 403)
 
@@ -518,3 +739,86 @@ class TestCase(unittest.TestCase):
         id = test_group.id
         rv = self.app.post('/problem/deltestgroup/%d' % test_group.id, follow_redirects=True)
         self.assertFalse(TestGroup.query.get(id))
+
+    def test_compilers_available(self):
+        detect_compilers()
+        self.assertTrue(Compiler.query.all())
+        for compiler in Compiler.query:
+            self.assertTrue(compiler.is_available())
+
+    def test_profile(self):
+        rv = self.app.get('/user', follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Please log in to view this page', rv.data)
+        rv = self.app.get('/user/admin', follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Please log in to view this page', rv.data)
+
+        self.login('default', 'default')
+        rv = self.app.get('/user', follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Change password', rv.data)
+        self.assertNotIn(b'Hidden', rv.data)
+        rvx = self.app.get('/user/default')
+        self.assertEqual(rvx.status_code, 200)
+        self.assertEqual(rv.data, rvx.data)
+        del rvx
+
+        rv = self.app.get('/user/admin')
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Hidden', rv.data)
+        self.assertNotIn(b'admin@admin.com', rv.data)
+        self.assertNotIn(b'Change password', rv.data)
+
+    def test_problem_contest_relations(self):
+        problem1 = Problem(name='A+B', description='Add two numbers',
+            statement='Just do it', time_limit=1234, memory_limit=54321)
+        db.session.add(problem1)
+        problem2 = Problem(name='1 to N', description='List all integers from 1 to N',
+            statement='Please do it. Again.', time_limit=1234, memory_limit=54321)
+        db.session.add(problem2)
+
+        now_plus_10m = datetime.now() + timedelta(minutes = 10)
+
+        contest = Contest(name="<'Hello'>", start=now_plus_10m,
+            end=now_plus_10m, freeze=now_plus_10m,
+            unfreeze_after_end=False, rules='acm')
+        db.session.add(contest)
+        db.session.commit()
+
+        rv = self.app.get('/problem/%d' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Just do it', rv.data)
+        rv = self.app.get('/problem/%d' % problem2.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Please do it. Again.', rv.data)
+
+        rv = self.app.get('/contest/%d/linkwith/%d' % (contest.id, problem1.id))
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Just do it', rv.data)
+
+        self.login('admin', 'admin')
+        rv = self.app.get('/contest/%d/linkwith/%d' % (contest.id, problem1.id), follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/problem/%d' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Just do it', rv.data)
+
+        self.logout()
+        rv = self.app.get('/problem/%d' % problem1.id)
+        self.assertEqual(rv.status_code, 403)
+        self.assertNotIn(b'Just do it', rv.data)
+        rv = self.app.get('/contest/%d/unlinkwith/%d' % (contest.id, problem1.id))
+        self.assertEqual(rv.status_code, 403)
+        rv = self.app.get('/problem/%d' % problem1.id)
+        self.assertEqual(rv.status_code, 403)
+        self.assertNotIn(b'Just do it', rv.data)
+        self.login('admin', 'admin')
+        rv = self.app.get('/contest/%d/unlinkwith/%d' % (contest.id, problem1.id), follow_redirects=True)
+        self.assertEqual(rv.status_code, 200)
+        self.logout()
+        rv = self.app.get('/problem/%d' % problem1.id)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'Just do it', rv.data)

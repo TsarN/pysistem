@@ -85,7 +85,7 @@ class User(db.Model):
         """Generate password hash from username, password and application's secret key"""
         if password is None:
             return 'x'
-        if type(username) is not str or type(password) is not str:
+        if type(username) is not str or type(password) is not str: # pragma: no cover
             raise TypeError("Two arguments required: (str, str)")
         hasher = hashlib.new('sha256')
         hasher.update(str.encode(password))

@@ -9,7 +9,7 @@ import tempfile
 import os
 try:
     from pysistem.conf import DIR
-except:
+except: # pragma: no cover
     try:
         from pysistem.conf_default import DIR
     except: pass
@@ -56,13 +56,13 @@ class Submission(db.Model):
         self.result = RESULT_UNKNOWN
         self.current_test_id = 0
 
-        if type(user) is int:
+        if type(user) is int: # pragma: no cover
             user = User.query.get(user)
 
-        if type(compiler) is int:
+        if type(compiler) is int: # pragma: no cover
             compiler = Compiler.query.get(compiler)
 
-        if type(problem) is int:
+        if type(problem) is int: # pragma: no cover
             problem = Problem.query.get(problem)
 
         self.user = user
@@ -83,7 +83,7 @@ class Submission(db.Model):
         """Get submission's source path"""
         if os.path.exists('/SANDBOX'):
             return '/SANDBOX/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
-        else:
+        else: # pragma: no cover
             return tempfile.gettempdir() + '/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
 
     def compile(self):
@@ -101,7 +101,7 @@ class Submission(db.Model):
 
         try:
             os.remove(self.get_exe_path())
-        except: pass
+        except: pass # pragma: no cover
 
         result, output = self.compiler.compile(source_path, self.get_exe_path())
         if result:
