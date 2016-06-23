@@ -151,9 +151,10 @@ class Lesson(db.Model):
             return max(results, key=lambda x: x[1])
         auto_marks = AutoMark.query.filter(db.and_( \
             AutoMark.lesson_id == self.id, \
-            AutoMark.type == allowed.index(valid_keys[0]))).all()
+            AutoMark.type == allowed.index(valid_keys[0]))) \
+            .order_by(AutoMark.required.desc()).all()
         if valid_keys[0] == "place":
-            for mark in auto_marks:
+            for mark in auto_marks[::-1]:
                 if mark.required >= kwargs[valid_keys[0]]:
                     return (mark.mark, mark.points)
         else:

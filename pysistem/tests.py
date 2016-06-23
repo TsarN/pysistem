@@ -1491,3 +1491,30 @@ class TestCase(unittest.TestCase):
         db.session.expire(default)
         passwd = User.signpasswd('default', 'memesloveme')
         self.assertEqual(default.password, passwd)
+
+    def test_automarks(self):
+        lesson = Lesson(name='lessonname')
+        db.session.add(lesson)
+        db.session.commit()
+
+        lesson.auto_marks.append(AutoMark("score", 50, "3", 4))
+        lesson.auto_marks.append(AutoMark("score", 100, "5", 8))
+        lesson.auto_marks.append(AutoMark("score", 75, "4", 5))
+
+        lesson.auto_marks.append(AutoMark("place", 3, "4+", 6))
+        lesson.auto_marks.append(AutoMark("place", 2, "5-", 7))
+        lesson.auto_marks.append(AutoMark("place", 1, "5+", 9))
+
+        db.session.commit()
+        self.assertEqual(lesson.get_automarks(), (None, 0))
+        self.assertEqual(lesson.get_automarks(score=49), (None, 0))
+        self.assertEqual(lesson.get_automarks(score=50), ("3", 4))
+        self.assertEqual(lesson.get_automarks(score=74), ("3", 4))
+        self.assertEqual(lesson.get_automarks(score=75), ("4", 5))
+        self.assertEqual(lesson.get_automarks(score=75, place=4), ("4", 5))
+        self.assertEqual(lesson.get_automarks(score=75, place=3), ("4+", 6))
+        self.assertEqual(lesson.get_automarks(score=25, place=3), ("4+", 6))
+        self.assertEqual(lesson.get_automarks(place=3), ("4+", 6))
+        self.assertEqual(lesson.get_automarks(score=100, place=3), ("5", 8))
+        self.assertEqual(lesson.get_automarks(score=100, place=1), ("5+", 9))
+
