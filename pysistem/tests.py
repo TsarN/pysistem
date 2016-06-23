@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 import warnings
 
 from sqlalchemy import exc as sa_exc
-from flask import session
 
 from pysistem import app, db
 from pysistem.users.model import User
@@ -42,7 +41,8 @@ class TestCase(unittest.TestCase):
         db.session.add(User(username='default', password='default', role='user', email='default@default.com'))
         db.session.commit()
         self.assertIn('en', LANGUAGES)
-        session['language'] = 'en'
+        with self.app.session_transaction() as session:
+            session['language'] = 'en'
 
     def tearDown(self):
         db.session.remove()
@@ -1079,15 +1079,23 @@ class TestCase(unittest.TestCase):
     def test_locale_change(self):
         request = self.app.get('/')
         self.assertIn('Anonymous', request.data.decode())
+        with self.app.session_transaction() as session:
+            self.assertEqual(session['language'], 'en')
 
         request = self.app.get('/locale/set/en', follow_redirects=True)
         request = self.app.get('/')
         self.assertIn('Anonymous', request.data.decode())
+        with self.app.session_transaction() as session:
+            self.assertEqual(session['language'], 'en')
 
         request = self.app.get('/locale/set/ru', follow_redirects=True)
         request = self.app.get('/')
         self.assertIn('Гость', request.data.decode())
+        with self.app.session_transaction() as session:
+            self.assertEqual(session['language'], 'ru')
 
         request = self.app.get('/locale/set/nosuchlanguage', follow_redirects=True)
         request = self.app.get('/')
         self.assertIn('Гость', request.data.decode())
+        with self.app.session_transaction() as session:
+            self.assertEqual(session['language'], 'ru')
