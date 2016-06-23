@@ -76,120 +76,118 @@ def edit(lesson_id=-1, group_id=-1):
                 return render_template('errors/404.html'), 404
 
         name = request.form.get('name', '')
-        start = datetime.strptime(request.form.get('start', g.now_formatted), "%Y-%m-%d %H:%M")
-        end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
-
+        try:
+            start = datetime.strptime(request.form.get('start', g.now_formatted), "%Y-%m-%d %H:%M")
+            end = datetime.strptime(request.form.get('end', g.now_formatted), "%Y-%m-%d %H:%M")
+        except ValueError:
+            error = gettext('error.invaliddateformat')
+            start = None
+            end = None
         contest = None
         contest_id = request.form.get('contest_id', "none")
         if contest_id != "none":
-            try:
-                contest_id = int(contest_id)
-            except: pass
-
             contest = Contest.query.get(contest_id)
-
             if not contest:
                 return render_template('errors/404.html'), 404
 
-        if start <= end:
-            if len(name.strip(' \t\n\r')) > 0:
-                lesson.name = name
-                lesson.start = start
-                lesson.end = end
-                db.session.add(lesson)
-                changed_contest = False
-                if contest:
-                    if lesson.contest_id != contest.id:
-                        changed_contest = True
-                        if lesson.auto_marks:
-                            for auto_mark in lesson.auto_marks:
-                                db.session.delete(auto_mark)
-                    lesson.contest_id = contest.id
-                else:
-                    lesson.contest_id = None
-
-                if is_new:
-                    lesson.group_id = group.id
-
-                db.session.commit()
-
-                if not is_new:
-                    # Updating attendance, marks and auto marks
-                    users = GroupUserAssociation.query.filter(db.and_(
-                        GroupUserAssociation.group_id == lesson.group_id,
-                        GroupUserAssociation.role == 'user'))
-
-                    for user in users:
-                        attendance = bool(request.form.get('user-was-%d' % user.id))
-                        mark = request.form.get('user-mark-%d' % user.id)
-
-                        assoc = LessonUserAssociation.query.filter(db.and_(
-                            LessonUserAssociation.lesson_id == lesson.id,
-                            LessonUserAssociation.user_id == user.id)).first()
-
-                        if assoc:
-                            assoc.mark = mark
-
-                        if attendance and not assoc:
-                            assoc = LessonUserAssociation()
-                            assoc.lesson_id = lesson.id
-                            assoc.user_id = user.id
-                            assoc.mark = mark
-                            db.session.add(assoc)
-                        if not attendance and assoc:
-                            db.session.delete(assoc)
-
-                    if not changed_contest:
-                        for auto_mark in lesson.auto_marks:
-                            do_delete = bool(request.form.get('am%d-delete' % auto_mark.id))
-                            if do_delete:
-                                db.session.delete(auto_mark)
-                                continue
-                            required = request.form.get('am%d-required' % auto_mark.id, '')
-                            mark = request.form.get('am%d-mark' % auto_mark.id, '')
-                            points = request.form.get('am%d-points' % auto_mark.id, '')
-
-                            try:
-                                auto_mark.required = int(required)
-                                auto_mark.mark = mark
-                                auto_mark.points = int(points)
-                            except ValueError:
-                                pass
-
-                            db.session.add(auto_mark)
-
-                        for typ in ("score", "place", "solved"):
-                            idx = 0
-                            while True:
-                                idx += 1
-                                avail = request.form.get('am-new%s%d-avail' % (typ, idx), False)
-                                if not avail:
-                                    break
-                                required = request.form.get('am-new%s%d-required' % (typ, idx))
-                                mark = request.form.get('am-new%s%d-mark' % (typ, idx))
-                                points = request.form.get('am-new%s%d-points' % (typ, idx))
-                                try:
-                                    required = int(required)
-                                    points = int(points)
-                                except:
-                                    continue
-
-                                m = AutoMark(type=typ, required=required, mark=mark, points=points)
-                                m.lesson_id = lesson.id
-                                db.session.add(m)
-
-                    db.session.commit()
-                if is_new:
-                    flash(gettext('lessons.new.success'))
-                else:
-                    flash(gettext('lessons.edit.success'))
-                return redirect(url_for('lessons.edit', lesson_id=lesson.id))
-            else:
-                error = gettext('lessons.edit.emptyname')
-        else:
+        if not error and (start > end):
             error = gettext('lessons.edit.invaliddates')
+        elif not error and (len(name.strip(' \t\n\r')) == 0):
+            error = gettext('lessons.edit.emptyname')
+        elif not error:
+            lesson.name = name
+            lesson.start = start
+            lesson.end = end
+            db.session.add(lesson)
+            changed_contest = False
+            if contest:
+                if lesson.contest_id != contest.id:
+                    changed_contest = True
+                    if lesson.auto_marks:
+                        for auto_mark in lesson.auto_marks:
+                            db.session.delete(auto_mark)
+                lesson.contest_id = contest.id
+            else:
+                lesson.contest_id = None
 
-        # An error occurred. Save form data for displaing
+            if is_new:
+                lesson.group_id = group.id
+
+            db.session.commit()
+
+            if not is_new:
+                # Updating attendance, marks and auto marks
+                users = GroupUserAssociation.query.filter(db.and_(
+                    GroupUserAssociation.group_id == lesson.group_id,
+                    GroupUserAssociation.role == 'user'))
+
+                for user in users:
+                    attendance = bool(request.form.get('user-was-%d' % user.id))
+                    mark = request.form.get('user-mark-%d' % user.id)
+
+                    assoc = LessonUserAssociation.query.filter(db.and_(
+                        LessonUserAssociation.lesson_id == lesson.id,
+                        LessonUserAssociation.user_id == user.id)).first()
+
+                    if assoc:
+                        assoc.mark = mark
+
+                    if attendance and not assoc:
+                        assoc = LessonUserAssociation()
+                        assoc.lesson_id = lesson.id
+                        assoc.user_id = user.id
+                        assoc.mark = mark
+                        db.session.add(assoc)
+                    if not attendance and assoc:
+                        db.session.delete(assoc)
+
+                if not changed_contest:
+                    for auto_mark in lesson.auto_marks:
+                        do_delete = bool(request.form.get('am%d-delete' % auto_mark.id))
+                        if do_delete:
+                            db.session.delete(auto_mark)
+                            continue
+                        required = request.form.get('am%d-required' % auto_mark.id, '')
+                        mark = request.form.get('am%d-mark' % auto_mark.id, '')
+                        points = request.form.get('am%d-points' % auto_mark.id, '')
+
+                        try:
+                            auto_mark.required = int(required)
+                            auto_mark.mark = mark
+                            auto_mark.points = int(points)
+                        except ValueError:
+                            pass
+
+                        db.session.add(auto_mark)
+
+                    for typ in ("score", "place", "solved"):
+                        idx = 0
+                        while True:
+                            idx += 1
+                            avail = request.form.get('am-new%s%d-avail' % (typ, idx),
+                                                     False)
+                            if not avail:
+                                break
+                            required = request.form.get('am-new%s%d-required' % (typ, idx))
+                            mark = request.form.get('am-new%s%d-mark' % (typ, idx))
+                            points = request.form.get('am-new%s%d-points' % (typ, idx))
+                            try:
+                                required = int(required)
+                                points = int(points)
+                            except:
+                                continue
+
+                            m = AutoMark(type=typ, required=required,
+                                         mark=mark, points=points)
+                            m.lesson_id = lesson.id
+                            db.session.add(m)
+                db.session.commit()
+            if is_new:
+                flash(gettext('lessons.new.success'))
+            else:
+                flash(gettext('lessons.edit.success'))
+            return redirect(url_for('lessons.edit', lesson_id=lesson.id))
+        # An error occurred. Save form data for displaying
         if is_new:
             lesson.name = name
             lesson.start = start
@@ -197,6 +195,11 @@ def edit(lesson_id=-1, group_id=-1):
     else:
         if lesson is None:
             return render_template('errors/404.html'), 404
+
+    if not lesson:
+        return new(group_id=group_id)
+    if error:
+        return render_template('lessons/edit.html', lesson=lesson, group=group, error=error)
 
     group = group or lesson.group
 

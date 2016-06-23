@@ -145,31 +145,30 @@ def edit_profile(username=None):
     groups = Group.query.all()
 
     if request.method == 'POST':
-        if request.form.get('update_info', None) is not None:
-            user.first_name = request.form.get('first_name', user.first_name)
-            user.last_name = request.form.get('last_name', user.last_name)
-            user.email = request.form.get('email', user.email)
+        user.first_name = request.form.get('first_name', user.first_name)
+        user.last_name = request.form.get('last_name', user.last_name)
+        user.email = request.form.get('email', user.email)
 
-            if g.user.is_admin():
-                for group in groups:
-                    radio = request.form.get('group-%d' % group.id, "none")
-                    checked = (radio == "none")
-                    role = 'admin' if (radio == 'admin') else 'user'
-                    assoc = GroupUserAssociation.query.filter(db.and_( \
-                        GroupUserAssociation.user_id == user.id, \
-                        GroupUserAssociation.group_id == group.id \
-                        )).first()
-                    if assoc and checked:
-                        db.session.delete(assoc)
-                    if not checked:
-                        assoc = assoc or GroupUserAssociation()
-                        assoc.role = role
-                        assoc.user_id = user.id
-                        assoc.group_id = group.id
-                        db.session.add(assoc)
-            db.session.commit()
-            flash(gettext('profile.update.success'))
-            return redirect(url_for('users.edit_profile', username=user.username))
+        if g.user.is_admin():
+            for group in groups:
+                radio = request.form.get('group-%d' % group.id, "none")
+                checked = (radio == "none")
+                role = 'admin' if (radio == 'admin') else 'user'
+                assoc = GroupUserAssociation.query.filter(db.and_( \
+                    GroupUserAssociation.user_id == user.id, \
+                    GroupUserAssociation.group_id == group.id \
+                    )).first()
+                if assoc and checked:
+                    db.session.delete(assoc)
+                if not checked:
+                    assoc = assoc or GroupUserAssociation()
+                    assoc.role = role
+                    assoc.user_id = user.id
+                    assoc.group_id = group.id
+                    db.session.add(assoc)
+        db.session.commit()
+        flash(gettext('profile.update.success'))
+        return redirect(url_for('users.edit_profile', username=user.username))
 
     group_map = {}
     for group in user.groups:

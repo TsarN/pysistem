@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PySistem 0.2-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: nikts53@gmail.com\n"
-"POT-Creation-Date: 2016-06-20 16:51+0300\n"
+"POT-Creation-Date: 2016-06-23 11:17+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: ru\n"
@@ -19,227 +19,175 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: views.py:179
-msgid "naturaltime.justnow"
-msgstr "только что"
+#: contests/views.py:176
+msgid "error.invaliddateformat"
+msgstr "Дата и время в неправильном формате"
 
-#: views.py:181
-msgid "naturaltime.secondsago"
-msgstr "секунд назад"
-
-#: views.py:183
-msgid "naturaltime.minuteago"
-msgstr "минуту назад"
-
-#: views.py:185
-msgid "naturaltime.minutesago"
-msgstr "минут назад"
-
-#: views.py:187
-msgid "naturaltime.hourago"
-msgstr "час назад"
-
-#: views.py:189
-msgid "naturaltime.hoursago"
-msgstr "часов назад"
-
-#: views.py:191
-msgid "naturaltime.yesterday"
-msgstr "вчера"
-
-#: views.py:193
-msgid "naturaltime.daysago"
-msgstr "дней назад"
-
-#: views.py:195
-msgid "naturaltime.weekago"
-msgstr "неделю назад"
-
-#: views.py:197
-msgid "naturaltime.weeksago"
-msgstr "недель назад"
-
-#: views.py:199
-msgid "naturaltime.monthago"
-msgstr "месяц назад"
-
-#: views.py:201
-msgid "naturaltime.monthsago"
-msgstr "месяцев назад"
-
-#: views.py:202
-msgid "naturaltime.yearsago"
-msgstr "лет назад"
-
-#: contests/views.py:141
+#: contests/views.py:203
 msgid "contests.edit.invaliddates"
 msgstr "Время указано неверно: Начало &le; Заморозка &le; Окончание"
 
-#: contests/views.py:178
+#: contests/views.py:240
 msgid "contests.new.success"
 msgstr "Турнир создан"
 
-#: contests/views.py:181
+#: contests/views.py:243
 msgid "contests.edit.success"
 msgstr "Турнир обновлён"
 
-#: contests/views.py:184
+#: contests/views.py:246
 msgid "contests.edit.atleastonegroup"
 msgstr "Укажите хотя бы одну группу"
 
-#: contests/views.py:186
+#: contests/views.py:248
 msgid "contests.edit.emptyname"
 msgstr "Пустое название турнира"
 
-#: groups/views.py:36 groups/views.py:49
+#: groups/views.py:71 groups/views.py:96
 msgid "groups.edit.emptyname"
 msgstr "Пустое название группы"
 
-#: groups/views.py:40
+#: groups/views.py:75
 msgid "groups.create.success"
 msgstr "Группа успешно создана"
 
-#: groups/views.py:53
+#: groups/views.py:100
 msgid "groups.rename.success"
 msgstr "Группа переименована"
 
-#: lessons/model.py:14
+#: lessons/model.py:19
 msgid "lessons.automarks.score"
 msgstr "Автоматические оценки по набранным баллам"
 
-#: lessons/model.py:15
+#: lessons/model.py:20
 msgid "lessons.automarks.score.atleast"
 msgstr "Минимум баллов"
 
-#: lessons/model.py:16
+#: lessons/model.py:21
 msgid "lessons.automarks.place"
 msgstr "Автоматические оценки по месту в турнире"
 
-#: lessons/model.py:17
+#: lessons/model.py:22
 msgid "lessons.automarks.place.atleast"
 msgstr "Минимальное место"
 
-#: lessons/model.py:18
+#: lessons/model.py:23
 msgid "lessons.automarks.solved"
 msgstr "Автоматические оценки по числу решённых задач"
 
-#: lessons/model.py:19
+#: lessons/model.py:24
 msgid "lessons.automarks.solved.atleast"
 msgstr "Минимальное количество задач"
 
-#: lessons/views.py:24
+#: lessons/views.py:30
 msgid "lessons.delete.success"
 msgstr "Занятие удалено"
 
-#: lessons/views.py:168
+#: lessons/views.py:183
 msgid "lessons.new.success"
 msgstr "Занятие добавлено"
 
-#: lessons/views.py:170
+#: lessons/views.py:185
 msgid "lessons.edit.success"
 msgstr "Занятие обновлено"
 
-#: lessons/views.py:173
+#: lessons/views.py:188
 msgid "lessons.edit.emptyname"
 msgstr "Пустое название занятия"
 
-#: lessons/views.py:175
+#: lessons/views.py:190
 msgid "lessons.edit.invaliddates"
 msgstr "Начало позже окончания"
 
-#: locale/views.py:15
+#: locale/views.py:25
 msgid "locale.set.success"
 msgstr "Язык сменён на %(lang)s"
 
-#: locale/views.py:17
-msgid "locale.set.langnotfound"
-msgstr "Язык %(lang)s не найден"
-
-#: problems/views.py:92
+#: problems/views.py:118
 msgid "problems.new.success"
 msgstr "Задача создана"
 
-#: problems/views.py:97
+#: problems/views.py:123
 msgid "problems.edit.success"
 msgstr "Задача обновлена"
 
-#: problems/views.py:100
+#: problems/views.py:126
 msgid "problems.edit.emptyname"
 msgstr "Пустое название задачи"
 
-#: problems/views.py:124 problems/views.py:129
+#: problems/views.py:165 problems/views.py:170
 msgid "problems.import.filemissing"
 msgstr "Укажите файл с задачей"
 
-#: problems/views.py:148
+#: problems/views.py:189
 msgid "problems.import.error"
 msgstr "Ошибка импорта"
 
-#: problems/views.py:184
+#: problems/views.py:247
 msgid "problems.addtestgroup.success"
 msgstr "Группа тестов создана"
 
-#: problems/views.py:186
+#: problems/views.py:249
 msgid "problems.modtestgroup.success"
 msgstr "Группа тестов обновлена"
 
-#: problems/views.py:198
+#: problems/views.py:268
 msgid "problems.deltestgroup.success"
 msgstr "Группа тестов удалена"
 
-#: problems/views.py:208
+#: problems/views.py:285
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:220 problems/views.py:225
+#: problems/views.py:304 problems/views.py:309
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:247 problems/views.py:252
+#: problems/views.py:338 problems/views.py:343
 msgid "problems.addtestzip.inputmissing"
 msgstr "Не указан ZIP файл"
 
-#: problems/views.py:269
-msgid "problems.addtestzip.success"
-msgstr "Тесты загружены из ZIP файла"
-
-#: problems/views.py:272
+#: problems/views.py:361
 msgid "problems.addtestzip.invalid"
 msgstr "ZIP файл повреждён"
 
-#: problems/views.py:293 problems/views.py:298
+#: problems/views.py:363
+msgid "problems.addtestzip.success"
+msgstr "Тесты загружены из ZIP файла"
+
+#: problems/views.py:399 problems/views.py:404
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:324
+#: problems/views.py:437
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:333
+#: problems/views.py:453
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:363 problems/views.py:368
+#: problems/views.py:500 problems/views.py:505
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:377
+#: problems/views.py:514
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:385
+#: problems/views.py:522
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: settings/views.py:28
+#: settings/views.py:37
 msgid "settings.errors.invalidusernameregex"
 msgstr "Неправильное регулярное выражение"
 
-#: settings/views.py:37
+#: settings/views.py:46
 msgid "settings.edit.success"
 msgstr "Настройки сохранены"
 
-#: submissions/model.py:166
+#: submissions/model.py:176
 msgid "common.outof"
 msgstr "из"
 
@@ -256,7 +204,7 @@ msgstr "Создание новой группы"
 msgid "common.name"
 msgstr "Название"
 
-#: templates/base.html:104 templates/contests/base.html:79
+#: templates/base.html:104 templates/contests/base.html:80
 #: templates/problems/base.html:22
 msgid "common.cancel"
 msgstr "Отмена"
@@ -337,11 +285,11 @@ msgstr "Для использования сервера необходима а
 msgid "common.helloworld"
 msgstr "Привет, мир!"
 
-#: templates/contests/base.html:73
+#: templates/contests/base.html:74
 msgid "contests.delete.confirm"
 msgstr "Подтвердите удаление турнира"
 
-#: templates/contests/base.html:83 templates/contests/base.html:105
+#: templates/contests/base.html:84 templates/contests/base.html:106
 #: templates/contests/problems.html:88 templates/lessons/edit.html:160
 #: templates/problems/base.html:26 templates/problems/base.html:65
 #: templates/problems/checkers.html:40 templates/problems/tests.html:11
@@ -349,45 +297,45 @@ msgstr "Подтвердите удаление турнира"
 msgid "common.delete"
 msgstr "Удалить"
 
-#: templates/contests/base.html:95 templates/contests/rawlist.html:3
+#: templates/contests/base.html:96 templates/contests/rawlist.html:3
 msgid "contests.problems"
 msgstr "Задачи"
 
-#: templates/contests/base.html:98 templates/contests/rawlist.html:45
+#: templates/contests/base.html:99 templates/contests/rawlist.html:45
 msgid "contests.scoreboard"
 msgstr "Турнирная таблица"
 
-#: templates/contests/base.html:102
+#: templates/contests/base.html:103
 msgid "contests.edit"
 msgstr "Редактировать турнир"
 
-#: templates/contests/base.html:116 templates/contests/edit.html:65
+#: templates/contests/base.html:117 templates/contests/edit.html:65
 #: templates/contests/edit.html:68 templates/groups/lessons.html:13
 msgid "contests.start"
 msgstr "Начало"
 
-#: templates/contests/base.html:117 templates/contests/edit.html:75
+#: templates/contests/base.html:118 templates/contests/edit.html:75
 #: templates/contests/edit.html:78
 msgid "contests.end"
 msgstr "Окончание"
 
-#: templates/contests/base.html:119 templates/contests/rawlist.html:26
+#: templates/contests/base.html:120 templates/contests/rawlist.html:26
 msgid "contests.remaining"
 msgstr "Осталось"
 
-#: templates/contests/base.html:121 templates/contests/rawlist.html:28
+#: templates/contests/base.html:122 templates/contests/rawlist.html:28
 msgid "contests.beforestart"
 msgstr "До начала"
 
-#: templates/contests/base.html:128 templates/contests/rawlist.html:36
+#: templates/contests/base.html:129 templates/contests/rawlist.html:36
 msgid "contests.finished"
 msgstr "Турнир окончен"
 
-#: templates/contests/base.html:140
+#: templates/contests/base.html:141
 msgid "contest.frozen"
 msgstr "Турнирная таблица заморожена"
 
-#: templates/contests/base.html:142
+#: templates/contests/base.html:143
 msgid "contest.adminfrozen"
 msgstr "Турнирная таблица заморожена для непривилегированных пользователей"
 
@@ -422,7 +370,7 @@ msgstr "Разморозить после окончания"
 
 #: templates/contests/edit.html:124 templates/lessons/edit.html:287
 #: templates/problems/edit.html:113 templates/problems/tests.html:49
-#: templates/settings/edit.html:52 templates/users/change_password.html:46
+#: templates/settings/edit.html:56 templates/users/change_password.html:46
 #: templates/users/edit_profile.html:73
 msgid "common.update"
 msgstr "Обновить"
@@ -726,15 +674,15 @@ msgstr "КиБ"
 msgid "settings.usernamepattern"
 msgstr "Шаблон имени пользователя"
 
-#: templates/settings/edit.html:21 templates/settings/edit.html:25
+#: templates/settings/edit.html:21 templates/settings/edit.html:26
 msgid "settings.scoreboardcachetimeout"
 msgstr "Частота обновления турнирной таблицы в секундах"
 
-#: templates/settings/edit.html:32
+#: templates/settings/edit.html:35
 msgid "settings.allowsignup"
 msgstr "Разрешить регистрацию"
 
-#: templates/settings/edit.html:41
+#: templates/settings/edit.html:45
 msgid "settings.allowguestview"
 msgstr "Разрешить доступ без авторизации"
 
@@ -877,70 +825,70 @@ msgstr "Код доступа из консоли сервера"
 msgid "signup.admin.code"
 msgstr "Код доступа"
 
-#: users/decorators.py:14
+#: users/decorators.py:18
 msgid "error.permission.authrequired"
 msgstr "Для просмотра страницы необходимо авторизироваться"
 
-#: users/model.py:82
+#: users/model.py:74
 msgid "auth.login.invalidcredentials"
 msgstr "Неправильный логин или пароль"
 
-#: users/model.py:107
+#: users/model.py:101
 msgid "common.hidden"
 msgstr "Скрыто"
 
-#: users/views.py:23
+#: users/views.py:28
 msgid "auth.login.success"
 msgstr "Вы вошли в систему"
 
-#: users/views.py:34
+#: users/views.py:39
 msgid "auth.signup.forbidden"
 msgstr "Регистрация отключена на этом сервере"
 
-#: users/views.py:43
+#: users/views.py:48
 msgid "auth.signup.admin.invalidcode"
 msgstr "Неверный код"
 
-#: users/views.py:55
+#: users/views.py:60
 msgid "auth.signup.success"
 msgstr "Вы зарегистрировались в системе"
 
-#: users/views.py:58
+#: users/views.py:63
 msgid "auth.signup.shortpassword"
 msgstr "Пароль слишком короткий"
 
-#: users/views.py:60
+#: users/views.py:65
 msgid "auth.signup.mismatchedpasswords"
 msgstr "Пароли не совпадают"
 
-#: users/views.py:62
+#: users/views.py:67
 msgid "auth.signup.exists"
 msgstr "Пользователь уже существует"
 
-#: users/views.py:64
+#: users/views.py:69
 msgid "auth.signup.invalidusername"
 msgstr "Такое имя нельзя использовать"
 
-#: users/views.py:71
+#: users/views.py:76
 msgid "auth.logout.success"
 msgstr "Вы вышли из системы"
 
-#: users/views.py:108
+#: users/views.py:114
 msgid "users.changepassword.incorrectoldpassword"
 msgstr "Старый пароль введён неверно"
 
-#: users/views.py:118
+#: users/views.py:124
 msgid "users.changepassword.success"
 msgstr "Пароль сменён"
 
-#: users/views.py:120
+#: users/views.py:126
 msgid "users.changepassword.shortpassword"
 msgstr "Новый пароль слишком короткий"
 
-#: users/views.py:122
+#: users/views.py:128
 msgid "users.changepassword.mismatchedpasswords"
 msgstr "Пароли не совпадают"
 
-#: users/views.py:165
+#: users/views.py:170
 msgid "profile.update.success"
-msgstr "Профиль пользователя был обновлён"
+msgstr "Профиль пользователя был обновлён""

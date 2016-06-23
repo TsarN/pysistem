@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import warnings
 
 from sqlalchemy import exc as sa_exc
+from flask import session
 
 from pysistem import app, db
 from pysistem.users.model import User
@@ -22,6 +23,11 @@ from pysistem.test_pairs.model import TestPair, TestGroup
 from pysistem.settings.model import Setting
 from pysistem.groups.model import Group, GroupUserAssociation, GroupContestAssociation
 
+try:
+    from pysistem.conf import LANGUAGES
+except ImportError:
+    from pysistem.conf_default import LANGUAGES
+
 class TestCase(unittest.TestCase):
     def setUp(self):
         warnings.filterwarnings("ignore", category=sa_exc.SAWarning)
@@ -35,6 +41,8 @@ class TestCase(unittest.TestCase):
         db.session.add(User(username='admin', password='admin', role='admin', email='admin@admin.com'))
         db.session.add(User(username='default', password='default', role='user', email='default@default.com'))
         db.session.commit()
+        self.assertIn('en', LANGUAGES)
+        session['language'] = 'en'
 
     def tearDown(self):
         db.session.remove()
@@ -115,6 +123,9 @@ class TestCase(unittest.TestCase):
         request = self.contest_create('', '2012-06-18 00:00',
             '2016-02-15 00:00', '2016-02-15 00:00', 'roi', 'on')
         self.assertIn(b'Contest name is empty', request.data)
+        request = self.contest_create('Invalid', '-- 00;00',
+            '2016-02-15 00:00', '2016-02-15 00:00', 'roi', 'on')
+        self.assertIn(b'Invalid date/time format', request.data)
         request = self.contest_create('Hello', '2016-06-18 00:00',
             '2016-02-15 00:00', '2016-02-15 00:00', 'roi', 'on')
         self.assertIn(b'Dates are invalid', request.data)
@@ -997,3 +1008,86 @@ class TestCase(unittest.TestCase):
         self.assertTrue(len(group.contests))
         self.assertEqual(group.contests[0].name, 'TestContest')
         self.assertTrue(teacher.is_admin(contest=group.contests[0]))
+
+        request = self.app.post('/user/default/edit', data={
+                ("group-%d" % group.id): "user"
+            }, follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.logout()
+        self.login('default', 'default')
+        request = self.app.get('/group/%d/contests' % group.id, follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.logout()
+        user = User.query.filter(User.username == 'default').first()
+        request = self.app.post('/user/default/edit', data={
+                ("group-%d" % group.id): "user",
+                "first_name": "Sir",
+                "last_name": "Userrendo",
+                "email": "youdontknowme@example.com"
+            }, follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.assertTrue(user)
+        db.session.expire(user)
+        db.session.expire(group)
+        self.assertNotEqual(user.first_name, "Sir")
+        self.assertNotEqual(user.last_name, "Userrendo")
+        self.assertNotEqual(user.email, "youdontknowme@example.com")
+        self.assertNotIn(user, [i.user for i in group.users])
+
+        self.login('default', 'default')
+        request = self.app.post('/user/default/edit', data={
+                ("group-%d" % group.id): "user",
+                "first_name": "Dog",
+                "last_name": "Memes",
+                "email": "again@example.com"
+            }, follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertTrue(user)
+        db.session.expire(user)
+        db.session.expire(group)
+        self.assertEqual(user.first_name, "Dog")
+        self.assertEqual(user.last_name, "Memes")
+        self.assertEqual(user.email, "again@example.com")
+        self.assertNotIn(user, [i.user for i in group.users])
+        self.logout()
+
+        self.login('admin', 'admin')
+        request = self.app.post('/user/default/edit', data={
+                ("group-%d" % group.id): "user",
+                "first_name": "Sir",
+                "last_name": "Userrendo",
+                "email": "youdontknowme@example.com"
+            }, follow_redirects=True)
+        db.session.expire(user)
+        db.session.expire(group)
+        self.assertEqual(request.status_code, 200)
+        self.assertTrue(user)
+        self.assertEqual(user.first_name, "Sir")
+        self.assertEqual(user.last_name, "Userrendo")
+        self.assertEqual(user.email, "youdontknowme@example.com")
+        self.assertIn(user, [i.user for i in group.users])
+        self.logout()
+        self.login('default', 'default')
+        request = self.app.get('/group/%d/contests' % group.id, follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertTrue(teacher.is_admin(user=user))
+        self.assertFalse(user.is_admin(user=teacher))
+        self.assertFalse(user.is_admin(user=user))
+
+    @unittest.skipUnless('ru' in LANGUAGES and 'en' in LANGUAGES,
+                         "Russian and English locales required")
+    def test_locale_change(self):
+        request = self.app.get('/')
+        self.assertIn('Anonymous', request.data.decode())
+
+        request = self.app.get('/locale/set/en', follow_redirects=True)
+        request = self.app.get('/')
+        self.assertIn('Anonymous', request.data.decode())
+
+        request = self.app.get('/locale/set/ru', follow_redirects=True)
+        request = self.app.get('/')
+        self.assertIn('Гость', request.data.decode())
+
+        request = self.app.get('/locale/set/nosuchlanguage', follow_redirects=True)
+        request = self.app.get('/')
+        self.assertIn('Гость', request.data.decode())

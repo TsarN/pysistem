@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import session, flash, redirect, Blueprint
+from flask import session, flash, redirect, Blueprint, render_template
 from flask_babel import gettext
 from pysistem import redirect_url
 
@@ -24,5 +24,4 @@ def setlocale(lang):
             session['language'] = lang
             flash(gettext('locale.set.success', lang=LANGUAGES[lang]))
             return redirect(redirect_url())
-    flash('::danger ' + gettext('locale.set.langnotfound', lang=lang))
-    return redirect(redirect_url())
+    return render_template('errors/404.html'), 404
