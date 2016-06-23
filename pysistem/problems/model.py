@@ -76,7 +76,7 @@ class Problem(db.Model):
                     ans += 1
         return ans
 
-    def user_succeed(self, user, freeze=None):
+    def user_score(self, user, freeze=None):
         """Return Tuple: (Score for this problem, last time of last meaningful submission)"""
         from pysistem.submissions.model import Submission
         subs = Submission.query.filter(db.and_(

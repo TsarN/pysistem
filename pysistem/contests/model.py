@@ -114,13 +114,13 @@ class Contest(db.Model):
         if self.rules == 'roi':
             score = 0
             for problem in self.problems:
-                score += problem.user_succeed(user, freeze=freeze)[0]
+                score += problem.user_score(user, freeze=freeze)[0]
             return (score,)
         else:
             solved, penalty = 0, 0
             for problem in self.problems:
-                succ = problem.user_succeed(user, freeze=freeze)
-                if succ[0]:
+                succ = problem.user_score(user, freeze=freeze)
+                if succ[0] and (succ[0] >= problem.get_max_score()):
                     solved += 1
                     penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
                     penalty += max(0, (succ[1] - self.start).total_seconds() // 60)

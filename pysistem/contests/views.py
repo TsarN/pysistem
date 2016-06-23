@@ -312,7 +312,7 @@ def scoreboard(contest_id, contest):
             solved_map = {}
             add_user = False
             for problem in problems:
-                succeed, submitted = problem.user_succeed(user, freeze=contest.get_freeze_time())
+                succeed, submitted = problem.user_score(user, freeze=contest.get_freeze_time())
                 time = None
                 if submitted is not None:
                     time = int(max(0, (submitted - contest.start).total_seconds() // 60))

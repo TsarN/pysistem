@@ -7,11 +7,12 @@ from datetime import datetime, timedelta
 import warnings
 
 from sqlalchemy import exc as sa_exc
+from flask import g
 
 from pysistem import app, db
 from pysistem.users.model import User
 from pysistem.compilers.model import Compiler, detect_compilers
-from pysistem.contests.model import Contest
+from pysistem.contests.model import Contest, ContestProblemAssociation
 from pysistem.problems.model import Problem
 from pysistem.submissions.model import Submission
 from pysistem.submissions.const import STATUS_ACT, STATUS_WAIT, STATUS_DONE
@@ -228,7 +229,7 @@ class TestCase(unittest.TestCase):
     def test_problem_import_submissions(self):
         detect_compilers()
 
-        if not Compiler.query.filter(Compiler.lang == 'pas').first(): # pragma: no cover
+        if not Compiler.query.filter(Compiler.lang == 'pas').first():
             self.skipTest('Pascal compiler not found')
 
         valid = [
@@ -800,6 +801,8 @@ class TestCase(unittest.TestCase):
         self.assertIn(b'Please log in to view this page', request.data)
 
         self.login('default', 'default')
+        request = self.app.get('/user/greatintellegence/edit', follow_redirects=True)
+        self.assertEqual(request.status_code, 404)
         request = self.app.get('/user', follow_redirects=True)
         self.assertEqual(request.status_code, 200)
         self.assertIn(b'Change password', request.data)
@@ -1038,6 +1041,21 @@ class TestCase(unittest.TestCase):
         self.assertEqual(group.contests[0].name, 'TestContest')
         self.assertTrue(teacher.is_admin(contest=group.contests[0]))
 
+        problem = Problem(name='A+B', description='Add two numbers',
+            statement='Just do it', time_limit=1234, memory_limit=54321)
+        db.session.add(problem)
+        db.session.commit()
+
+        self.assertFalse(teacher.is_admin(problem=problem))
+
+        assoc = ContestProblemAssociation(prefix='A')
+        assoc.problem_id = problem.id
+        assoc.contest_id = group.contests[0].contest.id
+        db.session.add(assoc)
+        db.session.commit()
+
+        self.assertTrue(teacher.is_admin(problem=problem))
+
         request = self.app.post('/user/default/edit', data={
                 ("group-%d" % group.id): "user"
             }, follow_redirects=True)
@@ -1115,27 +1133,24 @@ class TestCase(unittest.TestCase):
                          "Russian and English locales required")
     def test_locale_change(self):
         request = self.app.get('/')
-        self.assertIn('Anonymous', request.data.decode())
         with self.app.session_transaction() as session:
             self.assertEqual(session['language'], 'en')
+        self.assertIn('Anonymous', request.data.decode())
 
         request = self.app.get('/locale/set/en', follow_redirects=True)
-        request = self.app.get('/')
-        self.assertIn('Anonymous', request.data.decode())
         with self.app.session_transaction() as session:
             self.assertEqual(session['language'], 'en')
+        self.assertIn('Anonymous', request.data.decode())
 
         request = self.app.get('/locale/set/ru', follow_redirects=True)
-        request = self.app.get('/')
-        self.assertIn('Гость', request.data.decode())
         with self.app.session_transaction() as session:
             self.assertEqual(session['language'], 'ru')
+        self.assertIn('Гость', request.data.decode())
 
         request = self.app.get('/locale/set/nosuchlanguage', follow_redirects=True)
-        request = self.app.get('/')
-        self.assertIn('Гость', request.data.decode())
         with self.app.session_transaction() as session:
             self.assertEqual(session['language'], 'ru')
+        self.assertIn('Гость', request.data.decode())
 
     def test_lessons(self):
         group = Group(name='groupname')
@@ -1288,7 +1303,191 @@ class TestCase(unittest.TestCase):
         self.assertEqual(len(lesson.auto_marks), 0)
         self.assertEqual(len(lesson.users), 0)
 
+        self.logout()
+        lesson_id = lesson.id
+        request = self.app.get('/lesson/%d/delete' % lesson_id, follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.assertTrue(Lesson.query.get(lesson_id))
+        self.login('admin', 'admin')
+        request = self.app.get('/lesson/9001/delete', follow_redirects=True)
+        self.assertEqual(request.status_code, 404)
+        self.assertTrue(Lesson.query.get(lesson_id))
+        request = self.app.get('/lesson/%d/delete' % lesson_id, follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertFalse(Lesson.query.get(lesson_id))
+
     def test_notfound(self):
         request = self.app.get('/idontexist')
         self.assertEqual(request.status_code, 404)
         self.assertIn(b'PySistem', request.data)
+
+    def test_problem_methods(self):
+        problem1 = Problem(name='A+B', description='Add two numbers',
+            statement='Just do it', time_limit=1234, memory_limit=54321)
+        db.session.add(problem1)
+        problem2 = Problem(name='1 to N', description='List all integers from 1 to N',
+            statement='Please do it. Again.', time_limit=1234, memory_limit=54321)
+        db.session.add(problem2)
+
+        contest = Contest(name="<'Hello'>", start=datetime(2016, 1, 12),
+            end=datetime(2016, 1, 25), freeze=datetime(2016, 1, 14),
+            unfreeze_after_end=False, rules='acm')
+        db.session.add(contest)
+        db.session.commit()
+
+        test_group = TestGroup(problem=problem1)
+        test_group.score = 100
+        db.session.add(test_group)
+        db.session.commit()
+
+        g.user = User()
+        self.assertEqual(contest.get_freeze_time(), datetime(2016, 1, 14))
+        contest.unfreeze_after_end = True
+        self.assertEqual(contest.get_freeze_time(), datetime(2016, 1, 25))
+        contest.unfreeze_after_end = False
+        g.user = User.query.filter(User.username == 'admin').first()
+        self.assertEqual(contest.get_freeze_time(), datetime(2016, 1, 25))
+        self.assertEqual(contest.get_freeze_time(admin=False), datetime(2016, 1, 14))
+        g.user = User()
+
+        assoc1 = ContestProblemAssociation(prefix="A")
+        assoc1.contest_id = contest.id
+        assoc1.problem_id = problem1.id
+        assoc2 = ContestProblemAssociation(prefix="B")
+        assoc2.contest_id = contest.id
+        assoc2.problem_id = problem2.id
+        db.session.add(assoc1)
+        db.session.add(assoc2)
+        db.session.commit()
+
+        admin = User.query.filter(User.username == 'admin').first()
+
+        self.assertEqual(problem1.user_status(admin, color=False), '')
+        self.assertEqual(problem1.user_status(admin, only_color=True), '')
+
+        sub1 = Submission(user=admin, problem=problem1)
+        sub1.status = STATUS_COMPILEFAIL
+        sub1.result = RESULT_UNKNOWN
+        sub1.submitted = datetime(2016, 1, 13)
+        sub1.score = 0
+        db.session.add(sub1)
+        db.session.commit()
+        self.assertEqual(problem1.user_status(admin, color=False), '')
+        self.assertEqual(problem1.user_status(admin, only_color=True), '')
+
+        sub2 = Submission(user=admin, problem=problem1)
+        sub2.status = STATUS_DONE
+        sub2.result = RESULT_WA
+        sub2.submitted = datetime(2016, 1, 15)
+        sub2.score = 42
+        db.session.add(sub2)
+        db.session.commit()
+        self.assertEqual(problem1.user_status(admin, color=False), 'Wrong Answer')
+        self.assertEqual(problem1.user_status(admin, only_color=True), 'danger')
+
+        sub3 = Submission(user=admin, problem=problem1)
+        sub3.status = STATUS_DONE
+        sub3.result = RESULT_OK
+        sub3.submitted = datetime(2016, 1, 17)
+        sub3.score = 100
+        db.session.add(sub3)
+        db.session.commit()
+        self.assertEqual(problem1.user_status(admin, color=False), 'Accepted')
+        self.assertEqual(problem1.user_status(admin, only_color=True), 'success')
+
+        sub4 = Submission(user=admin, problem=problem1)
+        sub4.status = STATUS_DONE
+        sub4.result = RESULT_WA
+        sub4.submitted = datetime(2016, 1, 19)
+        sub4.score = 79
+        db.session.add(sub4)
+        db.session.commit()
+        self.assertEqual(problem1.user_status(admin, color=False), 'Accepted')
+        self.assertEqual(problem1.user_status(admin, only_color=True), 'success')
+
+        db.session.commit()
+        self.assertEqual(problem1.get_user_failed_attempts(admin), 1)
+        self.assertEqual(problem1.get_user_failed_attempts(admin, datetime(2016, 1, 14)), 0)
+        self.assertEqual(problem1.get_user_failed_attempts(admin, datetime(2016, 1, 16)), 1)
+        self.assertEqual(problem1.get_user_failed_attempts(admin, datetime(2016, 1, 18)), 1)
+        self.assertEqual(problem1.get_user_failed_attempts(admin, datetime(2016, 1, 20)), 1)
+
+        self.assertEqual(problem1.user_score(admin), (100, datetime(2016, 1, 19)))
+        self.assertEqual(problem1.user_score(admin, datetime(2016, 1, 14)), (0, None))
+        self.assertEqual(problem1.user_score(admin, datetime(2016, 1, 16)), (42, datetime(2016, 1, 15)))
+        self.assertEqual(problem1.user_score(admin, datetime(2016, 1, 18)), (100, datetime(2016, 1, 17)))
+        self.assertEqual(problem1.user_score(admin, datetime(2016, 1, 20)), (100, datetime(2016, 1, 19)))
+
+        contest.rules = 'roi'
+        self.assertEqual(contest.rate_user(admin), (0,))
+        self.assertEqual(contest.rate_user(admin, do_freeze=False), (100,))
+        contest.freeze = datetime(2016, 1, 16)
+        self.assertEqual(contest.rate_user(admin), (42,))
+        contest.freeze = datetime(2016, 1, 14)
+        g.user = User.query.filter(User.username == 'admin').first()
+        self.assertEqual(contest.rate_user(admin), (100,))
+        g.user = User()
+
+        contest.rules = 'acm'
+        self.assertEqual(contest.rate_user(admin), (0, 0))
+        self.assertEqual(contest.rate_user(admin, do_freeze=False), (1, 10100))
+        contest.freeze = datetime(2016, 1, 16)
+        self.assertEqual(contest.rate_user(admin), (0, 0))
+        contest.freeze = datetime(2016, 1, 14)
+        g.user = User.query.filter(User.username == 'admin').first()
+        self.assertEqual(contest.rate_user(admin), (1, 10100))
+        g.user = User()
+
+
+    def change_password(self, new_password=None, new_password_confirm=None, old_password=None, username=None):
+        return self.app.post('/user/%s/password' % username if username else '/user/password', data=dict(
+            new_password=new_password,
+            new_password_confirm=new_password_confirm,
+            old_password=old_password
+        ), follow_redirects=True)
+
+    def test_change_password(self):
+        request = self.change_password('ilovememes', 'ilovememes')
+        self.assertEqual(request.status_code, 404)
+        self.login('default', 'default')
+        request = self.change_password('ilovememes', 'ilovememes')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Old password is incorrect', request.data)
+        request = self.change_password('ilovemems', 'ilovememes', 'default')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'New passwords do not match', request.data)
+        request = self.change_password('i', 'i', 'default')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'New password is too short', request.data)
+        request = self.change_password('ilovememes', 'ilovememes', 'default')
+        self.assertEqual(request.status_code, 200)
+        default = User.query.filter(User.username == 'default').first()
+        self.assertTrue(default)
+        passwd = User.signpasswd('default', 'ilovememes')
+        self.assertEqual(default.password, passwd)
+
+        request = self.change_password('memesloveme', 'memesloveme', username='adminx')
+        self.assertEqual(request.status_code, 404)
+        request = self.change_password('memesloveme', 'memesloveme', username='admin')
+        self.assertEqual(request.status_code, 403)
+        admin = User.query.filter(User.username == 'admin').first()
+        self.assertTrue(admin)
+        passwd = User.signpasswd('admin', 'admin')
+        self.assertEqual(admin.password, passwd)
+
+        self.logout()
+        self.login('admin', 'admin')
+
+        request = self.change_password('memesloveme', 'memesloveme', username='defaultx')
+        self.assertEqual(request.status_code, 404)
+        request = self.change_password('memsloveme', 'memesloveme', username='default')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'New passwords do not match', request.data)
+        request = self.change_password('i', 'i', username='default')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'New password is too short', request.data)
+        request = self.change_password('memesloveme', 'memesloveme', username='default')
+        self.assertEqual(request.status_code, 200)
+        db.session.expire(default)
+        passwd = User.signpasswd('default', 'memesloveme')
+        self.assertEqual(default.password, passwd)

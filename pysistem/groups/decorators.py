@@ -41,13 +41,13 @@ def requires_group_membership(field='group_id', object_field='group'):
                 return render_template('errors/403.html'), 403
 
             group = kwargs.get(object_field)
-            if not isinstance(group, Group):
+            if not isinstance(group, Group): # pragma: no cover
                 group_id = kwargs.get(field)
                 if isinstance(group_id, int):
                     group = Group.query.get(group_id)
                 else:
                     group = None
-            if not group:
+            if not group: # pragma: no cover
                 return render_template('errors/404.html'), 404
 
             assoc = GroupUserAssociation.query.filter(db.and_( \

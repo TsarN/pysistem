@@ -10,7 +10,7 @@ from pysistem.users.model import User
 from pysistem.groups.model import Group
 try:
     from pysistem.conf import LANGUAGES
-except ImportError:
+except ImportError: # pragma: no cover
     from pysistem.conf_default import LANGUAGES
     
 from pysistem import app, babel
@@ -34,9 +34,6 @@ def before_request():
     g.now_formatted = datetime.now().strftime("%Y-%m-%d %H:%M")
     g.raw_content = False
     g.SETTINGS = SETTINGS
-    if SETTINGS.get('allow_raw_content', False):
-        if request.args.get('raw', False) == '1':
-            g.raw_content = True
 
     g.disable_navbar = False
     g.user_groups = {}
@@ -103,14 +100,6 @@ def timeonly_filter(seconds, enable_seconds=True, cycle=False):
     else:
         return pad_zero(hours) + ':' + pad_zero(minutes)
 
-@app.template_filter('shortstr')
-def shortstr_filter(string, length=5):
-    """If string is longer than maximum length, shorten it and add ... to end"""
-    if len(string) > length:
-        return string[:length] + '...'
-    else:
-        return string
-
 @app.template_filter('dtp')
 def dtp_filter(date):
     """Format date for Bootstrap-Datetimepicker"""
@@ -121,7 +110,7 @@ def naturaldate_filter(date):
     """Try to use Humanize to show natural date"""
     try:
         import humanize
-        if session.get('language') != "en":
+        if session.get('language') != "en": # pragma: no cover
             humanize.i18n.activate(session.get('language'))
         else:
             humanize.i18n.deactivate()
@@ -129,21 +118,8 @@ def naturaldate_filter(date):
         today = datetime.combine(date.today(), time(0))
         seconds = int((date-today).total_seconds())
         return date_str + ' ' + timeonly_filter(seconds, enable_seconds=False, cycle=True)
-    except ImportError:
+    except ImportError: # pragma: no cover
         return dtp_filter(date)
-
-@app.template_filter('duration')
-def duration_filter(delta):
-    """Try to use humanize to show natural delta"""
-    try:
-        import humanize
-        if session.get('language') != "en":
-            humanize.i18n.activate(session.get('language'))
-        else:
-            humanize.i18n.deactivate()
-        return humanize.naturaldelta(delta)
-    except ImportError:
-        return timeonly_filter(delta.total_seconds())
 
 @app.template_filter('ids')
 def ids_filter(obj):
@@ -166,12 +142,12 @@ def naturaltime_filter(date=False):
     now = datetime.now()
     try:
         import humanize
-        if session.get('language') != "en":
+        if session.get('language') != "en": # pragma: no cover
             humanize.i18n.activate(session.get('language'))
         else:
             humanize.i18n.deactivate()
         return humanize.naturaltime(date)
-    except ImportError:
+    except ImportError: # pragma: no cover
         return dtp_filter(date)
 
 @app.route('/')
@@ -191,7 +167,7 @@ class StrListConverter(BaseConverter):
     def to_python(self, value):
         return value.split(',')
 
-    def to_url(self, value):
+    def to_url(self, value): # pragma: no cover
         return ','.join(value)
 
 app.url_map.converters['str_list'] = StrListConverter

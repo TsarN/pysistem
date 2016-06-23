@@ -101,8 +101,8 @@ def change_password(username=None):
     if username is not None:
         user = User.query.filter( \
                 db.func.lower(User.username) == db.func.lower(username)).first()
-        if user is None:
-            return render_template('errors/404.html'), 404
+    if (user is None) or (user.id is None):
+        return render_template('errors/404.html'), 404
     if not user.check_permissions():
         return render_template('errors/403.html'), 403
 
