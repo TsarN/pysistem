@@ -5,10 +5,8 @@ from pysistem import redirect_url
 
 try:
     from pysistem.conf import LANGUAGES
-except ImportError:
-    LANGUAGES = {
-        'en': 'Default'
-    }
+except ImportError: # pragma: no cover
+    from pysistem.conf_default import LANGUAGES
 
 mod = Blueprint('locale', __name__, url_prefix='/locale')
 

@@ -21,6 +21,7 @@ from pysistem.checkers.model import Checker
 from pysistem.test_pairs.model import TestPair, TestGroup
 from pysistem.settings.model import Setting
 from pysistem.groups.model import Group, GroupUserAssociation, GroupContestAssociation
+from pysistem.lessons.model import Lesson, AutoMark
 
 try:
     from pysistem.conf import LANGUAGES
@@ -285,8 +286,20 @@ class TestCase(unittest.TestCase):
         valid = b''.join(valid)
         invalid = b'INVALID'
 
-        problem1 = Problem()
-        self.assertTrue(problem1.import_gzip(valid))
+        request = self.app.post('/problem/import', data=dict(
+            import_file=(BytesIO(valid), 'problem.pysistem.gz')
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.assertFalse(Problem.query.all())
+        self.login('admin', 'admin')
+        request = self.app.post('/problem/import', data=dict(
+            import_file=(BytesIO(valid), 'problem.pysistem.gz')
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertTrue(Problem.query.all())
+        self.logout()
+
+        problem1 = Problem.query.first()
         self.assertEqual(problem1.name, 'A+B')
         self.assertEqual(len(problem1.test_groups), 1)
         self.assertEqual(len(problem1.test_groups[0].test_pairs), 7)
@@ -917,6 +930,22 @@ class TestCase(unittest.TestCase):
         self.assertIn(b'^[a-z]+$', request.data)
 
         request = self.app.post('/settings/', data=dict(
+            allow_guest_view="",
+            allow_signup="",
+            scoreboard_cache_timeout=34,
+            username_pattern="^.*$"
+        ), follow_redirects=True)
+
+        self.assertEqual(request.status_code, 200)
+        self.assertNotIn(b'Invalid username regex', request.data)
+        self.assertIn(b'^.*$', request.data)
+        db.session.commit()
+        self.assertFalse(Setting.get('allow_guest_view'))
+        self.assertFalse(Setting.get('allow_signup'))
+        self.assertEqual(Setting.get('username_pattern'), '^.*$')
+        self.assertEqual(Setting.get('scoreboard_cache_timeout'), 34)
+
+        request = self.app.post('/settings/', data=dict(
             allow_guest_view="on",
             allow_signup="on",
             scoreboard_cache_timeout=60,
@@ -1018,6 +1047,14 @@ class TestCase(unittest.TestCase):
         request = self.app.get('/group/%d/contests' % group.id, follow_redirects=True)
         self.assertEqual(request.status_code, 403)
         self.logout()
+        request = self.app.get('/group/%d/contests' % group.id, follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+        self.login('admin', 'admin')
+        request = self.app.get('/group/%d/contests' % group.id, follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        request = self.app.get('/group/9001/contests', follow_redirects=True)
+        self.assertEqual(request.status_code, 404)
+        self.logout()
         user = User.query.filter(User.username == 'default').first()
         request = self.app.post('/user/default/edit', data={
                 ("group-%d" % group.id): "user",
@@ -1099,3 +1136,159 @@ class TestCase(unittest.TestCase):
         self.assertIn('Гость', request.data.decode())
         with self.app.session_transaction() as session:
             self.assertEqual(session['language'], 'ru')
+
+    def test_lessons(self):
+        group = Group(name='groupname')
+        db.session.add(group)
+        teacher = User(username='teacher', password='teacher', role='user')
+        db.session.add(teacher)
+        db.session.commit()
+        user = User.query.filter(User.username == 'default').first()
+        assoc = GroupUserAssociation(role='admin')
+        assoc.group_id = group.id
+        assoc.user_id = teacher.id
+        db.session.add(assoc)
+        assoc = GroupUserAssociation(role='user')
+        assoc.group_id = group.id
+        assoc.user_id = user.id
+        db.session.add(assoc)
+        db.session.commit()
+
+        request = self.app.get('/lesson/%d/new' % group.id)
+        self.assertEqual(request.status_code, 403)
+        request = self.app.post('/lesson/%d/new' % group.id, data=dict(
+            name='Introduction',
+            start='2016-06-23 12:57',
+            end='2016-06-23 12:58'
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 403)
+
+        self.login('teacher', 'teacher')
+        request = self.app.get('/lesson/%d/new' % group.id)
+        self.assertEqual(request.status_code, 200)
+        request = self.app.post('/lesson/%d/new' % group.id, data=dict(
+            name='',
+            start='2016-06-23 12:57',
+            end='2016-06-23 12:58'
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Empty lesson name', request.data)
+        request = self.app.post('/lesson/%d/new' % group.id, data=dict(
+            name='Introduction',
+            start='++ 12;57',
+            end='2016-06-23 12:58'
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Invalid date/time format', request.data)
+        request = self.app.post('/lesson/%d/new' % group.id, data=dict(
+            name='Introduction',
+            start='2016-06-23 12:57',
+            end='2016-06-23 12:58'
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        db.session.expire(group)
+        self.assertEqual(len(group.lessons), 1)
+        self.assertEqual(group.lessons[0].name, 'Introduction')
+
+        request = self.app.get('/group/%d/lessons' % group.id)
+        self.assertEqual(request.status_code, 200)
+        self.assertIn(b'Introduction', request.data)
+
+        lesson = Lesson.query.filter(Lesson.name == 'Introduction').first()
+        self.assertTrue(lesson)
+
+        request = self.app.post('/lesson/%d/edit' % lesson.id, data=dict(
+            name='Maximum',
+            contest_id=1
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 404)
+        contest = Contest(name="Test contest", start=datetime.now(), end=datetime.now(), freeze=datetime.now())
+        db.session.add(contest)
+        db.session.commit()
+        request = self.app.post('/lesson/%d/edit' % lesson.id, data=dict(
+            name='Maximum',
+            contest_id=contest.id,
+            start='2016-06-23 12:57',
+            end='2016-06-23 12:58'
+        ), follow_redirects=True)
+        self.assertEqual(request.status_code, 200)
+        db.session.expire(lesson)
+        self.assertEqual(lesson.name, 'Maximum')
+        self.assertEqual(lesson.start, datetime(2016, 6, 23, 12, 57))
+        self.assertEqual(lesson.end, datetime(2016, 6, 23, 12, 58))
+
+        self.logout()
+        request = self.app.post('/lesson/%d/edit' % lesson.id, data={
+            "name": 'Maximum',
+            "contest_id": contest.id,
+            "start": '2016-06-23 12:57',
+            "end": '2016-06-23 12:58',
+            "user-mark-%d" % user.id: "4+",
+            "user-was-%d" % user.id: "on",
+            "am-newscore1-required": 50,
+            "am-newscore1-mark": "5-",
+            "am-newscore1-points": 3,
+            "am-newscore1-avail": "on"
+        }, follow_redirects=True)
+        db.session.expire(lesson)
+        self.assertEqual(request.status_code, 403)
+
+        self.login('teacher', 'teacher')
+        request = self.app.post('/lesson/%d/edit' % lesson.id, data={
+            "name": 'Maximum',
+            "contest_id": contest.id,
+            "start": '2016-06-23 12:57',
+            "end": '2016-06-23 12:58',
+            "user-mark-%d" % user.id: "4+",
+            "user-was-%d" % user.id: "on",
+            "am-newscore1-required": 50,
+            "am-newscore1-mark": "5-",
+            "am-newscore1-points": 3,
+            "am-newscore1-avail": "on"
+        }, follow_redirects=True)
+        db.session.expire(lesson)
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(len(lesson.auto_marks), 1)
+        self.assertEqual(lesson.auto_marks[0].mark, "5-")
+        self.assertEqual(lesson.auto_marks[0].required, 50)
+        self.assertEqual(lesson.auto_marks[0].points, 3)
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(len(lesson.users), 1)
+        self.assertEqual(lesson.users[0].user.id, user.id)
+        self.assertEqual(lesson.users[0].mark, "4+")
+
+        amid = lesson.auto_marks[0].id
+
+        request = self.app.post('/lesson/%d/edit' % lesson.id, data={
+            "name": 'Maximum',
+            "contest_id": contest.id,
+            "start": '2016-06-23 12:57',
+            "end": '2016-06-23 12:58',
+            ("am%d-required" % amid): 42,
+            ("am%d-mark" % amid): "2+",
+            ("am%d-points" % amid): -4
+        }, follow_redirects=True)
+        db.session.expire(lesson)
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(len(lesson.auto_marks), 1)
+        self.assertEqual(lesson.auto_marks[0].mark, "2+")
+        self.assertEqual(lesson.auto_marks[0].required, 42)
+        self.assertEqual(lesson.auto_marks[0].points, -4)
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(len(lesson.users), 0)
+        request = self.app.post('/lesson/%d/edit' % lesson.id, data={
+            "name": 'Maximum',
+            "contest_id": contest.id,
+            "start": '2016-06-23 12:57',
+            "end": '2016-06-23 12:58',
+            ("am%d-delete" % amid): "on"
+        }, follow_redirects=True)
+        db.session.expire(lesson)
+        self.assertEqual(request.status_code, 200)
+        self.assertEqual(len(lesson.auto_marks), 0)
+        self.assertEqual(len(lesson.users), 0)
+
+    def test_notfound(self):
+        request = self.app.get('/idontexist')
+        self.assertEqual(request.status_code, 404)
+        self.assertIn(b'PySistem', request.data)

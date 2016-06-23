@@ -211,7 +211,8 @@ def edit(lesson_id=-1, group_id=-1):
     for user in users:
         user.mark = marked_users.get(user.id)
 
-    users.sort(key=lambda x:x.last_name + ' ' + x.first_name)
+    users.sort(key=lambda x:(x.last_name or '') + ' ' +
+              (x.first_name or '') + '::' + (x.username or ''))
 
     contests = [x for x in Contest.query if g.user.is_admin(contest=x)]
 
