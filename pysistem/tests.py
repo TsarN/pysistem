@@ -30,7 +30,7 @@ except ImportError:
 
 class TestCase(unittest.TestCase):
     def setUp(self):
-        warnings.filterwarnings("ignore", category=sa_exc.SAWarning)
+        warnings.filterwarnings("error", category=sa_exc.SAWarning)
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
         app.config['SECRET_KEY'] = os.urandom(24)

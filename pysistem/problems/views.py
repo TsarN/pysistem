@@ -201,9 +201,6 @@ def delete(problem_id, problem):
     Permissions required:
     Problem Administrator
     """
-    for assoc in ContestProblemAssociation.query.filter( \
-        ContestProblemAssociation.problem_id == problem.id):
-        db.session.delete(assoc)
     db.session.delete(problem)
     db.session.commit()
     return redirect(url_for('index'))

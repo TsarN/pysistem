@@ -78,8 +78,10 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
 
-    users = db.relationship('GroupUserAssociation', back_populates='group')
-    contests = db.relationship('GroupContestAssociation', back_populates='group')
+    users = db.relationship('GroupUserAssociation', cascade='all,delete',
+                            back_populates='group')
+    contests = db.relationship('GroupContestAssociation', cascade='all,delete',
+                               back_populates='group')
     lessons = db.relationship('Lesson', cascade='all,delete', backref='group',
                               order_by=Lesson.start.desc())
 

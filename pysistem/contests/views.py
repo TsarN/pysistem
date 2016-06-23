@@ -278,12 +278,6 @@ def delete(contest_id, contest):
     Permissions required:
     Contest Administrator
     """
-    for x in ContestProblemAssociation.query.filter( \
-        ContestProblemAssociation.contest_id == contest.id):
-        db.session.delete(x)
-    for x in GroupContestAssociation.query.filter( \
-        GroupContestAssociation.contest_id == contest.id):
-        db.session.delete(x)
     db.session.delete(contest)
     db.session.commit()
     return redirect(url_for('index'))

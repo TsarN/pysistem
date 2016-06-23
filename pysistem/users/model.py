@@ -36,9 +36,9 @@ class User(db.Model):
     email = db.Column(db.String(32))
     role = db.Column(db.String(8))
 
-    submissions = db.relationship('Submission', cascade = "all,delete", backref='user')
-    groups = db.relationship('GroupUserAssociation', back_populates='user')
-    lessons = db.relationship('LessonUserAssociation', back_populates='user')
+    submissions = db.relationship('Submission', cascade="all,delete", backref='user')
+    groups = db.relationship('GroupUserAssociation', back_populates='user', cascade='all,delete')
+    lessons = db.relationship('LessonUserAssociation', back_populates='user', cascade='all,delete')
 
     def __init__(self, username=None, password=None, first_name=None,
                  last_name=None, email=None, role='user'):
@@ -124,6 +124,9 @@ class User(db.Model):
             GroupUserAssociation.role == 'admin')).all()
 
         admin_groups_ids = [x.group_id for x in admin_groups]
+
+        if not admin_groups_ids:
+            return False
 
         group = kwargs.get('group')
         if group:

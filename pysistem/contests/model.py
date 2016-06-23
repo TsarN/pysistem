@@ -68,8 +68,9 @@ class Contest(db.Model):
 
     problems = db.relationship('ContestProblemAssociation',
                                back_populates='contest',
-                               order_by='ContestProblemAssociation.prefix')
-    groups = db.relationship('GroupContestAssociation', back_populates='contest')
+                               order_by='ContestProblemAssociation.prefix', cascade='all,delete')
+    groups = db.relationship('GroupContestAssociation', back_populates='contest',
+                             cascade='all,delete')
     lessons = db.relationship('Lesson', cascade='all,delete', backref='contest')
 
     def __init__(self, name=None, rules='acm', start=None, end=None,

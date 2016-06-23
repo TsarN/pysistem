@@ -45,7 +45,7 @@ class Problem(db.Model):
     checkers = db.relationship('Checker', cascade='all,delete', backref='problem')
 
     contests = db.relationship('ContestProblemAssociation',
-                               back_populates='problem')
+                               back_populates='problem', cascade='all,delete')
 
     def __init__(self, name=None, description=None, statement=None,
                  time_limit=1000, memory_limit=65536):
