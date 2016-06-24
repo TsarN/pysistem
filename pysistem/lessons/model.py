@@ -122,7 +122,7 @@ class Lesson(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))
 
-    users = db.relationship('LessonUserAssociation', back_populates='lesson')
+    users = db.relationship('LessonUserAssociation', back_populates='lesson', cascade="all,delete")
     auto_marks = db.relationship('AutoMark', cascade="all,delete",
                                  backref='lesson', order_by=AutoMark.required.desc())
 
@@ -149,7 +149,7 @@ class Lesson(db.Model):
             results = []
             for key in valid_keys:
                 results.append(self.get_automarks(**dict(((key, kwargs[key]),))))
-            return max(results, key=lambda x: x[::-1])
+            return max(results, key=lambda x: (x[1], x[0] or ''))
         auto_marks = AutoMark.query.filter(db.and_( \
             AutoMark.lesson_id == self.id, \
             AutoMark.type == allowed.index(valid_keys[0]))) \

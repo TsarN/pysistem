@@ -224,7 +224,7 @@ def edit(lesson_id=-1, group_id=-1):
 @yield_lesson()
 @requires_admin(lesson="lesson")
 def apply_auto_marks(lesson_id, lesson):
-    if not lesson.contest:
+    if not all((lesson.users, lesson.auto_marks, lesson.contest)):
         return render_template('errors/403.html'), 403
     if lesson.auto_marks_applied:
         flash('::danger ' + gettext('lessons.automarksalreadyapplied'))
@@ -271,6 +271,6 @@ def apply_auto_marks(lesson_id, lesson):
     for user in attempted_users:
         user.automark = lesson.get_automarks(score=user.score, place=user.place,
                                              solved=user.solved)
-    attempted_users.sort(key=lambda x: (x.automark[::-1], -x.place, x.score),
-                         reverse=True)
+    attempted_users.sort(key=lambda x: ((x.automark[1], x.automark[0] or ''),
+                        -x.place, x.score), reverse=True)
     return render_template('lessons/automarks.html', users=attempted_users, lesson=lesson)
