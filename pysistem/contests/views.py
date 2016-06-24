@@ -376,5 +376,6 @@ def listcontests():
     None
     """
     contests = Contest.query.all()
-    raw = render_template('contests/rawlist.html', contests=contests)
+    contests_data = dict([(x.id, (x.start, x.end)) for x in contests])
+    raw = render_template('contests/rawlist.html', contests=contests, contests_data=contests_data)
     return render_template('contests/list.html', rawlist=raw)

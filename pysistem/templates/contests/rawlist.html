@@ -1,3 +1,58 @@
+{% if contests_data %}
+<script type="text/javascript">
+    var contests = {{ contests_data|tojson|safe }};
+
+    var updateTimeInterval;
+    var timestamps = {};
+    var now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+    console.log(now);
+    for (var c in contests) {
+        var start = new Date(contests[c][0]);
+        var end = new Date(contests[c][1]);
+        console.log(start, end);
+        if (start < now) {
+            if (end > now) {
+                timestamps[c] = end.getTime();
+            }
+        } else {
+            timestamps[c] = start.getTime()
+        }
+    }
+
+    function timeFormat(ms) {
+        if (ms < 0) {
+            window.location.reload();
+            clearInterval(updateTimeInterval);
+            return "00:00:00"
+        }
+        var seconds = Math.floor(ms / 1000);
+        var minutes = Math.floor(seconds / 60);
+        var hours = Math.floor(minutes / 60);
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+
+        hours = (hours < 10) ? ("0" + hours) : hours;
+        minutes = (minutes < 10) ? ("0" + minutes) : minutes;
+        seconds = (seconds < 10) ? ("0" + seconds) : seconds;
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
+    function updateTime() {
+        var now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).getTime()
+        for (var c in timestamps) {
+            var $el = $('#contest-' + c.toString() + '-time');
+            var ms = timestamps[c] - now;
+            //console.log(ms);
+            $el.html(timeFormat(ms));
+        }
+    }
+
+    $(document).ready(function() {
+        updateTimeInterval = setInterval(updateTime, 1000);
+    })
+</script>
+{% endif %}
+
 <thead>
 <th>{{ _('common.name') }}</th>
 <th>{{ _('contests.problems') }}</th>
@@ -20,7 +75,6 @@
         {{ contest.problems|length }}
     </td>
     <td>
-
         {% if (contest.end - g.now).total_seconds() > 0 %}
         {% if g.now >= contest.start %}
             {{ _('contests.remaining') }}:
@@ -28,7 +82,7 @@
             {{ _('contests.beforestart') }}:
         {% endif %}
         {% endif %}
-        <span id="contest{{ contest.id }}_time">
+        <span id="contest-{{ contest.id }}-time">
             {% if g.now >= contest.start %}
                 {% if (contest.end - g.now).total_seconds() > 0 %}
                 {{ (contest.end - g.now).total_seconds()|timeonly }}

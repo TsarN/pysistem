@@ -38,7 +38,9 @@ def contests(group_id, group):
     Permissions required:
     Group Member
     """
-    raw = render_template('contests/rawlist.html', contests=group.contests)
+    contests = group.contests
+    contests_data = dict([(x.id, (x.start, x.end)) for x in contests])
+    raw = render_template('contests/rawlist.html', contests=contests, contests_data=contests_data)
     return render_template('groups/contests.html', group=group, rawlist=raw)
 
 @mod.route('/<int:group_id>/lessons')
