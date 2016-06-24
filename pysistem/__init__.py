@@ -4,8 +4,8 @@ import os
 import sys
 import random
 import threading
-import atexit
 import traceback
+from time import sleep
 
 from flask import Flask, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -24,17 +24,24 @@ basedir = os.path.dirname(os.path.realpath(__file__))
 
 class PySistemApplication(Flask):
     """Main PySistem WSGI Application"""
+    def make_check_thread(self):
+        from pysistem.checkthread import CheckThread
+        self.check_thread = CheckThread()
+
     def start_check_thread(self=None, join=False):
         """Start checking thread
 
         Arguments:
         join -- Do Thread.join()?
         """
-        check_thread_init()
-        atexit.register(check_thread_interrupt)
-        print("Checker thread started")
+        self.make_check_thread()
+        self.check_thread.start()
         if join:
-            check_thread.join()
+            self.check_thread.join()
+
+    def stop_check_thread(self=None):
+        """Stop checking thread"""
+        check_thread_interrupt()
 
     def make_dirs(self=None):
         """Create required directories"""
@@ -43,8 +50,7 @@ class PySistemApplication(Flask):
             if not os.path.exists(os.path.join(self.config['STORAGE'], directory)):
                 os.makedirs(os.path.join(self.config['STORAGE'], directory))
 
-    def run(self, *args, **kwargs):
-        """Start Werkzeug WSGI server"""
+    def prerun(self, *args, **kwargs):
         from pysistem.users.model import User
         self.make_dirs()
         if User.query.count() == 0:
@@ -55,19 +61,20 @@ class PySistemApplication(Flask):
             from pysistem.compilers.model import detect_compilers
             detect_compilers()
 
-        if app.config.get('LAUNCH_CHECK_THREAD', True):
-            self.start_check_thread()
+        if kwargs.get('launch_check_thread', True):
+            if app.config.get('LAUNCH_CHECK_THREAD', True):
+                self.start_check_thread()
 
+    def run(self, *args, **kwargs):
+        """Start Werkzeug WSGI server"""
+        self.prerun(*args, **kwargs)
         try:
             Flask.run(self, *args, **kwargs)
-            check_thread_interrupt()
             sys.exit(0)
         except SystemExit as exception:
-            check_thread_interrupt()
             sys.exit(exception.code)
         except:
             trace = traceback.format_exc()
-            check_thread_interrupt()
             print(trace)
             print("Exception occurred, exiting")
             sys.exit(1)
@@ -77,6 +84,7 @@ try:
     app.config.from_object(conf)
 except NameError:
     app.config.from_object(conf_default)
+
 app.config['CONFIRM_CODE'] = ''.join(random.SystemRandom().choice( \
 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789' \
 ) for _ in range(12))
@@ -88,55 +96,6 @@ migrate = Migrate(app, db)
 
 babel = Babel(app)
 cache = SimpleCache()
-
-CHECK_THREAD_TIME = app.config.get('CHECK_THREAD_TIME', 1)
-data_lock = threading.Lock()
-check_thread = threading.Thread()
-common_data = {}
-
-def check_thread_interrupt():
-    """Stop checking thread"""
-    check_thread.cancel()
-
-def check_thread_wake():
-    """Check submissions"""
-    global check_thread
-    with data_lock:
-        Session = common_data['Session']
-        Submission = common_data['Submission']
-        Compiler = common_data['Compiler']
-        SubmissionLog = common_data['SubmissionLog']
-        session = Session()
-        for sub in session.query(Submission).filter( \
-            Submission.status.in_([STATUS_CWAIT, STATUS_WAIT])):
-
-            compiler = session.query(Compiler).filter(Compiler.id == sub.compiler_id).first()
-            if compiler and compiler.is_available():
-                for log in session.query(SubmissionLog) \
-                    .filter(SubmissionLog.submission_id == sub.id):
-                    session.add(log)
-                    session.delete(log)
-                if sub.compile()[0]:
-                    sub.check(session)
-                session.commit()
-        Session.remove()
-    check_thread = threading.Timer(CHECK_THREAD_TIME, check_thread_wake, ())
-    check_thread.start()
-
-def check_thread_init():
-    """Initialize checking thread"""
-    global check_thread
-    global common_data
-    from pysistem.submissions.model import Submission
-    from pysistem.submissions.model import SubmissionLog
-    from pysistem.compilers.model import Compiler
-    common_data['Submission'] = Submission
-    common_data['SubmissionLog'] = SubmissionLog
-    common_data['Compiler'] = Compiler
-    Session = db.scoped_session(db.sessionmaker(bind=db.engine))
-    common_data['Session'] = Session
-    check_thread = threading.Timer(CHECK_THREAD_TIME, check_thread_wake, ())
-    check_thread.start()
 
 # Misc functions
 

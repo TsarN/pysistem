@@ -34,6 +34,7 @@ PATH_EXTRA = []
 CHECK_THREAD_TIME = 1
 
 # Do check submissions?
+# Note: using this option may be unstable with Gunicorn
 LAUNCH_CHECK_THREAD = True
 
 # Maximum upload size

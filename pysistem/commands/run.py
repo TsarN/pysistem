@@ -2,6 +2,11 @@
 
 """Commands for running PySistem"""
 
+import sys
+import logging
+from time import sleep
+import threading
+
 from flask_script import Manager, Command, Option
 from flask import _request_ctx_stack
 
@@ -122,6 +127,7 @@ if enable_gunicorn:
                     def load(self):
                         return app
 
+                app.prerun()
                 FlaskApplication().run()
 
     RunCommand.add_command('gunicorn', GunicornServer)

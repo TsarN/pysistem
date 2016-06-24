@@ -532,4 +532,5 @@ def submissions(problem_id, problem, username=None):
 
     return render_template('problems/submissions.html',
                            problem=problem, compilers=compilers, rendered_subs=rendered_subs,
-                           attempted_users=attempted_users, user=user)
+                           attempted_users=attempted_users, user=user,
+                           show_belonging_caption=bool(submissions))

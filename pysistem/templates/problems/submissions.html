@@ -18,7 +18,7 @@
 
 <hr />
 
-{% if g.user.is_admin(problem=problem) %}
+{% if g.user.is_admin(problem=problem) and attempted_users %}
 <table class="table" id="table-users">
 <caption>
 {{ _('problems.submissions.attemptedusers') }}
@@ -48,11 +48,12 @@
 </tbody>
 </table>
 {% endif %}
+{% if show_belonging_caption %}
 <h4>
 {{ _('problems.submissions.belonging', username=user.username) }}
 </h4>
+{% endif %}
 <table class="table" id="table-submissions">
-
 {{ rendered_subs|safe }}
 </table>
 {% endblock %}
