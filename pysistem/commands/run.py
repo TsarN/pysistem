@@ -21,12 +21,12 @@ from pysistem import app, manager
 RunCommand = Manager(usage="Start PySistem services")
 
 @RunCommand.option('-h', '--host', dest='host', default='127.0.0.1', help="Server host")
-@RunCommand.option('-p', '--port', dest='port', default=5000, help="Server port")
+@RunCommand.option('-p', '--port', type=int, dest='port', default=5000, help="Server port")
 @RunCommand.option('--threaded', dest='threaded', action='store_true',
                    default=False, help="Handle each request in separate thread")
-@RunCommand.option('-d', '--debug', dest='use_debugger', action='store_true', 
+@RunCommand.option('-d', '--debug', dest='debug', action='store_true', 
                    default=None, help='enable the Werkzeug debugger')
-@RunCommand.option('-D', '--no-debug', dest='use_debugger', action='store_false', 
+@RunCommand.option('-D', '--no-debug', dest='debug', action='store_false', 
                    default=None, help='disable the Werkzeug debugger')
 
 def wsgi(**kwargs):

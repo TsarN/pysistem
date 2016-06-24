@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PySistem 0.2-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: nikts53@gmail.com\n"
-"POT-Creation-Date: 2016-06-23 11:17+0300\n"
+"POT-Creation-Date: 2016-06-24 15:29+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: ru\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: contests/views.py:176
+#: contests/views.py:176 lessons/views.py:83
 msgid "error.invaliddateformat"
 msgstr "Дата и время в неправильном формате"
 
@@ -83,23 +83,23 @@ msgstr "Минимальное количество задач"
 msgid "lessons.delete.success"
 msgstr "Занятие удалено"
 
-#: lessons/views.py:183
-msgid "lessons.new.success"
-msgstr "Занятие добавлено"
-
-#: lessons/views.py:185
-msgid "lessons.edit.success"
-msgstr "Занятие обновлено"
-
-#: lessons/views.py:188
-msgid "lessons.edit.emptyname"
-msgstr "Пустое название занятия"
-
-#: lessons/views.py:190
+#: lessons/views.py:94
 msgid "lessons.edit.invaliddates"
 msgstr "Начало позже окончания"
 
-#: locale/views.py:25
+#: lessons/views.py:96
+msgid "lessons.edit.emptyname"
+msgstr "Пустое название занятия"
+
+#: lessons/views.py:186
+msgid "lessons.new.success"
+msgstr "Занятие добавлено"
+
+#: lessons/views.py:188
+msgid "lessons.edit.success"
+msgstr "Занятие обновлено"
+
+#: locale/views.py:23
 msgid "locale.set.success"
 msgstr "Язык сменён на %(lang)s"
 
@@ -123,59 +123,59 @@ msgstr "Укажите файл с задачей"
 msgid "problems.import.error"
 msgstr "Ошибка импорта"
 
-#: problems/views.py:247
+#: problems/views.py:244
 msgid "problems.addtestgroup.success"
 msgstr "Группа тестов создана"
 
-#: problems/views.py:249
+#: problems/views.py:246
 msgid "problems.modtestgroup.success"
 msgstr "Группа тестов обновлена"
 
-#: problems/views.py:268
+#: problems/views.py:265
 msgid "problems.deltestgroup.success"
 msgstr "Группа тестов удалена"
 
-#: problems/views.py:285
+#: problems/views.py:282
 msgid "problems.deltest.success"
 msgstr "Тест удалён"
 
-#: problems/views.py:304 problems/views.py:309
+#: problems/views.py:301 problems/views.py:306
 msgid "problems.addtest.inputmissing"
 msgstr "Укажите файл ввода"
 
-#: problems/views.py:338 problems/views.py:343
+#: problems/views.py:335 problems/views.py:340
 msgid "problems.addtestzip.inputmissing"
 msgstr "Не указан ZIP файл"
 
-#: problems/views.py:361
+#: problems/views.py:358
 msgid "problems.addtestzip.invalid"
 msgstr "ZIP файл повреждён"
 
-#: problems/views.py:363
+#: problems/views.py:360
 msgid "problems.addtestzip.success"
 msgstr "Тесты загружены из ZIP файла"
 
-#: problems/views.py:399 problems/views.py:404
+#: problems/views.py:396 problems/views.py:401
 msgid "problems.addchecker.sourcemissing"
 msgstr "Укажите исходный файл"
 
-#: problems/views.py:437
+#: problems/views.py:434
 msgid "problems.delchecker.success"
 msgstr "Чекер удалён"
 
-#: problems/views.py:453
+#: problems/views.py:450
 msgid "problems.actchecker.success"
 msgstr "Чекер сделан активным"
 
-#: problems/views.py:500 problems/views.py:505
+#: problems/views.py:497 problems/views.py:502
 msgid "problems.submit.sourcemissing"
 msgstr "Укажите файл посылки"
 
-#: problems/views.py:514
+#: problems/views.py:511
 msgid "problems.submit.selectcompiler"
 msgstr "Выберите компилятор"
 
-#: problems/views.py:522
+#: problems/views.py:519
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
@@ -191,11 +191,11 @@ msgstr "Настройки сохранены"
 msgid "common.outof"
 msgstr "из"
 
-#: templates/base.html:95
+#: templates/base.html:94
 msgid "title.groups.new"
 msgstr "Создание новой группы"
 
-#: templates/base.html:98 templates/contests/edit.html:60
+#: templates/base.html:97 templates/contests/edit.html:60
 #: templates/contests/edit.html:63 templates/contests/problems.html:55
 #: templates/contests/rawlist.html:2 templates/groups/lessons.html:12
 #: templates/lessons/edit.html:55 templates/lessons/edit.html:58
@@ -204,71 +204,71 @@ msgstr "Создание новой группы"
 msgid "common.name"
 msgstr "Название"
 
-#: templates/base.html:104 templates/contests/base.html:80
+#: templates/base.html:103 templates/contests/base.html:80
 #: templates/problems/base.html:22
 msgid "common.cancel"
 msgstr "Отмена"
 
-#: templates/base.html:107 templates/contests/edit.html:126
+#: templates/base.html:106 templates/contests/edit.html:126
 #: templates/lessons/edit.html:289 templates/problems/edit.html:115
 #: templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Создать"
 
-#: templates/base.html:135 templates/index.html:2
+#: templates/base.html:134 templates/index.html:2
 msgid "title.home"
 msgstr "Главная"
 
-#: templates/base.html:138 templates/contests/list.html:2
+#: templates/base.html:137 templates/contests/list.html:2
 #: templates/groups/base.html:41
 msgid "title.contestlist"
 msgstr "Турниры"
 
-#: templates/base.html:144 templates/contests/edit.html:103
+#: templates/base.html:143 templates/contests/edit.html:103
 #: templates/users/edit_profile.html:42
 msgid "title.groups"
 msgstr "Группы"
 
-#: templates/base.html:152 templates/users/edit_profile.html:62
+#: templates/base.html:151 templates/users/edit_profile.html:62
 msgid "groups.role.admin"
 msgstr "Администратор"
 
-#: templates/base.html:158 templates/users/edit_profile.html:57
+#: templates/base.html:157 templates/users/edit_profile.html:57
 msgid "groups.role.user"
 msgstr "Участник"
 
-#: templates/base.html:176
+#: templates/base.html:175
 msgid "groups.new"
 msgstr "Создать группу"
 
-#: templates/base.html:195 templates/problems/checkers.html:9
-#: templates/submissions/list.html:49
+#: templates/base.html:194 templates/problems/checkers.html:9
+#: templates/submissions/list.html:50
 msgid "common.language"
 msgstr "Язык"
 
-#: templates/base.html:214
+#: templates/base.html:213
 msgid "common.anonymous"
 msgstr "Гость"
 
-#: templates/base.html:219 templates/users/edit_profile.html:2
+#: templates/base.html:218 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Профиль"
 
-#: templates/base.html:221 templates/settings/edit.html:2
+#: templates/base.html:220 templates/settings/edit.html:2
 msgid "title.settings"
 msgstr "Настройки сервера"
 
-#: templates/base.html:224
+#: templates/base.html:223
 msgid "title.logout"
 msgstr "Выйти"
 
-#: templates/base.html:226 templates/guest_view_denied.html:13
+#: templates/base.html:225 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Войти"
 
-#: templates/base.html:228 templates/guest_view_denied.html:18
+#: templates/base.html:227 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Зарегистрироваться"
@@ -405,7 +405,7 @@ msgstr "Добавить задачу в турнир"
 msgid "common.description"
 msgstr "Описание"
 
-#: templates/contests/raw_scoreboard.html:4 templates/submissions/list.html:40
+#: templates/contests/raw_scoreboard.html:4 templates/submissions/list.html:41
 msgid "common.user"
 msgstr "Пользователь"
 
@@ -557,21 +557,21 @@ msgid "problems.export"
 msgstr "Экспортировать"
 
 #: templates/problems/checkers.html:10 templates/problems/submissions.html:14
-#: templates/submissions/list.html:47 templates/submissions/rawview.html:12
+#: templates/submissions/list.html:48 templates/submissions/rawview.html:12
 msgid "common.source"
 msgstr "Исходный код"
 
-#: templates/problems/checkers.html:53 templates/submissions/list.html:100
+#: templates/problems/checkers.html:53 templates/submissions/list.html:101
 msgid "problems.submissions.viewcompilelog"
 msgstr "Посмотреть лог компиляции"
 
 #: templates/problems/checkers.html:61 templates/problems/checkers.html:83
-#: templates/submissions/list.html:10 templates/submissions/list.html:85
+#: templates/submissions/list.html:11 templates/submissions/list.html:86
 msgid "common.show"
 msgstr "Показать"
 
-#: templates/problems/checkers.html:79 templates/submissions/list.html:8
-#: templates/submissions/list.html:17
+#: templates/problems/checkers.html:79 templates/submissions/list.html:9
+#: templates/submissions/list.html:18
 msgid "common.hide"
 msgstr "Скрыть"
 
@@ -617,7 +617,7 @@ msgstr "Отправить"
 msgid "problems.submissions.attemptedusers"
 msgstr "Пытавшиеся участники"
 
-#: templates/problems/submissions.html:52
+#: templates/problems/submissions.html:53
 msgid "problems.submissions.belonging"
 msgstr "Попытки пользователя %(username)s"
 
@@ -686,45 +686,49 @@ msgstr "Разрешить регистрацию"
 msgid "settings.allowguestview"
 msgstr "Разрешить доступ без авторизации"
 
-#: templates/submissions/list.html:25
+#: templates/submissions/list.html:26
 msgid "problems.submissions.recheck.all"
 msgstr "Перепроверить всё"
 
-#: templates/submissions/list.html:28
+#: templates/submissions/list.html:29
 msgid "problems.submissions.reject.all"
 msgstr "Отклонить всё"
 
-#: templates/submissions/list.html:31
+#: templates/submissions/list.html:32
 msgid "problems.submissions.delete.all"
 msgstr "Удалить всё"
 
-#: templates/submissions/list.html:42
+#: templates/submissions/list.html:43
 msgid "submissions.submitted"
 msgstr "Отправлено"
 
-#: templates/submissions/list.html:44
+#: templates/submissions/list.html:45
 msgid "common.problem"
 msgstr "Задача"
 
-#: templates/submissions/list.html:50
+#: templates/submissions/list.html:51
 msgid "submissions.status"
 msgstr "Статус"
 
-#: templates/submissions/list.html:96
+#: templates/submissions/list.html:97
 msgid "problems.submissions.view"
 msgstr "Страница посылки"
 
-#: templates/submissions/list.html:106
+#: templates/submissions/list.html:107
 msgid "problems.submissions.recheck"
 msgstr "Перепроверить"
 
-#: templates/submissions/list.html:110
+#: templates/submissions/list.html:111
 msgid "problems.submissions.reject"
 msgstr "Отклонить"
 
-#: templates/submissions/list.html:114
+#: templates/submissions/list.html:115
 msgid "problems.submissions.delete"
 msgstr "Удалить"
+
+#: templates/submissions/list.html:136
+msgid "submissions.list.empty"
+msgstr "Попытки отсутствуют"
 
 #: templates/submissions/rawview.html:21
 msgid "common.compilelog"
@@ -891,4 +895,5 @@ msgstr "Пароли не совпадают"
 
 #: users/views.py:170
 msgid "profile.update.success"
-msgstr "Профиль пользователя был обновлён""
+msgstr "Профиль пользователя был обновлён\""
+
