@@ -51,6 +51,7 @@ class PySistemApplication(Flask):
                 os.makedirs(os.path.join(self.config['STORAGE'], directory))
 
     def prerun(self, *args, **kwargs):
+        """Make preparations for start"""
         from pysistem.users.model import User
         self.make_dirs()
         if User.query.count() == 0:

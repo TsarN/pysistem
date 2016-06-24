@@ -30,30 +30,15 @@ def check_thread_wake():
             session.commit()
     Session.remove()
 
-check_thread_lock = threading.Lock()
-alive = True
-
 def check_thread_main():
-    global alive
-    if check_thread_lock.locked():
-        print('Too late!')
-    check_thread_lock.acquire()
+    """Start checking thread"""
     print('Starting checking thread')
-    while check_thread_lock.locked() and alive:
+    while True:
         check_thread_wake()
         sleep(CHECK_THREAD_TIME)
-    print('Checking thread exited')
-    check_thread_lock.release()
 
 class CheckThread(threading.Thread):
+    """Submission-checking thread"""
     def __init__(self, *args):
         threading.Thread.__init__(self, target=check_thread_main, args=args)
         self.daemon = True
-
-    def is_locked(self):
-        return check_thread_lock.locked()
-
-    def unlock(self):
-        global alive
-        alive = False
-        check_thread_lock.release()
