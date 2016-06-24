@@ -89,7 +89,7 @@ except NameError:
 app.config['CONFIRM_CODE'] = ''.join(random.SystemRandom().choice( \
 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789' \
 ) for _ in range(12))
-app.config['VERSION'] = '0.2-SNAPSHOT'
+app.config['VERSION'] = '0.2'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
