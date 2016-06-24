@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}
+    {{ lesson.name }}
+{% endblock %}
+{% block navbar_link_groups %}active{% endblock %}
+{% block content %}
+<h2 class="text-center page-header">{{ lesson.name }}</h2>
+<form method="POST" action="{{ url_for('lessons.apply_auto_marks', lesson_id=lesson.id) }}">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>{{ _('common.username') }}</th>
+            <th>{{ _('common.score') }}</th>
+            <th>{{ _('common.place') }}</th>
+            <th>{{ _('common.solved') }}</th>
+            <th>{{ _('lessons.mark') }}</th>
+            <th>{{ _('common.points') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>
+                <a href="{{ url_for('users.profile', username=user.username) }}">
+                {{ user.username }}
+                </a>
+            </td>
+            <td>{{ user.score or 0 }}</td>
+            <td>{{ user.place or '-' }}</td>
+            <td>{{ user.solved or 0 }}</td>
+            <td>
+                <input value="{{ user.automark[0] or '' }}" size="1" name="u{{ user.id }}-mark" />
+                </td>
+            <td>
+                <input value="{{ user.automark[1] or 0 }}" type="number" name="u{{ user.id }}-points" />
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+        <button class="btn btn-primary btn-lg btn-block" type="submit">
+            {{ _('common.apply') }}
+        </button>
+    </div>
+</div>
+</form>
+{% endblock %}

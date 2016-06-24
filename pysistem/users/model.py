@@ -23,6 +23,7 @@ class User(db.Model):
     last_name -- user's last name
     email -- user's email
     role -- user's role, currently 'user' or 'admin'
+    points -- user's accumulated points
 
     Relationships:
     submissions -- all user's submissions
@@ -35,6 +36,7 @@ class User(db.Model):
     last_name = db.Column(db.String(32))
     email = db.Column(db.String(32))
     role = db.Column(db.String(8))
+    points = db.Column(db.Integer)
 
     submissions = db.relationship('Submission', cascade="all,delete", backref='user')
     groups = db.relationship('GroupUserAssociation', back_populates='user', cascade='all,delete')
@@ -48,6 +50,7 @@ class User(db.Model):
         self.last_name = last_name
         self.email = email
         self.role = role
+        self.points = 0
 
     def __repr__(self):
         return '<User %r>' % self.username

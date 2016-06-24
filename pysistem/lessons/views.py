@@ -8,6 +8,7 @@ from pysistem.groups.decorators import yield_group
 from pysistem.users.decorators import requires_admin
 from pysistem.groups.model import Group, GroupUserAssociation
 from pysistem.contests.model import Contest
+from pysistem.users.model import User
 from datetime import datetime
 
 mod = Blueprint('lessons', __name__, url_prefix='/lesson')
@@ -218,3 +219,58 @@ def edit(lesson_id=-1, group_id=-1):
 
     return render_template('lessons/edit.html', lesson=lesson,
         error=error, group=group, users=users, contests=contests)
+
+@mod.route('/<int:lesson_id>/automarks', methods=['GET', 'POST'])
+@yield_lesson()
+@requires_admin(lesson="lesson")
+def apply_auto_marks(lesson_id, lesson):
+    if not lesson.contest:
+        return render_template('errors/403.html'), 403
+    if lesson.auto_marks_applied:
+        flash('::danger ' + gettext('lessons.automarksalreadyapplied'))
+        return redirect(url_for('groups.lessons', group_id=lesson.group_id))
+
+    if request.method == 'POST':
+        for assoc in lesson.users:
+            # Validate
+            points = request.form.get('u%d-points' % assoc.user_id, 0)
+            try:
+                points = int(points)
+            except ValueError:
+                flash('::danger ' + gettext('error.valuenotint'))
+                return redirect(url_for('lessons.apply_auto_marks', lesson_id=lesson_id))
+
+        for assoc in lesson.users:
+            mark = request.form.get('u%d-mark' % assoc.user_id, assoc.mark)
+            points = request.form.get('u%d-points' % assoc.user_id, 0)
+            points = int(points)
+            assoc.mark = mark
+            assoc.user.points += points
+        lesson.auto_marks_applied = True
+        db.session.commit()
+        flash(gettext('lessons.automarksapplied'))
+        return redirect(url_for('groups.lessons', group_id=lesson.group_id))
+    places = lesson.contest.get_places()
+    attempted_users = []
+    for user_id in places:
+        if GroupUserAssociation.query.filter(db.and_(
+            GroupUserAssociation.user_id == user_id,
+            GroupUserAssociation.group_id == lesson.group_id,
+            GroupUserAssociation.role == 'user')).first() and \
+            LessonUserAssociation.query.filter(db.and_(
+            LessonUserAssociation.user_id == user_id,
+            LessonUserAssociation.lesson_id == lesson.id)).first():
+            user = User.query.get(user_id)
+            user.place = places[user_id]
+            attempted_users.append(user)
+
+    for user in attempted_users:
+        user.score = lesson.contest.rate_user(user, rules='roi')[0]
+        user.solved = lesson.contest.rate_user(user, rules='acm')[0]
+
+    for user in attempted_users:
+        user.automark = lesson.get_automarks(score=user.score, place=user.place,
+                                             solved=user.solved)
+    attempted_users.sort(key=lambda x: (x.automark[::-1], -x.place, x.score),
+                         reverse=True)
+    return render_template('lessons/automarks.html', users=attempted_users, lesson=lesson)

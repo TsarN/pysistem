@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PySistem 0.2-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: nikts53@gmail.com\n"
-"POT-Creation-Date: 2016-06-24 15:29+0300\n"
+"POT-Creation-Date: 2016-06-24 19:19+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: ru\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: contests/views.py:176 lessons/views.py:83
+#: contests/views.py:176 lessons/views.py:84
 msgid "error.invaliddateformat"
 msgstr "Дата и время в неправильном формате"
 
@@ -43,15 +43,15 @@ msgstr "Укажите хотя бы одну группу"
 msgid "contests.edit.emptyname"
 msgstr "Пустое название турнира"
 
-#: groups/views.py:71 groups/views.py:96
+#: groups/views.py:73 groups/views.py:98
 msgid "groups.edit.emptyname"
 msgstr "Пустое название группы"
 
-#: groups/views.py:75
+#: groups/views.py:77
 msgid "groups.create.success"
 msgstr "Группа успешно создана"
 
-#: groups/views.py:100
+#: groups/views.py:102
 msgid "groups.rename.success"
 msgstr "Группа переименована"
 
@@ -79,25 +79,37 @@ msgstr "Автоматические оценки по числу решённы
 msgid "lessons.automarks.solved.atleast"
 msgstr "Минимальное количество задач"
 
-#: lessons/views.py:30
+#: lessons/views.py:31
 msgid "lessons.delete.success"
 msgstr "Занятие удалено"
 
-#: lessons/views.py:94
+#: lessons/views.py:95
 msgid "lessons.edit.invaliddates"
 msgstr "Начало позже окончания"
 
-#: lessons/views.py:96
+#: lessons/views.py:97
 msgid "lessons.edit.emptyname"
 msgstr "Пустое название занятия"
 
-#: lessons/views.py:186
+#: lessons/views.py:187
 msgid "lessons.new.success"
 msgstr "Занятие добавлено"
 
-#: lessons/views.py:188
+#: lessons/views.py:189
 msgid "lessons.edit.success"
 msgstr "Занятие обновлено"
+
+#: lessons/views.py:230
+msgid "lessons.automarksalreadyapplied"
+msgstr "Оценки уже выставлены"
+
+#: lessons/views.py:240
+msgid "error.valuenotint"
+msgstr "Значение не является целым числом"
+
+#: lessons/views.py:251
+msgid "lessons.automarksapplied"
+msgstr "Оценки и очки начислены"
 
 #: locale/views.py:23
 msgid "locale.set.success"
@@ -197,7 +209,7 @@ msgstr "Создание новой группы"
 
 #: templates/base.html:97 templates/contests/edit.html:60
 #: templates/contests/edit.html:63 templates/contests/problems.html:55
-#: templates/contests/rawlist.html:2 templates/groups/lessons.html:12
+#: templates/contests/rawlist.html:57 templates/groups/lessons.html:12
 #: templates/lessons/edit.html:55 templates/lessons/edit.html:58
 #: templates/problems/checkers.html:8 templates/problems/checkers.html:19
 #: templates/problems/edit.html:67 templates/problems/edit.html:70
@@ -297,11 +309,11 @@ msgstr "Подтвердите удаление турнира"
 msgid "common.delete"
 msgstr "Удалить"
 
-#: templates/contests/base.html:96 templates/contests/rawlist.html:3
+#: templates/contests/base.html:96 templates/contests/rawlist.html:58
 msgid "contests.problems"
 msgstr "Задачи"
 
-#: templates/contests/base.html:99 templates/contests/rawlist.html:45
+#: templates/contests/base.html:99 templates/contests/rawlist.html:99
 msgid "contests.scoreboard"
 msgstr "Турнирная таблица"
 
@@ -319,15 +331,15 @@ msgstr "Начало"
 msgid "contests.end"
 msgstr "Окончание"
 
-#: templates/contests/base.html:120 templates/contests/rawlist.html:26
+#: templates/contests/base.html:120 templates/contests/rawlist.html:80
 msgid "contests.remaining"
 msgstr "Осталось"
 
-#: templates/contests/base.html:122 templates/contests/rawlist.html:28
+#: templates/contests/base.html:122 templates/contests/rawlist.html:82
 msgid "contests.beforestart"
 msgstr "До начала"
 
-#: templates/contests/base.html:129 templates/contests/rawlist.html:36
+#: templates/contests/base.html:129 templates/contests/rawlist.html:90
 msgid "contests.finished"
 msgstr "Турнир окончен"
 
@@ -409,7 +421,7 @@ msgstr "Описание"
 msgid "common.user"
 msgstr "Пользователь"
 
-#: templates/contests/rawlist.html:4
+#: templates/contests/rawlist.html:59
 msgid "common.time"
 msgstr "Время"
 
@@ -458,8 +470,13 @@ msgstr "Добавить занятие"
 msgid "common.duration"
 msgstr "Продолжительность"
 
-#: templates/groups/users.html:7 templates/lessons/edit.html:83
-#: templates/users/login.html:14 templates/users/signup.html:20
+#: templates/groups/lessons.html:38
+msgid "lessons.applyautomarks"
+msgstr "Применить автооценки"
+
+#: templates/groups/users.html:7 templates/lessons/automarks.html:12
+#: templates/lessons/edit.html:83 templates/users/login.html:14
+#: templates/users/signup.html:20
 msgid "common.username"
 msgstr "Имя пользователя"
 
@@ -470,6 +487,32 @@ msgstr "Имя"
 #: templates/groups/users.html:9
 msgid "common.role"
 msgstr "Роль"
+
+#: templates/lessons/automarks.html:13
+msgid "common.score"
+msgstr "Баллы"
+
+#: templates/lessons/automarks.html:14
+msgid "common.place"
+msgstr "Место"
+
+#: templates/lessons/automarks.html:15
+msgid "common.solved"
+msgstr "Решено"
+
+#: templates/lessons/automarks.html:16 templates/lessons/edit.html:106
+#: templates/lessons/edit.html:158
+msgid "lessons.mark"
+msgstr "Оценка"
+
+#: templates/lessons/automarks.html:17 templates/lessons/edit.html:159
+#: templates/users/profile.html:20
+msgid "common.points"
+msgstr "Очки"
+
+#: templates/lessons/automarks.html:44
+msgid "common.apply"
+msgstr "Применить"
 
 #: templates/lessons/edit.html:6 templates/lessons/edit.html:35
 msgid "title.lessons.new"
@@ -495,10 +538,6 @@ msgstr "Присутствующие"
 msgid "lessons.attendance"
 msgstr "Присутствие"
 
-#: templates/lessons/edit.html:106 templates/lessons/edit.html:158
-msgid "lessons.mark"
-msgstr "Оценка"
-
 #: templates/lessons/edit.html:119
 msgid "common.contest"
 msgstr "Турнир"
@@ -518,10 +557,6 @@ msgstr "Автоматические оценки"
 #: templates/lessons/edit.html:152
 msgid "lessons.automarks.addrow"
 msgstr "Добавить"
-
-#: templates/lessons/edit.html:159
-msgid "common.points"
-msgstr "Очки"
 
 #: templates/problems/base.html:16
 msgid "problems.delete.confirm"
@@ -801,11 +836,11 @@ msgstr "Войти"
 msgid "common.password"
 msgstr "Пароль"
 
-#: templates/users/profile.html:22
+#: templates/users/profile.html:25
 msgid "common.changepasswd"
 msgstr "Сменить пароль"
 
-#: templates/users/profile.html:25
+#: templates/users/profile.html:28
 msgid "common.edit"
 msgstr "Редактировать"
 
@@ -833,11 +868,11 @@ msgstr "Код доступа"
 msgid "error.permission.authrequired"
 msgstr "Для просмотра страницы необходимо авторизироваться"
 
-#: users/model.py:74
+#: users/model.py:77
 msgid "auth.login.invalidcredentials"
 msgstr "Неправильный логин или пароль"
 
-#: users/model.py:101
+#: users/model.py:104
 msgid "common.hidden"
 msgstr "Скрыто"
 
@@ -895,5 +930,5 @@ msgstr "Пароли не совпадают"
 
 #: users/views.py:170
 msgid "profile.update.success"
-msgstr "Профиль пользователя был обновлён\""
+msgstr "Профиль пользователя был обновлён"
 

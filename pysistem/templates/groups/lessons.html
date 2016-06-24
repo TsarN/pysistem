@@ -12,6 +12,7 @@
         <th>{{ _('common.name') }}</th>
         <th>{{ _('contests.start') }}</th>
         <th>{{ _('common.duration') }}</th>
+        <th></th>
     </tr>
 </thead>
 <tbody>
@@ -29,6 +30,17 @@
         </td>
         <td>{{ lesson.start|naturaldate }}</td>
         <td>{{ (lesson.end - lesson.start).total_seconds()|timeonly(enable_seconds=False) }}</td>
+        <td>
+            {% if not lesson.auto_marks_applied %}
+            {% if lesson.users %}
+            {% if lesson.end < g.now %}<b>{% endif %}
+            <a href="{{ url_for('lessons.apply_auto_marks', lesson_id = lesson.id) }}">
+                {{ _('lessons.applyautomarks') }}&nbsp;»
+            </a>
+            {% if lesson.end < g.now %}</b>{% endif %}
+            {% endif %}
+            {% endif %}
+        </td>
     </tr>
 {% endfor %}
 </tbody>

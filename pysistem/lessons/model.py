@@ -30,7 +30,6 @@ class LessonUserAssociation(db.Model):
 
     Fields:
     mark -- user's mark for lesson
-    points -- user's points for lesson
 
     Relationships:
     lesson, lesson_id -- Lesson
@@ -39,7 +38,6 @@ class LessonUserAssociation(db.Model):
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     mark = db.Column(db.String(4))
-    points = db.Column(db.Integer)
 
     lesson = db.relationship('Lesson', back_populates='users')
     user = db.relationship('User', back_populates='lessons')
@@ -107,6 +105,7 @@ class Lesson(db.Model):
     name -- lesson name
     start -- lesson's start datetime
     end -- lesson's end datetime
+    auto_marks_applied -- automarks already applied?
 
     Relationships:
     group, group_id -- group, whose lesson it is
@@ -118,6 +117,7 @@ class Lesson(db.Model):
     name = db.Column(db.String(80))
     start = db.Column(db.DateTime)
     end = db.Column(db.DateTime)
+    auto_marks_applied = db.Column(db.Boolean)
 
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))
@@ -130,6 +130,7 @@ class Lesson(db.Model):
         self.name = name
         self.start = start
         self.end = end
+        self.auto_marks_applied = False
 
     def __repr__(self):
         if self.group_id:
@@ -148,7 +149,7 @@ class Lesson(db.Model):
             results = []
             for key in valid_keys:
                 results.append(self.get_automarks(**dict(((key, kwargs[key]),))))
-            return max(results, key=lambda x: x[1])
+            return max(results, key=lambda x: x[::-1])
         auto_marks = AutoMark.query.filter(db.and_( \
             AutoMark.lesson_id == self.id, \
             AutoMark.type == allowed.index(valid_keys[0]))) \

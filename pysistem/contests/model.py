@@ -7,6 +7,7 @@ from datetime import datetime
 from flask import g
 
 from pysistem import db
+from pysistem.submissions.const import STATUS_DONE
 
 class ContestProblemAssociation(db.Model):
     """Helper class to associate contests and problems between each other
@@ -105,13 +106,14 @@ class Contest(db.Model):
             return False
         return True
 
-    def rate_user(self, user, do_freeze=True):
+    def rate_user(self, user, do_freeze=True, rules=None):
         """Get user's score in contests"""
         if do_freeze:
             freeze = self.get_freeze_time()
         else:
             freeze = None
-        if self.rules == 'roi':
+        rules = rules or self.rules
+        if rules == 'roi':
             score = 0
             for problem in self.problems:
                 score += problem.user_score(user, freeze=freeze)[0]
@@ -125,6 +127,31 @@ class Contest(db.Model):
                     penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
                     penalty += max(0, (succ[1] - self.start).total_seconds() // 60)
             return solved, int(penalty)
+
+    def get_places(self):
+        users = {}
+        for problem in self.problems:
+            for submission in problem.submissions:
+                if submission.status == STATUS_DONE:
+                    user_id = submission.user_id
+                    if user_id and user_id not in users:
+                        users[user_id] = self.rate_user(submission.user)
+        users_sorted = [(users[u], u) for u in users]
+        if self.rules == 'acm':
+            users_sorted = [((u[0][0], -u[0][1]), u[1]) for u in users_sorted]
+        users_sorted.sort(reverse=True)
+
+        user_places = {}
+        current_place = 0
+        supposed_place = 0
+        last_val = None
+        for user in users_sorted:
+            supposed_place += 1
+            if user[0] != last_val:
+                last_val = user[0]
+                current_place = supposed_place
+            user_places[user[1]] = current_place
+        return user_places
 
 contest_rulesets = {
     "acm": "ACM/ICPC",

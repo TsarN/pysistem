@@ -313,6 +313,8 @@ def scoreboard(contest_id, contest):
             add_user = False
             for problem in problems:
                 succeed, submitted = problem.user_score(user, freeze=contest.get_freeze_time())
+                if contest.rules == 'acm':
+                    succeed = bool(succeed) and (problem.get_max_score() <= succeed)
                 time = None
                 if submitted is not None:
                     time = int(max(0, (submitted - contest.start).total_seconds() // 60))
