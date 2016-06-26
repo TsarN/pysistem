@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 """Contest management system"""
 import os
-import sys
 import random
-import threading
+import sys
 import traceback
-from time import sleep
 
 from flask import Flask, request, url_for
-from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
+from flask_migrate import Migrate
 from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.contrib.cache import SimpleCache
+
 try:
     from pysistem import conf
 except ImportError:

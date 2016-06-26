@@ -7,7 +7,7 @@
         $("#btn-addproblem").click(function() {
             $("#modal-addproblem").modal()
             
-        })
+        });
 
         $("#modal-addproblem-problemlist").DataTable({
             "paging": false,
@@ -17,7 +17,7 @@
                 "emptyTable": "{{ _('datatables.emptytable') }}",
                 "zeroRecords": "{{ _('datatables.zerorecords') }}"
             }
-        })
+        });
 
         $(".edit-problem-prefix").change(function() {
             var problem_id = $(this).attr('data-id');

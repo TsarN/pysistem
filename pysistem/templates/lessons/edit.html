@@ -192,27 +192,27 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
     var auto_marks_rows = {"score": 0, "place": 0, "solved": 0};
 
     function addAutoMarksRow(parent, type) {
-        $(parent).parents("table").children("thead").show()
+        $(parent).parents("table").children("thead").show();
         var x = ++auto_marks_rows[type];
-        var parentTr = $("<tr/>")
-        var requiredTd = $("<td/>")
+        var parentTr = $("<tr/>");
+        var requiredTd = $("<td/>");
         requiredTd.html('<input type="number" autocomplete="off" name="am-new'
-            + type + x.toString() + '-required" />')
-        var markTd = $("<td/>")
+            + type + x.toString() + '-required" />');
+        var markTd = $("<td/>");
         markTd.html('<input size="1" autocomplete="off" name="am-new'
-            + type + x.toString() + '-mark" />')
-        var pointsTd = $("<td />")
+            + type + x.toString() + '-mark" />');
+        var pointsTd = $("<td />");
         pointsTd.html('<input type="number" autocomplete="off" value="0" name="am-new'
-            + type + x.toString() + '-points" />')
-        var plusTd = $("<td />")
+            + type + x.toString() + '-points" />');
+        var plusTd = $("<td />");
         plusTd.html('<div class="vcenter"><span class="glyphicon glyphicon-plus text-success" \
-style="font-size: 16px"></span></div>')
+style="font-size: 16px"></span></div>');
         parentTr
         .append(requiredTd)
         .append(markTd)
         .append(pointsTd)
         .append(plusTd)
-        .append('<input type="hidden" name="am-new' + type + x.toString() + '-avail" value="on" />')
+        .append('<input type="hidden" name="am-new' + type + x.toString() + '-avail" value="on" />');
         $(parent).append(parentTr)
     }
     var all_checked = true;
@@ -228,49 +228,49 @@ style="font-size: 16px"></span></div>')
 
     .change(function() {
         if (this.checked) {
-            $(this).siblings(".user-mark-edit").show()
+            $(this).siblings(".user-mark-edit").show();
             all_checked = true;
             $(".user-was-checkbox").each(function() {
                 if (!this.checked) {
                     all_checked = false;
                     return false;
                 }
-            })
+            });
             $("#checkall").prop('checked', all_checked)
         }
         else {
-            $(this).siblings(".user-mark-edit").hide()
+            $(this).siblings(".user-mark-edit").hide();
             $("#checkall").prop('checked', false)
         }
-    })
+    });
 
     $("#checkall")
     .prop('disabled', false)
     .prop('checked', all_checked)
     .change(function() {
-        $(".user-was-checkbox").prop('checked', this.checked)
+        $(".user-was-checkbox").prop('checked', this.checked);
         if (this.checked)
-            $(".user-mark-edit").show()
+            $(".user-mark-edit").show();
         else 
             $(".user-mark-edit").hide()
-    })
+    });
     $("#contest-selector").change(function() {
         {% if lesson.contest_id %}
         if ($(this).val() != {{ lesson.contest_id }}) {
-            $("#auto-marks-panel").hide()
+            $("#auto-marks-panel").hide();
             if ($(this).val() != "none")
                 $("#auto-marks-warn").show()
         } else {
-            $("#auto-marks-panel").show()
+            $("#auto-marks-panel").show();
             $("#auto-marks-warn").hide()
         }
         {% else %}
         if ($(this).val() != "none")
-            $("#auto-marks-warn").show()
+            $("#auto-marks-warn").show();
         else
-            $("#auto-marks-warn").hide()
+            $("#auto-marks-warn").hide();
         {% endif %}
-    })
+    });
 
     $(".automarks-table > tbody").each(function() {
         if ($(this).children().size() == 0) {

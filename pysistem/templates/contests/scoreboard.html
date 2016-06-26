@@ -35,7 +35,7 @@
 {% if g.user.id %}
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#scoreboard_row_u{{ g.user.id }}").addClass("active")
+        $("#scoreboard_row_u{{ g.user.id }}").addClass("active");
         $("#scoreboard th").bind('mouseenter', function(){
             var $this = $(this);
 
