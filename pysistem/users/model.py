@@ -38,9 +38,12 @@ class User(db.Model):
     role = db.Column(db.String(8))
     points = db.Column(db.Integer)
 
-    submissions = db.relationship('Submission', cascade="all,delete", backref='user')
-    groups = db.relationship('GroupUserAssociation', back_populates='user', cascade='all,delete')
-    lessons = db.relationship('LessonUserAssociation', back_populates='user', cascade='all,delete')
+    submissions = db.relationship('Submission', cascade="all,delete",
+                                  backref='user', lazy="dynamic")
+    groups = db.relationship('GroupUserAssociation', back_populates='user',
+                             cascade='all,delete', lazy="dynamic")
+    lessons = db.relationship('LessonUserAssociation', back_populates='user',
+                              cascade='all,delete', lazy="dynamic")
 
     def __init__(self, username=None, password=None, first_name=None,
                  last_name=None, email=None, role='user'):

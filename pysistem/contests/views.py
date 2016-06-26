@@ -103,7 +103,7 @@ def problems(contest_id, contest):
     None
     """
     addable_problems = Problem.query.all()
-    if g.user.is_admin(contest=contest) and (len(contest.problems) > 0):
+    if g.user.is_admin(contest=contest) and (contest.problems.count() > 0):
         addable_problems = \
         Problem.query.filter(~Problem.id.in_([x.id for x in contest.problems])).all()
         addable_problems = [x for x in addable_problems if g.user.is_admin(problem=x)]

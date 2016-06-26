@@ -108,9 +108,8 @@ class Checker(db.Model):
     def set_act(self):
         """Set as active checker for problem, works only if checker compiled successfully"""
         if self.status == STATUS_DONE:
-            Checker.query \
-            .filter(db.and_(Checker.problem_id == self.problem_id, Checker.status == STATUS_ACT)) \
-            .update({"status": STATUS_DONE})
+            self.problem.checkers.filter(Checker.status == STATUS_ACT) \
+                .update({"status": STATUS_DONE})
             self.status = STATUS_ACT
             db.session.commit()
             return True

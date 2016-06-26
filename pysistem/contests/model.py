@@ -68,11 +68,12 @@ class Contest(db.Model):
     unfreeze_after_end = db.Column(db.Boolean)
 
     problems = db.relationship('ContestProblemAssociation',
-                               back_populates='contest',
+                               back_populates='contest', lazy="dynamic",
                                order_by='ContestProblemAssociation.prefix', cascade='all,delete')
     groups = db.relationship('GroupContestAssociation', back_populates='contest',
-                             cascade='all,delete')
-    lessons = db.relationship('Lesson', cascade='all,delete', backref='contest')
+                             cascade='all,delete', lazy="dynamic")
+    lessons = db.relationship('Lesson', cascade='all,delete',
+                              lazy="dynamic", backref='contest')
 
     def __init__(self, name=None, rules='acm', start=None, end=None,
                  freeze=None, unfreeze_after_end=False):

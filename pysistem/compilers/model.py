@@ -31,8 +31,10 @@ class Compiler(db.Model):
     autodetect = db.Column(db.String(16))
     executable = db.Column(db.String(80))
 
-    submissions = db.relationship('Submission', cascade="all,delete", backref='compiler')
-    checkers = db.relationship('Checker', cascade="all,delete", backref='compiler')
+    submissions = db.relationship('Submission', cascade="all,delete",
+                                  backref='compiler', lazy="dynamic")
+    checkers = db.relationship('Checker', cascade="all,delete",
+                               backref='compiler', lazy="dynamic")
 
     def __init__(self, name=None, lang=None, cmd_compile=None, cmd_run=None):
         self.name = name
@@ -206,8 +208,7 @@ def detect_compilers():
                 ver = "" # pragma: no cover
 
             name = compiler['name'] % ver
-            comp = Compiler.query.filter(Compiler.autodetect == compilerid) \
-                                     .first() or Compiler()
+            comp = Compiler.query.filter(Compiler.autodetect == compilerid).first() or Compiler()
             comp.name = name
             comp.lang = compiler.get('lang')
             comp.cmd_compile = build

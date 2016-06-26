@@ -40,11 +40,14 @@ class Problem(db.Model):
     time_limit = db.Column(db.Integer)
     memory_limit = db.Column(db.Integer)
 
-    submissions = db.relationship('Submission', cascade='all,delete', backref='problem')
-    test_groups = db.relationship('TestGroup', cascade='all,delete', backref='problem')
-    checkers = db.relationship('Checker', cascade='all,delete', backref='problem')
+    submissions = db.relationship('Submission', cascade='all,delete',
+                                  backref='problem', lazy="dynamic")
+    test_groups = db.relationship('TestGroup', cascade='all,delete',
+                                  backref='problem', lazy="dynamic")
+    checkers = db.relationship('Checker', cascade='all,delete',
+                               backref='problem', lazy="dynamic")
 
-    contests = db.relationship('ContestProblemAssociation',
+    contests = db.relationship('ContestProblemAssociation', lazy="dynamic",
                                back_populates='problem', cascade='all,delete')
 
     def __init__(self, name=None, description=None, statement=None,
@@ -61,10 +64,7 @@ class Problem(db.Model):
     def get_user_failed_attempts(self, user, freeze=None):
         """(For ACM/ICPC contests): return amount of user's failed attempts before 'freeze'"""
         from pysistem.submissions.model import Submission
-        subs = Submission.query.filter(db.and_(
-            self.id == Submission.problem_id,
-            user.id == Submission.user_id
-        )).all()
+        subs = self.submissions.filter(Submission.user_id == user.id).all()
         ans = 0
         for sub in subs:
             if freeze and sub.submitted > freeze:
@@ -106,10 +106,7 @@ class Problem(db.Model):
         only_color -- will return ONLY Bootstrap color class: 'success', 'danger' etc
         """
         from pysistem.submissions.model import Submission
-        subs = Submission.query.filter(db.and_(
-            self.id == Submission.problem_id,
-            user.id == Submission.user_id
-        )).all()
+        subs = self.submissions.filter(Submission.user_id == user.id).all()
 
         attempted = None
 
@@ -245,5 +242,5 @@ class Problem(db.Model):
         score = 0
         for test_group in self.test_groups:
             score += test_group.score
-            score += len(test_group.test_pairs) * test_group.score_per_test
+            score += test_group.test_pairs.count() * test_group.score_per_test
         return score

@@ -46,7 +46,8 @@ class Submission(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     compiler_id = db.Column(db.Integer, db.ForeignKey('compiler.id'))
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
-    submission_logs = db.relationship('SubmissionLog', cascade="all,delete", backref="submission")
+    submission_logs = db.relationship('SubmissionLog', cascade="all,delete",
+                                      backref="submission", lazy="dynamic")
 
     current_test_id = db.Column(db.Integer)
 
@@ -203,9 +204,7 @@ class Submission(db.Model):
             cache.delete("/submission/view/%d/%r" % (self.id, True))
             cache.delete("/submission/view/%d/%r" % (self.id, False))
         except: pass
-        checker = Checker.query \
-            .filter(db.and_(Checker.problem_id == self.problem_id,
-                            Checker.status == STATUS_ACT)).first()
+        checker = self.problem.checkers.filter(Checker.status == STATUS_ACT).first()
 
         if checker is None:
             return -1

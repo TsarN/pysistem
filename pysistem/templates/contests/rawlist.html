@@ -72,7 +72,7 @@
         </a>
     </td>
     <td style="white-space: nowrap;">
-        {{ contest.problems|length }}
+        {{ contest.problems.count() }}
     </td>
     <td>
         {% if (contest.end - g.now).total_seconds() > 0 %}

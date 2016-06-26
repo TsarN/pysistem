@@ -122,8 +122,9 @@ class Lesson(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))
 
-    users = db.relationship('LessonUserAssociation', back_populates='lesson', cascade="all,delete")
-    auto_marks = db.relationship('AutoMark', cascade="all,delete",
+    users = db.relationship('LessonUserAssociation', back_populates='lesson',
+                            cascade="all,delete", lazy="dynamic")
+    auto_marks = db.relationship('AutoMark', cascade="all,delete", lazy="dynamic",
                                  backref='lesson', order_by=AutoMark.required.desc())
 
     def __init__(self, name=None, start=None, end=None):
@@ -150,10 +151,7 @@ class Lesson(db.Model):
             for key in valid_keys:
                 results.append(self.get_automarks(**dict(((key, kwargs[key]),))))
             return max(results, key=lambda x: (x[1], x[0] or ''))
-        auto_marks = AutoMark.query.filter(db.and_( \
-            AutoMark.lesson_id == self.id, \
-            AutoMark.type == allowed.index(valid_keys[0]))) \
-            .order_by(AutoMark.required.desc()).all()
+        auto_marks = self.auto_marks.filter(AutoMark.type == allowed.index(valid_keys[0])).all()
         if valid_keys[0] == "place":
             for mark in auto_marks[::-1]:
                 if mark.required >= kwargs[valid_keys[0]]:

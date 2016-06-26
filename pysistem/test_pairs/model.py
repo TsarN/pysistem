@@ -21,7 +21,8 @@ class TestPair(db.Model):
     pattern = db.Column(db.Text)
 
     test_group_id = db.Column(db.Integer, db.ForeignKey('test_group.id'))
-    submission_logs = db.relationship('SubmissionLog', cascade="all,delete", backref="test_pair")
+    submission_logs = db.relationship('SubmissionLog', cascade="all,delete",
+                                      backref="test_pair", lazy="dynamic")
 
     def __init__(self, input='', pattern=''):
         self.input = input
@@ -49,7 +50,8 @@ class TestGroup(db.Model):
     score_per_test = db.Column(db.Integer)
     check_all = db.Column(db.Boolean)
 
-    test_pairs = db.relationship('TestPair', cascade="all,delete", backref='test_group')
+    test_pairs = db.relationship('TestPair', cascade="all,delete",
+                                 backref='test_group', lazy="dynamic")
     problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
 
     def __init__(self, problem=None):

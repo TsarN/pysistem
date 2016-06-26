@@ -302,8 +302,8 @@ class TestCase(unittest.TestCase):
 
         problem1 = Problem.query.first()
         self.assertEqual(problem1.name, 'A+B')
-        self.assertEqual(len(problem1.test_groups), 1)
-        self.assertEqual(len(problem1.test_groups[0].test_pairs), 7)
+        self.assertEqual(problem1.test_groups.count(), 1)
+        self.assertEqual(problem1.test_groups[0].test_pairs.count(), 7)
 
         db.session.add(problem1)
         db.session.commit()
@@ -509,7 +509,7 @@ class TestCase(unittest.TestCase):
 
     def test_checker_actions(self):
         detect_compilers()
-        self.assertTrue(len(Compiler.query.all()))
+        self.assertTrue(Compiler.query.count())
         problem = Problem(name='A+B', description='Add two numbers',
             statement='Please do it', time_limit=1234, memory_limit=54321)
         db.session.add(problem)
@@ -621,10 +621,10 @@ class TestCase(unittest.TestCase):
         self.assertEqual(request.status_code, 404)
         request = self.create_test_group(problem.id, '42', 13, 'on')
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(len(TestGroup.query.filter(TestGroup.problem_id == problem.id).all()), 1)
+        self.assertEqual(TestGroup.query.filter(TestGroup.problem_id == problem.id).count(), 1)
 
         test_group = TestGroup.query.filter(TestGroup.problem_id == problem.id).first()
-        self.assertFalse(test_group.test_pairs)
+        self.assertFalse(test_group.test_pairs.count())
         self.assertEqual(test_group.score, 42)
         self.assertEqual(test_group.score_per_test, 13)
         self.assertTrue(test_group.check_all)
@@ -689,8 +689,8 @@ class TestCase(unittest.TestCase):
             zip_file=(BytesIO(zip1), 'zip1.zip')
         ), follow_redirects=True)
 
-        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
-        self.assertEqual(len(test_pairs), 2)
+        test_pairs = test_group.test_pairs
+        self.assertEqual(test_pairs.count(), 2)
         self.assertIn(b'Tests added from ZIP file', request.data)
         self.assertEqual(test_pairs[0].input, '2 3')
         self.assertEqual(test_pairs[1].input, '5 6')
@@ -701,8 +701,9 @@ class TestCase(unittest.TestCase):
             zip_file=(BytesIO(zip2), 'zip2.zip')
         ), follow_redirects=True)
 
-        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
-        self.assertEqual(len(test_pairs), 4)
+        db.session.expire(test_group)
+        test_pairs = test_group.test_pairs
+        self.assertEqual(test_pairs.count(), 4)
         self.assertIn(b'Tests added from ZIP file', request.data)
         self.assertEqual(test_pairs[0].input, '2 3')
         self.assertEqual(test_pairs[1].input, '5 6')
@@ -716,8 +717,9 @@ class TestCase(unittest.TestCase):
         request = self.app.post('/problem/addtestzip/%d' % test_group.id, data=dict(
             zip_file=(BytesIO(zip3), 'zip3.zip')
         ), follow_redirects=True)
-        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
-        self.assertEqual(len(test_pairs), 4)
+        db.session.expire(test_group)
+        test_pairs = test_group.test_pairs
+        self.assertEqual(test_pairs.count(), 4)
         self.assertIn(b'ZIP file is corrupted', request.data)
 
         request = self.app.post('/problem/addtestzip/%d' % test_group.id, follow_redirects=True)
@@ -736,8 +738,9 @@ class TestCase(unittest.TestCase):
         request = self.app.post('/problem/addtest/%d' % test_group.id, data=dict(
             input_file=(BytesIO(b'-3 -4'), "input.txt")
         ), follow_redirects=True)
-        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
-        self.assertEqual(len(test_pairs), 5)
+        db.session.expire(test_group)
+        test_pairs = test_group.test_pairs
+        self.assertEqual(test_pairs.count(), 5)
         self.assertEqual(test_pairs[4].input, '-3 -4')
         self.assertEqual(test_pairs[4].pattern, '')
 
@@ -746,8 +749,9 @@ class TestCase(unittest.TestCase):
 
         request = self.app.post('/problem/deltest/%d' % test_pairs[2].id, follow_redirects=True)
         self.assertEqual(request.status_code, 200)
-        test_pairs = TestPair.query.filter(TestPair.test_group_id == test_group.id).all()
-        self.assertEqual(len(test_pairs), 4)
+        db.session.expire(test_group)
+        test_pairs = test_group.test_pairs
+        self.assertEqual(test_pairs.count(), 4)
         self.assertEqual(test_pairs[0].input, '2 3')
         self.assertEqual(test_pairs[1].input, '5 6')
         self.assertEqual(test_pairs[2].input, '5 6')
@@ -1037,7 +1041,7 @@ class TestCase(unittest.TestCase):
             ), follow_redirects=True)
         self.assertEqual(request.status_code, 200)
         db.session.expire(group)
-        self.assertTrue(len(group.contests))
+        self.assertTrue(group.contests.count())
         self.assertEqual(group.contests[0].name, 'TestContest')
         self.assertTrue(teacher.is_admin(contest=group.contests[0]))
 
@@ -1202,7 +1206,7 @@ class TestCase(unittest.TestCase):
         ), follow_redirects=True)
         self.assertEqual(request.status_code, 200)
         db.session.expire(group)
-        self.assertEqual(len(group.lessons), 1)
+        self.assertEqual(group.lessons.count(), 1)
         self.assertEqual(group.lessons[0].name, 'Introduction')
 
         request = self.app.get('/group/%d/lessons' % group.id)
@@ -1263,12 +1267,12 @@ class TestCase(unittest.TestCase):
         }, follow_redirects=True)
         db.session.expire(lesson)
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(len(lesson.auto_marks), 1)
+        self.assertEqual(lesson.auto_marks.count(), 1)
         self.assertEqual(lesson.auto_marks[0].mark, "5-")
         self.assertEqual(lesson.auto_marks[0].required, 50)
         self.assertEqual(lesson.auto_marks[0].points, 3)
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(len(lesson.users), 1)
+        self.assertEqual(lesson.users.count(), 1)
         self.assertEqual(lesson.users[0].user.id, user.id)
         self.assertEqual(lesson.users[0].mark, "4+")
 
@@ -1285,12 +1289,12 @@ class TestCase(unittest.TestCase):
         }, follow_redirects=True)
         db.session.expire(lesson)
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(len(lesson.auto_marks), 1)
+        self.assertEqual(lesson.auto_marks.count(), 1)
         self.assertEqual(lesson.auto_marks[0].mark, "2+")
         self.assertEqual(lesson.auto_marks[0].required, 42)
         self.assertEqual(lesson.auto_marks[0].points, -4)
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(len(lesson.users), 0)
+        self.assertEqual(lesson.users.count(), 0)
         request = self.app.post('/lesson/%d/edit' % lesson.id, data={
             "name": 'Maximum',
             "contest_id": contest.id,
@@ -1300,8 +1304,8 @@ class TestCase(unittest.TestCase):
         }, follow_redirects=True)
         db.session.expire(lesson)
         self.assertEqual(request.status_code, 200)
-        self.assertEqual(len(lesson.auto_marks), 0)
-        self.assertEqual(len(lesson.users), 0)
+        self.assertEqual(lesson.auto_marks.count(), 0)
+        self.assertEqual(lesson.users.count(), 0)
 
         self.logout()
         lesson_id = lesson.id

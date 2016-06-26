@@ -34,8 +34,7 @@ def view(submission_id, submission):
     cache_name = '/submission/view/%d/%r' % (submission_id, g.user.is_admin(submission=submission))
     rawview = cache.get(cache_name)
     if rawview is None:
-        submission_logs = SubmissionLog.query.filter( \
-            SubmissionLog.submission_id == submission.id).all()
+        submission_logs = submission.submission_logs.all()
 
         logs = {}
         for sub in submission_logs:

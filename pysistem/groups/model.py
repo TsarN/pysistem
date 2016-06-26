@@ -79,11 +79,11 @@ class Group(db.Model):
     name = db.Column(db.String(80))
 
     users = db.relationship('GroupUserAssociation', cascade='all,delete',
-                            back_populates='group')
+                            back_populates='group', lazy="dynamic")
     contests = db.relationship('GroupContestAssociation', cascade='all,delete',
-                               back_populates='group')
+                               back_populates='group', lazy="dynamic")
     lessons = db.relationship('Lesson', cascade='all,delete', backref='group',
-                              order_by=Lesson.start.desc())
+                              order_by=Lesson.start.desc(), lazy="dynamic")
 
     def __init__(self, name=None):
         self.name = name
@@ -94,5 +94,4 @@ class Group(db.Model):
     def get_current_lessons(self):
         """Return currently ongoing Lessons"""
         now = datetime.now()
-        return Lesson.query.filter(db.and_(Lesson.group_id == self.id, \
-               Lesson.start <= now, Lesson.end >= now)).all()
+        return self.lessons.filter(db.and_(Lesson.start <= now, Lesson.end >= now)).all()

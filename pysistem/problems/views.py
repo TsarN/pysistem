@@ -217,7 +217,7 @@ def tests(problem_id, problem):
     Permissions required:
     Problem Administrator
     """
-    test_groups = TestGroup.query.filter(TestGroup.problem_id == problem.id).all()
+    test_groups = problem.test_groups.all()
     return render_template('problems/tests.html', problem=problem, test_groups=test_groups)
 
 @mod.route('/<int:problem_id>/testgroup/new', methods=['POST'])
@@ -373,7 +373,7 @@ def checkers(problem_id, problem):
     Permissions required:
     Problem Administrator
     """
-    checkers = Checker.query.filter(Checker.problem_id == problem.id).all()
+    checkers = problem.checkers.all()
     compilers = Compiler.query.all()
     return render_template('problems/checkers.html', problem=problem,
                            checkers=checkers, compilers=compilers)
@@ -519,8 +519,7 @@ def submissions(problem_id, problem, username=None):
         flash(gettext('problems.submit.success'))
         return redirect(url_for('problems.submissions', problem_id=problem_id))
 
-    submissions = Submission.query.filter(db.and_(
-        Submission.problem_id == problem.id, Submission.user_id == user.id)).all()
+    submissions = problem.submissions.filter(Submission.user_id == user.id).all()
     compilers = Compiler.query.all()
 
     rendered_subs = render_template('submissions/list.html', submissions=submissions)
