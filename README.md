@@ -10,7 +10,6 @@ PySistem is contest management system written in Python 3, that uses Flask and S
  - Flask-Babel
  - Flask-SQLAlchemy with backend (like MySQL)
  - Flask-Migrate
- - Flask-Assets
  - MsgPack-Python
  - Transliterate 
  - Humanize
