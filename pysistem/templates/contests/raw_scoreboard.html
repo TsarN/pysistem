@@ -31,8 +31,7 @@
     <td>
     {% for x in (('a', 'sub1', True), ('span', 'sub1', False), ('span', 'sub2', False)) %}
     {% if (x[1] == 'sub2') or (g.user.is_admin(contest=contest) == x[2]) %}
-    <{{ x[0] }} class="{{ x[1] }}"
-    {% if x[0] == 'a' %}href="{{ url_for('problems.submissions', problem_id=problem.id, username=user['username']) }}"{% endif %}>
+    <{{ x[0] }} class="{{ x[1] }}" {% if x[0] == 'a' %}href="{{ url_for('problems.submissions', problem_id=problem.id, username=user['username']) }}"{% endif %}>
     {% if contest.rules == 'acm' %}
     <div class="text-center">
     <b>
@@ -53,7 +52,7 @@
     <b>{{ user['is_solved'][problem.id]['succeed'] }}</b>
     </div>
     {% endif %}
-    <{{ x[0] }}/>
+    </{{ x[0] }}>
     {% endif %}
     {% endfor %}
     </td>
