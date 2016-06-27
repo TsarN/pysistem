@@ -16,9 +16,9 @@
     <td>
         <span class="glyphicon glyphicon-plus text-success"></span>
     </td>
-    <td><input type="text" name="name" placeholder="{{ _('common.name') }}" /></td>
+    <td><input type="text" class="form-control" name="name" placeholder="{{ _('common.name') }}" /></td>
     <td>
-        <select name="compiler">
+        <select name="compiler" class="form-control">
         {% for compiler in compilers %}
         <option value="{{ compiler.id }}" {% if loop.first %}selected="selected"{% endif %}>
             {{ compiler.name }}
