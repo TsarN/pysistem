@@ -5,17 +5,15 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#table-contests").DataTable({
-            "paging": false,
             "info": false,
+            {% if g.locale == 'ru' %}
             "language": {
-                "search": "{{ _('datatables.search') }} ",
-                "emptyTable": "{{ _('datatables.emptytable') }}",
-                "zeroRecords": "{{ _('datatables.zerorecords') }}"
+                "url": "{{ url_for('static', filename='datatables/Russian.json') }}"
             }
+            {% endif %}
         })
     })
 </script>
-
 {% if g.user.is_admin() %}
 <div style="float: right; margin-bottom: 16px">
 <a href="{{ url_for('contests.new') }}" class="btn btn-success" id="btn-newcontest">

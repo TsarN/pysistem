@@ -1,7 +1,19 @@
 {% extends "groups/base.html" %}
 {% block group_nav_link_users %}active{% endblock %}
 {% block group_content %}
-<table class="table table-hover">
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#table-users").DataTable({
+            "info": false,
+            {% if g.locale == 'ru' %}
+            "language": {
+                "url": "{{ url_for('static', filename='datatables/Russian.json') }}"
+            }
+            {% endif %}
+        })
+    })
+    </script>
+<table class="table table-hover" id="table-users">
 <thead>
     <tr>
         <th>{{ _('common.username') }}</th>

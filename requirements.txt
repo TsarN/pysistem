@@ -1,0 +1,7 @@
+flask
+flask-babel
+flask-sqlalchemy
+flask-migrate
+msgpack-python
+transliterate
+humanize

@@ -164,15 +164,15 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
                 <tr>
                     <td>
                         <input type="number" autocomplete="off" name="am{{ auto_mark.id }}-required"
-                        value="{{ auto_mark.required }}" />
+                        class="form-control input-sm" value="{{ auto_mark.required }}" />
                     </td>
                     <td>
                         <input size="1" autocomplete="off" name="am{{ auto_mark.id }}-mark"
-                        value="{{ auto_mark.mark }}" />
+                        class="form-control input-sm" value="{{ auto_mark.mark }}" />
                     </td>
                     <td>
                         <input type="number" autocomplete="off" name="am{{ auto_mark.id }}-points"
-                        value="{{ auto_mark.points }}" >
+                        class="form-control input-sm" value="{{ auto_mark.points }}" >
                     </td>
                     <td>
                         <input type="checkbox" autocomplete="off" 
@@ -196,13 +196,13 @@ src="{{ url_for('static', filename='bootstrap-datetimepicker/bootstrap-datetimep
         var x = ++auto_marks_rows[type];
         var parentTr = $("<tr/>");
         var requiredTd = $("<td/>");
-        requiredTd.html('<input type="number" autocomplete="off" name="am-new'
+        requiredTd.html('<input type="number" class="form-control input-sm" autocomplete="off" name="am-new'
             + type + x.toString() + '-required" />');
         var markTd = $("<td/>");
-        markTd.html('<input size="1" autocomplete="off" name="am-new'
+        markTd.html('<input size="1" class="form-control input-sm" autocomplete="off" name="am-new'
             + type + x.toString() + '-mark" />');
         var pointsTd = $("<td />");
-        pointsTd.html('<input type="number" autocomplete="off" value="0" name="am-new'
+        pointsTd.html('<input type="number" class="form-control input-sm" autocomplete="off" value="0" name="am-new'
             + type + x.toString() + '-points" />');
         var plusTd = $("<td />");
         plusTd.html('<div class="vcenter"><span class="glyphicon glyphicon-plus text-success" \

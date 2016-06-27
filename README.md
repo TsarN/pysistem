@@ -10,12 +10,11 @@ PySistem is contest management system written in Python 3, that uses Flask and S
  - Flask-Babel
  - Flask-SQLAlchemy with backend (like MySQL)
  - Flask-Migrate
+ - Flask-Assets
  - MsgPack-Python
- - SISTEM Backend (https://github.com/TsarN/sistem-backend)
-
-## Optional python dependencies
  - Transliterate 
  - Humanize
+ - SISTEM Backend (https://github.com/TsarN/sistem-backend)
 
 ## What database should I use?
 
@@ -39,7 +38,7 @@ This will configure current terminal for virtual enviroment
 ### Installing PySistem
 Install dependencies:
 
-    $ pip install Flask Flask-Babel Flask-SQLAlchemy Flask-Migrate msgpack-python gunicorn
+    $ pip install -r requirements.txt 
 
 Simply copy `pysistem` folder from repository to newly created virtual enviroment
 
