@@ -180,6 +180,13 @@ detectable_compilers = {
         "find_version": "%s 2>&1 --version | sed 's/^Python //'",
         "run": "__compiler__ __src__"
     },
+    "ghc": {
+        "name": "Glasgow Haskell Compiler %s",
+        "executable": "ghc",
+        "lang": "hs",
+        "find_version": "%s --version | sed 's/^.*version //'",
+        "build": "__compiler__ --make __src__ -O2 -Wall -outputdir=ghcdumps -o __exe__"
+    }
 }
 
 def detect_compilers():

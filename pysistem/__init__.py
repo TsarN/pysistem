@@ -38,10 +38,6 @@ class PySistemApplication(Flask):
         if join:
             self.check_thread.join()
 
-    def stop_check_thread(self=None):
-        """Stop checking thread"""
-        check_thread_interrupt()
-
     def make_dirs(self=None):
         """Create required directories"""
         self = self or app
@@ -58,8 +54,8 @@ class PySistemApplication(Flask):
             print(app.config['CONFIRM_CODE'])
             print('---- SIGN UP CONFIRMATION CODE ----')
 
-            from pysistem.compilers.model import detect_compilers
-            detect_compilers()
+        from pysistem.compilers.model import detect_compilers
+        detect_compilers()
 
         if kwargs.get('launch_check_thread', True):
             if app.config.get('LAUNCH_CHECK_THREAD', True):
