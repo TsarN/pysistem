@@ -70,7 +70,8 @@ class Setting(db.Model):
             return default
         value = setting.val()
         if value is None:
-            return default
+            value = default
+        cached[name] = value
         return value
 
     @staticmethod
