@@ -295,14 +295,17 @@ def format_time(mins):
 
 def render_scoreboard(contest, cache_name):
     """Do actual scoreboard rendering"""
-    if not contest.problems.count():
-        return render_template('contests/raw_scoreboard_empty.html')
-    problem_ids = [x.id for x in contest.problems]
-    submissions = Submission.query.filter(Submission.problem_id.in_(problem_ids))
-    problems = [x.problem for x in submissions.distinct(Submission.problem_id)
-                                              .group_by(Submission.problem_id)]
-    qusers = [x.user for x in submissions.distinct(Submission.user_id)
-                                         .group_by(Submission.user_id)]
+    if contest.problems.count() == 0:
+        submissions = []
+        problems = []
+        qusers = []
+    else:
+        problem_ids = [x.id for x in contest.problems]
+        submissions = Submission.query.filter(Submission.problem_id.in_(problem_ids))
+        problems = [x.problem for x in submissions.distinct(Submission.problem_id)
+                                                  .group_by(Submission.problem_id)]
+        qusers = [x.user for x in submissions.distinct(Submission.user_id)
+                                             .group_by(Submission.user_id)]
     subs = {}
     for user in qusers:
         subs[user.id] = {}
