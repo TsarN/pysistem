@@ -47,7 +47,7 @@ def signup():
         if g.is_first_time and (confirm_code != app.config['CONFIRM_CODE']):
             error = gettext('auth.signup.admin.invalidcode')
         else:
-            if re.compile(g.SETTINGS.get('username_pattern', '.*')).match(request.form['username']):
+            if re.compile(r"^[A-Za-z0-9_]{3,15}$").match(request.form['username']):
                 if not User.exists(username):
                     if password == password_confirm:
                         if len(password) > 3:

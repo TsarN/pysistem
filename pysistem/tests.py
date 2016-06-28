@@ -72,7 +72,7 @@ class TestCase(unittest.TestCase):
             username=username,
             password=password,
             passwordConfirm=password_confirm
-        ))
+        ), follow_redirects=True)
 
     def test_login_logout(self):
         request = self.login('admin', 'admin')
@@ -99,9 +99,7 @@ class TestCase(unittest.TestCase):
         request = self.signup('user', 'u', 'u')
         self.assertIn(b'Password is too short', request.data)
         request = self.signup('user', 'user', 'user')
-        self.assertIn(b'<a href="/">', request.data)
-        self.assertEqual(request.status_code, 302)
-        request = self.app.get('/')
+        self.assertEqual(request.status_code, 200)
         self.assertIn(b'You were registred', request.data)
 
     def contest_create(self, name, start, freeze, end, ruleset, unfreeze_after_end):
@@ -922,46 +920,29 @@ class TestCase(unittest.TestCase):
 
         self.assertTrue(Setting.get('allow_guest_view'))
         self.assertTrue(Setting.get('allow_signup'))
-        self.assertEqual(Setting.get('username_pattern'), '^[A-Za-z0-9_]{3,15}$')
         self.assertEqual(Setting.get('scoreboard_cache_timeout'), 60)
 
         request = self.app.post('/settings/', data=dict(
             allow_guest_view="",
             allow_signup="checked",
-            scoreboard_cache_timeout=42,
-            username_pattern="^[a-z]+$"
+            scoreboard_cache_timeout=42
         ), follow_redirects=True)
 
         self.assertEqual(request.status_code, 200)
-        self.assertNotIn(b'Invalid username regex', request.data)
-        self.assertIn(b'^[a-z]+$', request.data)
+        self.assertIn(b'42', request.data)
 
         request = self.app.post('/settings/', data=dict(
             allow_guest_view="",
             allow_signup="",
             scoreboard_cache_timeout=34,
-            username_pattern="^.*$"
         ), follow_redirects=True)
 
         self.assertEqual(request.status_code, 200)
         self.assertNotIn(b'Invalid username regex', request.data)
-        self.assertIn(b'^.*$', request.data)
         db.session.commit()
         self.assertFalse(Setting.get('allow_guest_view'))
         self.assertFalse(Setting.get('allow_signup'))
-        self.assertEqual(Setting.get('username_pattern'), '^.*$')
         self.assertEqual(Setting.get('scoreboard_cache_timeout'), 34)
-
-        request = self.app.post('/settings/', data=dict(
-            allow_guest_view="on",
-            allow_signup="on",
-            scoreboard_cache_timeout=60,
-            username_pattern=":("
-        ), follow_redirects=True)
-
-        self.assertEqual(request.status_code, 200)
-        self.assertIn(b'Invalid username regex', request.data)
-        self.assertNotIn(b':(', request.data)
 
         self.logout()
         request = self.app.get('/')

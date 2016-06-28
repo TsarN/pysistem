@@ -12,7 +12,6 @@ SETTING_EMPTY = 0
 DEFAULT = {
     "allow_signup": True,
     "allow_guest_view": True,
-    "username_pattern": "^[A-Za-z0-9_]{3,15}$",
     "scoreboard_cache_timeout": 60
 }
 

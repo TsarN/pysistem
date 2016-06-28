@@ -190,10 +190,6 @@ msgstr "Compiler is not selected"
 msgid "problems.submit.success"
 msgstr "Your solution was sent to testing"
 
-#: settings/views.py:37
-msgid "settings.errors.invalidusernameregex"
-msgstr "Invalid username regex"
-
 #: settings/views.py:46
 msgid "settings.edit.success"
 msgstr "Settings updated"
@@ -703,10 +699,6 @@ msgstr "ms"
 #: templates/problems/view.html:5
 msgid "common.units.kilobytes"
 msgstr "KiB"
-
-#: templates/settings/edit.html:13 templates/settings/edit.html:17
-msgid "settings.usernamepattern"
-msgstr "Valid username regex"
 
 #: templates/settings/edit.html:21 templates/settings/edit.html:26
 msgid "settings.scoreboardcachetimeout"
