@@ -9,6 +9,7 @@ from flask_babel import gettext
 
 from pysistem import db, redirect_url, cache
 from pysistem.contests.model import Contest, ContestProblemAssociation, contest_rulesets
+from pysistem.submissions.model import Submission
 from pysistem.users.model import User
 from pysistem.problems.model import Problem
 from pysistem.users.decorators import requires_admin
@@ -291,6 +292,88 @@ def format_time(mins):
     return ("0" * (hour < 10) + str(hour)) + ':' + \
            ("0" * (mins < 10) + str(mins))
 
+
+def render_scoreboard(contest, cache_name):
+    """Do actual scoreboard rendering"""
+    if not contest.problems.count():
+        return render_template('contests/raw_scoreboard_empty.html')
+    problem_ids = [x.id for x in contest.problems]
+    submissions = Submission.query.filter(Submission.problem_id.in_(problem_ids))
+    problems = [x.problem for x in submissions.distinct(Submission.problem_id)
+                                              .group_by(Submission.problem_id)]
+    qusers = [x.user for x in submissions.distinct(Submission.user_id)
+                                         .group_by(Submission.user_id)]
+    subs = {}
+    for user in qusers:
+        subs[user.id] = {}
+        for problem in problems:
+            subs[user.id][problem.id] = []
+
+    for sub in submissions:
+        subs[sub.user_id][sub.problem_id].append(sub)
+
+    users = []
+
+    for user in qusers:
+        score = contest.rate_user(user, subs=subs[user.id])
+        solved_map = {}
+        add_user = False
+        for problem in problems:
+            succeed, submitted = problem.user_score(user, freeze=contest.get_freeze_time(),
+                                                    subs=subs[user.id][problem.id])
+            if contest.rules == 'acm':
+                succeed = bool(succeed) and (problem.get_max_score() <= succeed)
+            time = None
+            if submitted is not None:
+                time = int(max(0, (submitted - contest.start).total_seconds() // 60))
+                add_user = True
+            solved_map[problem.id] = {
+                "succeed": succeed,
+                "time": format_time(time),
+                "failed": problem.get_user_failed_attempts(user, subs=subs[user.id][problem.id],
+                                                           freeze=contest.get_freeze_time())
+            }
+        if add_user:
+            users.append({
+                "id": user.id,
+                "score": score,
+                "username": user.username,
+                "is_solved": solved_map
+            })
+    if contest.rules == 'acm':
+        users.sort(key=lambda x: (-x['score'][0], x['score'][1]))
+    else:
+        users.sort(key=lambda x: (-x['score'][0]))
+
+    # Calculating fair places
+    if users:
+        last_idx = 0
+        cur_place = 1
+        cur_score = users[0]['score']
+        users[0]['place'] = '1'
+        users[0]['int_place'] = 1
+
+        for i in range(1, len(users)):
+            if cur_score != users[i]['score']:
+                cur_score = users[i]['score']
+                cur_place = i + 1
+                for j in range(i - 1, last_idx - 1, -1):
+                    if i != users[j]['int_place']:
+                        users[j]['place'] += '-' + str(i)
+                last_idx = i
+            users[i]['place'] = str(cur_place)
+            users[i]['int_place'] = cur_place
+
+        user_len = len(users)
+        for j in range(user_len - 1, last_idx - 1, -1):
+            if users[j]['int_place'] != user_len:
+                users[j]['place'] += '-' + str(user_len)
+
+    rawscore = (render_template('contests/raw_scoreboard.html',
+                                contest=contest, problems=problems, users=users), g.now)
+    cache.set(cache_name, rawscore, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
+    return rawscore
+
 @mod.route('/<int:contest_id>/scoreboard')
 @yield_contest()
 def scoreboard(contest_id, contest):
@@ -305,65 +388,8 @@ def scoreboard(contest_id, contest):
     cache_name = '/contests/scoreboard/%d/%r' % (contest.id, g.user.is_admin(contest=contest))
     rawscore = cache.get(cache_name)
     if rawscore is None:
-        problems = contest.problems
-        users = []
-        for user in User.query:
-            score = contest.rate_user(user)
-            solved_map = {}
-            add_user = False
-            for problem in problems:
-                succeed, submitted = problem.user_score(user, freeze=contest.get_freeze_time())
-                if contest.rules == 'acm':
-                    succeed = bool(succeed) and (problem.get_max_score() <= succeed)
-                time = None
-                if submitted is not None:
-                    time = int(max(0, (submitted - contest.start).total_seconds() // 60))
-                    add_user = True
-                solved_map[problem.id] = {
-                    "succeed": succeed,
-                    "time": format_time(time),
-                    "failed": problem.get_user_failed_attempts(
-                              user, freeze=contest.get_freeze_time())
-                }
-            if add_user:
-                users.append({
-                    "id": user.id,
-                    "score": score,
-                    "username": user.username,
-                    "is_solved": solved_map
-                })
-        if contest.rules == 'acm':
-            users.sort(key=lambda x: (-x['score'][0], x['score'][1]))
-        else:
-            users.sort(key=lambda x: (-x['score'][0]))
+        rawscore = render_scoreboard(contest, cache_name)
 
-        # Calculating fair places
-        if users:
-            last_idx = 0
-            cur_place = 1
-            cur_score = users[0]['score']
-            users[0]['place'] = '1'
-            users[0]['int_place'] = 1
-
-            for i in range(1, len(users)):
-                if cur_score != users[i]['score']:
-                    cur_score = users[i]['score']
-                    cur_place = i + 1
-                    for j in range(i - 1, last_idx - 1, -1):
-                        if i != users[j]['int_place']:
-                            users[j]['place'] += '-' + str(i)
-                    last_idx = i
-                users[i]['place'] = str(cur_place)
-                users[i]['int_place'] = cur_place
-
-            user_len = len(users)
-            for j in range(user_len - 1, last_idx - 1, -1):
-                if users[j]['int_place'] != user_len:
-                    users[j]['place'] += '-' + str(user_len)
-
-        rawscore = (render_template('contests/raw_scoreboard.html',
-                                    contest=contest, problems=problems, users=users), g.now)
-        cache.set(cache_name, rawscore, timeout=g.SETTINGS.get('scoreboard_cache_timeout', 60))
     if request.args.get('printing'):
         return render_template('contests/printing_scoreboard.html',
                                scoreboard=rawscore[0])

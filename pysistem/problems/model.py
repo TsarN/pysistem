@@ -61,10 +61,10 @@ class Problem(db.Model):
     def __repr__(self):
         return '<Problem %r>' % self.name
 
-    def get_user_failed_attempts(self, user, freeze=None):
+    def get_user_failed_attempts(self, user, freeze=None, subs=None):
         """(For ACM/ICPC contests): return amount of user's failed attempts before 'freeze'"""
         from pysistem.submissions.model import Submission
-        subs = self.submissions.filter(Submission.user_id == user.id).all()
+        subs = subs or self.submissions.filter(Submission.user_id == user.id).all()
         ans = 0
         for sub in subs:
             if freeze and sub.submitted > freeze:
@@ -76,10 +76,10 @@ class Problem(db.Model):
                     ans += 1
         return ans
 
-    def user_score(self, user, freeze=None):
+    def user_score(self, user, freeze=None, subs=None):
         """Return Tuple: (Score for this problem, last time of last meaningful submission)"""
         from pysistem.submissions.model import Submission
-        subs = Submission.query.filter(db.and_(
+        subs = subs or Submission.query.filter(db.and_(
             self.id == Submission.problem_id,
             user.id == Submission.user_id
         )).all()

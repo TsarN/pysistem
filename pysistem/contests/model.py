@@ -107,7 +107,7 @@ class Contest(db.Model):
             return False
         return True
 
-    def rate_user(self, user, do_freeze=True, rules=None):
+    def rate_user(self, user, do_freeze=True, rules=None, subs=None):
         """Get user's score in contests"""
         if do_freeze:
             freeze = self.get_freeze_time()
@@ -116,27 +116,43 @@ class Contest(db.Model):
         rules = rules or self.rules
         if rules == 'roi':
             score = 0
-            for problem in self.problems:
-                score += problem.user_score(user, freeze=freeze)[0]
+            if subs:
+                for problem in self.problems:
+                    score += problem.user_score(user, freeze=freeze, subs=subs[problem.id])[0]
+            else:
+                for problem in self.problems:
+                    score += problem.user_score(user, freeze=freeze)[0]
             return (score,)
         else:
             solved, penalty = 0, 0
-            for problem in self.problems:
-                succ = problem.user_score(user, freeze=freeze)
-                if succ[0] and (succ[0] >= problem.get_max_score()):
-                    solved += 1
-                    penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
-                    penalty += max(0, (succ[1] - self.start).total_seconds() // 60)
+            if subs:
+                for problem in self.problems:
+                    succ = problem.user_score(user, freeze=freeze, subs=subs[problem.id])
+                    if succ[0] and (succ[0] >= problem.get_max_score()):
+                        solved += 1
+                        penalty += problem.get_user_failed_attempts(user, freeze=freeze,
+                                                                    subs=subs[problem.id]) * 20
+                        penalty += max(0, (succ[1] - self.start).total_seconds() // 60)
+            else:
+                for problem in self.problems:
+                    succ = problem.user_score(user, freeze=freeze)
+                    if succ[0] and (succ[0] >= problem.get_max_score()):
+                        solved += 1
+                        penalty += problem.get_user_failed_attempts(user, freeze=freeze) * 20
+                        penalty += max(0, (succ[1] - self.start).total_seconds() // 60)
             return solved, int(penalty)
 
     def get_places(self):
+        from pysistem.submissions.model import Submission
+        from pysistem.problems.model import Problem
         users = {}
-        for problem in self.problems:
-            for submission in problem.submissions:
-                if submission.status == STATUS_DONE:
-                    user_id = submission.user_id
-                    if user_id and user_id not in users:
-                        users[user_id] = self.rate_user(submission.user)
+        query = Submission.query.filter(db.and_(
+                 Submission.status == STATUS_DONE,
+                 Submission.problem.any(Problem.contest_id == self.id)))
+        for submission in query:
+            user_id = submission.user_id
+            if user_id and user_id not in users:
+                users[user_id] = self.rate_user(submission.user)
         users_sorted = [(users[u], u) for u in users]
         if self.rules == 'acm':
             users_sorted = [((u[0][0], -u[0][1]), u[1]) for u in users_sorted]
