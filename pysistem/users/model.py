@@ -125,11 +125,17 @@ class User(db.Model):
         if not kwargs:
             return False
 
-        admin_groups = GroupUserAssociation.query.filter(db.and_(
-            GroupUserAssociation.user_id == self.id,
-            GroupUserAssociation.role == 'admin')).all()
+        admin_groups_ids = []
 
-        admin_groups_ids = [x.group_id for x in admin_groups]
+        if hasattr(self, 'cached_admin_groups_ids'):
+            admin_groups_ids = getattr(self, 'cached_admin_groups_ids')
+        else:
+            admin_groups = GroupUserAssociation.query.filter(db.and_(
+                GroupUserAssociation.user_id == self.id,
+                GroupUserAssociation.role == 'admin')).all()
+
+            admin_groups_ids = [x.group_id for x in admin_groups]
+            setattr(self, 'cached_admin_groups_ids', admin_groups_ids)
 
         if not admin_groups_ids:
             return False

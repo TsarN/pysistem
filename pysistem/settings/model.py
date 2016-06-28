@@ -16,6 +16,8 @@ DEFAULT = {
     "scoreboard_cache_timeout": 60
 }
 
+cached = {}
+
 class Setting(db.Model):
     """A global server setting
 
@@ -50,7 +52,6 @@ class Setting(db.Model):
 
     def val(self):
         """Get self value with auto-conversion"""
-        db.session.commit()
         if self.type == SETTING_INT:
             return self.value_int
         if self.type == SETTING_STRING:
@@ -62,7 +63,8 @@ class Setting(db.Model):
     @staticmethod
     def get(name, default=None):
         """Global function. Get value by name"""
-        db.session.commit()
+        if cached.get(name):
+            return cached.get(name)
         default = DEFAULT.get(name) or default
         setting = Setting.query.get(name)
         if setting is None:
@@ -75,7 +77,7 @@ class Setting(db.Model):
     @staticmethod
     def set(name, value):
         """Global function. Set value"""
-        db.session.commit()
+        cached[name] = value
         setting = Setting.query.get(name)
         if setting:
             if isinstance(value, int):
@@ -92,3 +94,4 @@ class Setting(db.Model):
         else:
             setting = Setting(name, value)
         db.session.add(setting)
+        db.session.commit()
