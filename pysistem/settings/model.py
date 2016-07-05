@@ -15,8 +15,6 @@ DEFAULT = {
     "scoreboard_cache_timeout": 60
 }
 
-cached = {}
-
 class Setting(db.Model):
     """A global server setting
 
@@ -62,8 +60,6 @@ class Setting(db.Model):
     @staticmethod
     def get(name, default=None):
         """Global function. Get value by name"""
-        if cached.get(name):
-            return cached.get(name)
         default = DEFAULT.get(name) or default
         setting = Setting.query.get(name)
         if setting is None:
@@ -71,13 +67,11 @@ class Setting(db.Model):
         value = setting.val()
         if value is None:
             value = default
-        cached[name] = value
         return value
 
     @staticmethod
     def set(name, value):
         """Global function. Set value"""
-        cached[name] = value
         setting = Setting.query.get(name)
         if setting:
             if isinstance(value, int):
