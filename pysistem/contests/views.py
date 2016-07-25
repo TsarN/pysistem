@@ -300,10 +300,15 @@ def render_scoreboard(contest, cache_name):
         problems = []
         qusers = []
     else:
+        contest_problems = {}
+        for problem in contest.problems:
+            contest_problems[problem.id] = problem
         problem_ids = [x.id for x in contest.problems]
         submissions = Submission.query.filter(Submission.problem_id.in_(problem_ids))
-        problems = [x.problem for x in submissions.distinct(Submission.problem_id)
-                                                  .group_by(Submission.problem_id)]
+        problems = [contest_problems[x.problem.id] for x in
+                    submissions.distinct(Submission.problem_id)
+                               .group_by(Submission.problem_id)]
+        problems.sort(key=lambda x: x.prefix)
         qusers = [x.user for x in submissions.distinct(Submission.user_id)
                                              .group_by(Submission.user_id)]
     subs = {}

@@ -77,11 +77,15 @@ class Submission(db.Model):
 
     def get_exe_path(self):
         """Get submission's executable path"""
+        if not self.id:
+            db.session.commit()
         storage_dir = app.config['STORAGE']
         return storage_dir + '/submissions_bin/' + str(self.id)
 
     def get_source_path(self):
         """Get submission's source path"""
+        if not self.id:
+            db.session.commit()
         if os.path.exists('/SANDBOX'):
             return '/SANDBOX/pysistem_submission_' + str(self.id) + '.' + self.compiler.lang
         else: # pragma: no cover
@@ -200,6 +204,8 @@ class Submission(db.Model):
     def check(self, session=None):
         """Start sync checking of submission"""
         session = session or db.session
+        if not self.id:
+            session.commit()
         try:
             cache.delete("/submission/view/%d/%r" % (self.id, True))
             cache.delete("/submission/view/%d/%r" % (self.id, False))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PySistem 0.3-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: nikts53@gmail.com\n"
-"POT-Creation-Date: 2016-06-24 19:19+0300\n"
+"POT-Creation-Date: 2016-07-21 08:50+0300\n"
 "PO-Revision-Date: 2016-05-24 15:51+0300\n"
 "Last-Translator: Tsarev Nikita <nikts53@gmail.com>\n"
 "Language: ru\n"
@@ -19,27 +19,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: contests/views.py:176 lessons/views.py:84
+#: contests/views.py:177 lessons/views.py:84
 msgid "error.invaliddateformat"
 msgstr "Дата и время в неправильном формате"
 
-#: contests/views.py:203
+#: contests/views.py:204
 msgid "contests.edit.invaliddates"
 msgstr "Время указано неверно: Начало &le; Заморозка &le; Окончание"
 
-#: contests/views.py:240
+#: contests/views.py:241
 msgid "contests.new.success"
 msgstr "Турнир создан"
 
-#: contests/views.py:243
+#: contests/views.py:244
 msgid "contests.edit.success"
 msgstr "Турнир обновлён"
 
-#: contests/views.py:246
+#: contests/views.py:247
 msgid "contests.edit.atleastonegroup"
 msgstr "Укажите хотя бы одну группу"
 
-#: contests/views.py:248
+#: contests/views.py:249
 msgid "contests.edit.emptyname"
 msgstr "Пустое название турнира"
 
@@ -191,19 +191,19 @@ msgstr "Выберите компилятор"
 msgid "problems.submit.success"
 msgstr "Ваше решение отправлено на проверку"
 
-#: settings/views.py:46
+#: settings/views.py:32
 msgid "settings.edit.success"
 msgstr "Настройки сохранены"
 
-#: submissions/model.py:176
+#: submissions/model.py:181
 msgid "common.outof"
 msgstr "из"
 
-#: templates/base.html:94
+#: templates/base.html:101
 msgid "title.groups.new"
 msgstr "Создание новой группы"
 
-#: templates/base.html:97 templates/contests/edit.html:60
+#: templates/base.html:104 templates/contests/edit.html:60
 #: templates/contests/edit.html:63 templates/contests/problems.html:55
 #: templates/contests/rawlist.html:57 templates/groups/lessons.html:12
 #: templates/lessons/edit.html:55 templates/lessons/edit.html:58
@@ -212,71 +212,71 @@ msgstr "Создание новой группы"
 msgid "common.name"
 msgstr "Название"
 
-#: templates/base.html:103 templates/contests/base.html:80
-#: templates/problems/base.html:22
+#: templates/base.html:110 templates/contests/base.html:80
+#: templates/groups/base.html:57 templates/problems/base.html:22
 msgid "common.cancel"
 msgstr "Отмена"
 
-#: templates/base.html:106 templates/contests/edit.html:126
+#: templates/base.html:113 templates/contests/edit.html:126
 #: templates/lessons/edit.html:289 templates/problems/edit.html:115
 #: templates/problems/tests.html:49
 msgid "common.create"
 msgstr "Создать"
 
-#: templates/base.html:134 templates/index.html:2
+#: templates/base.html:141 templates/index.html:2
 msgid "title.home"
 msgstr "Главная"
 
-#: templates/base.html:137 templates/contests/list.html:2
+#: templates/base.html:144 templates/contests/list.html:2
 #: templates/groups/base.html:41
 msgid "title.contestlist"
 msgstr "Турниры"
 
-#: templates/base.html:143 templates/contests/edit.html:103
+#: templates/base.html:150 templates/contests/edit.html:103
 #: templates/users/edit_profile.html:42
 msgid "title.groups"
 msgstr "Группы"
 
-#: templates/base.html:151 templates/users/edit_profile.html:62
+#: templates/base.html:158 templates/users/edit_profile.html:62
 msgid "groups.role.admin"
 msgstr "Администратор"
 
-#: templates/base.html:157 templates/users/edit_profile.html:57
+#: templates/base.html:164 templates/users/edit_profile.html:57
 msgid "groups.role.user"
 msgstr "Участник"
 
-#: templates/base.html:175
+#: templates/base.html:182
 msgid "groups.new"
 msgstr "Создать группу"
 
-#: templates/base.html:194 templates/problems/checkers.html:9
+#: templates/base.html:201 templates/problems/checkers.html:9
 #: templates/submissions/list.html:50
 msgid "common.language"
 msgstr "Язык"
 
-#: templates/base.html:213
+#: templates/base.html:220
 msgid "common.anonymous"
 msgstr "Гость"
 
-#: templates/base.html:218 templates/users/edit_profile.html:2
+#: templates/base.html:225 templates/users/edit_profile.html:2
 #: templates/users/profile.html:2
 msgid "title.profile"
 msgstr "Профиль"
 
-#: templates/base.html:220 templates/settings/edit.html:2
+#: templates/base.html:227 templates/settings/edit.html:2
 msgid "title.settings"
 msgstr "Настройки сервера"
 
-#: templates/base.html:223
+#: templates/base.html:230
 msgid "title.logout"
 msgstr "Выйти"
 
-#: templates/base.html:225 templates/guest_view_denied.html:13
+#: templates/base.html:232 templates/guest_view_denied.html:13
 #: templates/users/login.html:2
 msgid "title.login"
 msgstr "Войти"
 
-#: templates/base.html:227 templates/guest_view_denied.html:18
+#: templates/base.html:234 templates/guest_view_denied.html:18
 #: templates/users/signup.html:2
 msgid "title.signup"
 msgstr "Зарегистрироваться"
@@ -298,10 +298,11 @@ msgid "contests.delete.confirm"
 msgstr "Подтвердите удаление турнира"
 
 #: templates/contests/base.html:84 templates/contests/base.html:106
-#: templates/contests/problems.html:88 templates/lessons/edit.html:160
-#: templates/problems/base.html:26 templates/problems/base.html:65
-#: templates/problems/checkers.html:40 templates/problems/tests.html:11
-#: templates/problems/tests.html:101
+#: templates/contests/problems.html:88 templates/groups/base.html:61
+#: templates/groups/base.html:83 templates/groups/lessons.html:26
+#: templates/lessons/edit.html:160 templates/problems/base.html:26
+#: templates/problems/base.html:65 templates/problems/checkers.html:40
+#: templates/problems/tests.html:11 templates/problems/tests.html:101
 msgid "common.delete"
 msgstr "Удалить"
 
@@ -348,7 +349,7 @@ msgid "contest.adminfrozen"
 msgstr "Турнирная таблица заморожена для непривилегированных пользователей"
 
 #: templates/contests/edit.html:7 templates/contests/edit.html:38
-#: templates/contests/list.html:22 templates/groups/contests.html:20
+#: templates/contests/list.html:20 templates/groups/contests.html:19
 msgid "contests.new"
 msgstr "Новый турнир"
 
@@ -378,20 +379,20 @@ msgstr "Разморозить после окончания"
 
 #: templates/contests/edit.html:124 templates/lessons/edit.html:287
 #: templates/problems/edit.html:113 templates/problems/tests.html:49
-#: templates/settings/edit.html:56 templates/users/change_password.html:46
+#: templates/settings/edit.html:47 templates/users/change_password.html:46
 #: templates/users/edit_profile.html:73
 msgid "common.update"
 msgstr "Обновить"
 
-#: templates/contests/list.html:11 templates/contests/problems.html:16
+#: templates/contests/problems.html:16
 msgid "datatables.search"
 msgstr "Поиск"
 
-#: templates/contests/list.html:12 templates/contests/problems.html:17
+#: templates/contests/problems.html:17
 msgid "datatables.emptytable"
 msgstr "Нет записей"
 
-#: templates/contests/list.html:13 templates/contests/problems.html:18
+#: templates/contests/problems.html:18
 msgid "datatables.zerorecords"
 msgstr "Записи не найдены"
 
@@ -450,13 +451,21 @@ msgstr "404 - страница не найдена"
 msgid "error.404.text"
 msgstr "Мы не смогли найти страницу, к которой Вы обратились"
 
-#: templates/groups/base.html:45
+#: templates/groups/base.html:51
+msgid "groups.delete.confirm"
+msgstr "Подтвердите удаление группы"
+
+#: templates/groups/base.html:70
 msgid "title.users"
 msgstr "Пользователи"
 
-#: templates/groups/base.html:48
+#: templates/groups/base.html:73
 msgid "title.lessons"
 msgstr "Занятия"
+
+#: templates/groups/base.html:77 templates/problems/base.html:54
+msgid "common.more"
+msgstr "Ещё"
 
 #: templates/groups/lessons.html:6
 msgid "lessons.new"
@@ -470,17 +479,17 @@ msgstr "Продолжительность"
 msgid "lessons.applyautomarks"
 msgstr "Применить автооценки"
 
-#: templates/groups/users.html:7 templates/lessons/automarks.html:12
+#: templates/groups/users.html:19 templates/lessons/automarks.html:12
 #: templates/lessons/edit.html:83 templates/users/login.html:14
 #: templates/users/signup.html:20
 msgid "common.username"
 msgstr "Имя пользователя"
 
-#: templates/groups/users.html:8 templates/lessons/edit.html:84
+#: templates/groups/users.html:20 templates/lessons/edit.html:84
 msgid "common.fullname"
 msgstr "Имя"
 
-#: templates/groups/users.html:9
+#: templates/groups/users.html:21
 msgid "common.role"
 msgstr "Роль"
 
@@ -578,10 +587,6 @@ msgstr "Тестовые пары"
 #: templates/problems/base.html:50
 msgid "title.problem.checkers"
 msgstr "Чекеры"
-
-#: templates/problems/base.html:54
-msgid "common.more"
-msgstr "Ещё"
 
 #: templates/problems/base.html:60
 msgid "problems.export"
@@ -701,15 +706,15 @@ msgstr "мс"
 msgid "common.units.kilobytes"
 msgstr "КиБ"
 
-#: templates/settings/edit.html:21 templates/settings/edit.html:26
+#: templates/settings/edit.html:12 templates/settings/edit.html:17
 msgid "settings.scoreboardcachetimeout"
 msgstr "Частота обновления турнирной таблицы в секундах"
 
-#: templates/settings/edit.html:35
+#: templates/settings/edit.html:26
 msgid "settings.allowsignup"
 msgstr "Разрешить регистрацию"
 
-#: templates/settings/edit.html:45
+#: templates/settings/edit.html:36
 msgid "settings.allowguestview"
 msgstr "Разрешить доступ без авторизации"
 
@@ -860,11 +865,11 @@ msgstr "Код доступа"
 msgid "error.permission.authrequired"
 msgstr "Для просмотра страницы необходимо авторизироваться"
 
-#: users/model.py:77
+#: users/model.py:80
 msgid "auth.login.invalidcredentials"
 msgstr "Неправильный логин или пароль"
 
-#: users/model.py:104
+#: users/model.py:107
 msgid "common.hidden"
 msgstr "Скрыто"
 

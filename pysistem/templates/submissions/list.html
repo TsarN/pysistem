@@ -1,24 +1,4 @@
 {% if submissions %}
-{% if not hide_source %}
-<script type="text/javascript">
-    function load_submission(id) {
-        sub = $('#submission' + id + '_source');
-        if (sub.html() != '') {
-            sub.toggle();
-            if (sub.is(':visible'))
-                return "{{ _('common.hide') }}"
-            else
-                return "{{ _('common.show') }}"
-        }
-        sub.load(
-            '/submission/' + id + '/source', function() {
-                sub.show();
-                hljs.highlightBlock(sub[0]);
-        });
-        return "{{ _('common.hide') }}";
-    }
-</script>
-{% endif %}
 {% if g.user.is_admin(submission=submissions) and not disable_all_actions %}
 <caption>
     <span class="pull-right">
@@ -81,9 +61,9 @@
     </td>
     {% endif %}
     {% if not hide_source %}
-    <td><pre id="submission{{ submission.id }}_source" style="display: none;"></pre>
-        <a href="/submission/{{ submission.id }}/source"
-        onclick="$(this).html(load_submission({{ submission.id }})); return false;">{{ _('common.show') }}</a>
+    <td>
+        <a href="#" class="view-source" data-action="show">{{ _('common.show') }}</a>
+        <pre style="display: none"><code>{{ submission.source }}</code></pre>
     </td>
     {% endif %}
     <td>{{ submission.compiler.name }}</td>
@@ -131,6 +111,21 @@
         border-bottom: 6px solid;
     }
 </style>
+<script type="text/javascript">
+$('.view-source').click(function() {
+    var action = $(this).attr('data-action');
+    if (action == 'show') {
+        $(this).attr('data-action', 'hide');
+        $(this).siblings('pre').show();
+        $(this).html('{{ _("common.hide") }}');
+    } else {
+        $(this).attr('data-action', 'show');
+        $(this).siblings('pre').hide();
+        $(this).html('{{ _("common.show") }}');
+    };
+    return false;
+})
+</script>
 {% else %}
 <caption>
 {{ _('submissions.list.empty') }}

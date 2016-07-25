@@ -32,13 +32,18 @@ def view(submission_id, submission):
     if not g.user.is_admin(submission=submission) and (submission.user_id != g.user.id):
         return render_template('errors/403.html'), 403
     cache_name = '/submission/view/%d/%r' % (submission_id, g.user.is_admin(submission=submission))
+    if submission.status not in [STATUS_DONE, STATUS_ACT]:
+        cache.delete(cache_name)
     rawview = cache.get(cache_name)
     if rawview is None:
-        submission_logs = submission.submission_logs.all()
-
+        submission_logs = {}
+        try:
+            submission_logs = submission.submission_logs
+        except:
+            pass
         logs = {}
         for sub in submission_logs:
-            if sub.test_pair.test_group_id not in logs.keys():
+            if sub.test_pair.test_group_id not in logs:
                 logs[sub.test_pair.test_group_id] = []
             logs[sub.test_pair.test_group_id].append({
                 "result": sub.result,

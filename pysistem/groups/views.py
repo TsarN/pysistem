@@ -2,7 +2,7 @@
 
 """Group-related views"""
 
-from flask import render_template, flash, redirect, request, Blueprint
+from flask import render_template, flash, redirect, request, Blueprint, url_for
 from flask_babel import gettext
 
 from pysistem.groups.decorators import yield_group, requires_group_membership
@@ -101,3 +101,19 @@ def rename(group_id, group):
         db.session.commit()
         flash(gettext('groups.rename.success'))
     return redirect(redirect_url())
+
+@mod.route('/<int:group_id>/delete')
+@yield_group()
+@requires_admin()
+def delete(group_id, group):
+    """Delete group
+
+    ROUTE parameters:
+    group_id -- Group ID to delete
+
+    Permissions required:
+    Server Administrator
+    """
+    db.session.delete(group)
+    db.session.commit()
+    return redirect(url_for('index'))

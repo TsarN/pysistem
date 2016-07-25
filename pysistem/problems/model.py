@@ -240,7 +240,10 @@ class Problem(db.Model):
     def get_max_score(self):
         """Get problem's maximum achievable score"""
         score = 0
-        for test_group in self.test_groups:
-            score += test_group.score
-            score += test_group.test_pairs.count() * test_group.score_per_test
+        try:
+            for test_group in self.test_groups:
+                score += test_group.score
+                score += test_group.test_pairs.count() * test_group.score_per_test
+        except:
+            score = 0
         return score

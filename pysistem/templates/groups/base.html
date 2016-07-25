@@ -41,11 +41,55 @@
         <a href="{{ url_for('groups.contests', group_id=group.id) }}">{{ _('title.contestlist') }}</a>
     </li>
     {% if g.user.is_admin(group=group) %}
+    <div id="modal-confirm-delete" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">{{ _('groups.delete.confirm') }}</h4>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <a href="#" onclick="$('#modal-confirm-delete').modal('hide')"
+                class="btn btn-default">
+                    {{ _('common.cancel') }}
+                </a>
+                <a href="{{ url_for('groups.delete', group_id=group.id) }}"
+                class="btn btn-danger">
+                    {{ _('common.delete') }}
+                </a>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
     <li role="presentation" class="{% block group_nav_link_users %}{% endblock %}">
         <a href="{{ url_for('groups.users', group_id=group.id) }}">{{ _('title.users') }}</a>
     </li>
     <li role="presentation" class="{% block group_nav_link_lessons %}{% endblock %}">
         <a href="{{ url_for('groups.lessons', group_id=group.id) }}">{{ _('title.lessons') }}</a>
+    </li>
+    <li role="presentation" class="dropdown">
+        <a id="group-more-dropdown" class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {{ _('common.more') }}...
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="group-more-dropdown">
+            <li>
+                <a href="{{ url_for('groups.delete', group_id=group.id) }}" id="delbtn">
+                    {{ _('common.delete') }}
+                </a>
+                <script type="text/javascript">
+                    $("#delbtn").click(function() {
+                        $("#modal-confirm-delete").modal("show");
+                        return false;
+                    })
+                </script>
+            </li>
+        </ul>
     </li>
     {% endif %}
 </ul>

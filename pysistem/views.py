@@ -4,7 +4,7 @@
 
 from datetime import time, datetime
 from werkzeug.routing import BaseConverter
-from flask import render_template, session, g, redirect, url_for, request
+from flask import render_template, session, g, redirect, url_for, request, Response
 
 from pysistem.users.model import User
 from pysistem.groups.model import Group
@@ -13,7 +13,7 @@ try:
 except ImportError: # pragma: no cover
     from pysistem.conf_default import LANGUAGES
     
-from pysistem import app, babel
+from pysistem import app, db, babel
 from pysistem.settings.model import Setting as SETTINGS
 
 @babel.localeselector
@@ -22,10 +22,11 @@ def get_locale():
     return session.get('language') or request.accept_languages.best_match(LANGUAGES.keys())
 
 @app.before_request
-def before_request():
+def before_request(check_static=True):
     """Process before request"""
-    if request.path.startswith('/static/'):
+    if check_static and request.path.startswith('/static/'):
         return
+    db.session.commit()
     g.is_first_time = (User.query.count() == 0)
     g.now = datetime.now()
     session['language'] = get_locale()
@@ -158,6 +159,8 @@ def index():
 @app.errorhandler(404)
 def err_notfound(exception):
     """HTTP 404 Not Found handler"""
+    if not hasattr(g, 'user'):
+        before_request(False)
     return render_template('errors/404.html'), 404
 
 class StrListConverter(BaseConverter):

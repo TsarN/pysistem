@@ -17,7 +17,7 @@ LANGUAGES = {
     'ru': 'Русский'
 }
 # Database to use
-SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(DIR, 'sistem.db')
+SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(DIR, 'pysistem.db')
 # For debugging
 #SQLALCHEMY_ECHO = True
 
@@ -39,3 +39,6 @@ LAUNCH_CHECK_THREAD = True
 
 # Maximum upload size
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+
+# Maximum compilation time, in seconds
+COMPILE_TIME_LIMIT = 15

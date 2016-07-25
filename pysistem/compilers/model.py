@@ -7,6 +7,11 @@ import shlex
 
 from pysistem import app, db
 
+try:
+    from pysistem.conf import COMPILE_TIME_LIMIT
+except ImportError:
+    from pysistem.conf_default import COMPILE_TIME_LIMIT
+
 class Compiler(db.Model):
     """A submission runner backend
 
@@ -56,7 +61,11 @@ class Compiler(db.Model):
         Tuple: (Successfully compiled, compiler log)
         """
         cmd = self.cmd_compile.replace('%exe%', exe).replace('%src%', src)
-        result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        try:
+            result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT, timeout=COMPILE_TIME_LIMIT)
+        except subprocess.TimeoutExpired:
+            return (False, "[INVOKER] Compilation time limit (%d seconds) expired" % COMPILE_TIME_LIMIT);
         return (result.returncode == 0, result.stdout or '')
 
     def run(self, exe, src_path='', time_limit=1000, memory_limit=65536, stdin=''):

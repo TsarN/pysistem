@@ -196,6 +196,7 @@ class Checker(db.Model):
         pysistem.submissions.const -- Submission's result
 
         """
+        print("Starting checking", submission);
         session = session or db.session
         from pysistem.submissions.model import SubmissionLog
         submission.result = RESULT_OK
@@ -203,6 +204,10 @@ class Checker(db.Model):
         submission.score = 0
         submission.check_log = ''
         last_result = RESULT_OK
+        for submission_log in session.query(SubmissionLog).filter(
+            SubmissionLog.submission_id == submission.id):
+            session.remove(submission_log)
+
         session.commit()
         from pysistem.test_pairs.model import TestPair, TestGroup
         for test_group in session.query(TestGroup) \
@@ -211,14 +216,15 @@ class Checker(db.Model):
             for test in session.query(TestPair) \
                 .filter(test_group.id == TestPair.test_group_id):
                 cstdout, stdout = self.check_test(submission, test)
-                submission_log = session.query(SubmissionLog).filter(db.and_(\
-                    SubmissionLog.submission_id == submission.id, \
-                    SubmissionLog.test_pair_id == test.id \
+                submission_log = session.query(SubmissionLog).filter(db.and_(
+                    SubmissionLog.submission_id == submission.id,
+                    SubmissionLog.test_pair_id == test.id
                     )).first() or SubmissionLog(submission=submission, test_pair=test)
                 session.add(submission_log)
                 submission_log.result = submission.result
                 submission_log.log = cstdout
                 submission_log.stdout = stdout
+                session.commit()
                 if submission.result != RESULT_OK:
                     all_passed = False
                     if last_result == RESULT_OK:
